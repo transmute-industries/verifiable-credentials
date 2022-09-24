@@ -3,7 +3,7 @@ const {v1} = mod;
 
 const {validFragment} = v1.examples;
 
-it('credentialStatus', () => {
+it('evidence', () => {
   const input = {
     ...validFragment,
     evidence: [
