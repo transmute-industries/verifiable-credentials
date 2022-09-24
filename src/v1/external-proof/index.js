@@ -1,3 +1,3 @@
 const credential = require('./credential');
-
-module.exports = {credential};
+const presentation = require('./presentation');
+module.exports = {credential, presentation};
