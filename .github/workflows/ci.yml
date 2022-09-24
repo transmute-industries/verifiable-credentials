@@ -1,0 +1,14 @@
+name: CI
+on: [push]
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Test
+      run: npm run test-ci
+    - name: Badges
+      uses: jpb06/jest-badges-action@latest
+        with:
+          branches: main

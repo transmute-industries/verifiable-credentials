@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test-ci": "jest --ci --coverage"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "repository": {
     "type": "git",
@@ -15,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/transmute-industries/verifiable-credentials/issues"
   },
-  "homepage": "https://github.com/transmute-industries/verifiable-credentials#readme"
+  "homepage": "https://github.com/transmute-industries/verifiable-credentials#readme",
+  "devDependencies": {
+    "jest": "^29.0.3"
+  }
 }
