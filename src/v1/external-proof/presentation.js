@@ -7,7 +7,7 @@ const encode = (presentation, nonce, aud) => {
   const header = {typ: 'JWT'};
 
   const payload = {vp: p};
-  // required
+
   payload.iss = p.holder.id ? p.holder.id : p.holder;
   payload.sub = p.holder.id ? p.holder.id : p.holder;
 

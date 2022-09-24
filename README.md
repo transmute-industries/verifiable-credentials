@@ -6,3 +6,9 @@
 ![Lines](./badges/coverage-lines.svg)
 ![Statements](./badges/coverage-statements.svg)
 ![Jest coverage](./badges/coverage-jest%20coverage.svg)
+
+## TODO
+
+- readme examples
+- cli
+- vocab injection / warning
