@@ -10,5 +10,5 @@ jobs:
       run: npm run test-ci
     - name: Badges
       uses: jpb06/jest-badges-action@latest
-        with:
-          branches: main
+      with:
+        branches: main
