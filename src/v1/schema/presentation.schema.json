@@ -58,6 +58,30 @@
           "required": ["id"]
         }
       ]
+    },
+
+    "verifiableCredential": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object"
+              }
+            ]
+          }
+        }
+      ]
     }
   },
 
