@@ -1,4 +1,4 @@
-const validFragment = {
+const validCredentialFragment = {
   '@context': [
     'https://www.w3.org/2018/credentials/v1',
     {'@vocab': 'https://brand.example/vocab#'},
@@ -9,4 +9,13 @@ const validFragment = {
   'credentialSubject': {id: 'did:example:456'},
 };
 
-module.exports = {validFragment};
+const validPresentationFragment = {
+  '@context': [
+    'https://www.w3.org/2018/credentials/v1',
+    {'@vocab': 'https://brand.example/vocab#'},
+  ],
+  'type': ['VerifiablePresentation'],
+  'holder': {id: 'did:example:123'},
+};
+
+module.exports = {validCredentialFragment, validPresentationFragment};

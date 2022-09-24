@@ -1,13 +1,13 @@
 const mod = require('../../../..');
 const {v1} = mod;
 
-const {validFragment} = v1.examples;
+const {validCredentialFragment} = v1.examples;
 
 describe('issuanceDate', () => {
   it('unexpected integer', () => {
     expect(() => {
       v1.credential.create({
-        ...validFragment,
+        ...validCredentialFragment,
         issuanceDate: 1651017600,
       });
     }).toThrow();
@@ -16,7 +16,7 @@ describe('issuanceDate', () => {
   it('invalid xml date time', () => {
     expect(() => {
       v1.credential.create({
-        ...validFragment,
+        ...validCredentialFragment,
         issuanceDate: 'September 24th 2022, 11:35:34 am',
       });
     }).toThrow();

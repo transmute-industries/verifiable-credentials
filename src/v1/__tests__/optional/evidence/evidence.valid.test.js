@@ -1,11 +1,11 @@
 const mod = require('../../../..');
 const {v1} = mod;
 
-const {validFragment} = v1.examples;
+const {validCredentialFragment} = v1.examples;
 
 it('evidence', () => {
   const input = {
-    ...validFragment,
+    ...validCredentialFragment,
     evidence: [
       {
         id: 'https://example.edu/evidence/f2aeec97-fc0d-42bf-8ca7-0548192d4231',

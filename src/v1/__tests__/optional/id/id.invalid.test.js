@@ -1,12 +1,12 @@
 const mod = require('../../../..');
 const {v1} = mod;
 
-const {validFragment} = v1.examples;
+const {validCredentialFragment} = v1.examples;
 describe('id', () => {
   it('invalid data type', () => {
     expect(() => {
       v1.credential.create({
-        ...validFragment,
+        ...validCredentialFragment,
         id: 123,
       });
     }).toThrow();
@@ -15,7 +15,7 @@ describe('id', () => {
   it('not an IRI', () => {
     expect(() => {
       v1.credential.create({
-        ...validFragment,
+        ...validCredentialFragment,
         id: 'cool-story-bro',
       });
     }).toThrow();

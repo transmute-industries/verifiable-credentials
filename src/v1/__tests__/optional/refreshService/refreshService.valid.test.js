@@ -1,11 +1,11 @@
 const mod = require('../../../..');
 const {v1} = mod;
 
-const {validFragment} = v1.examples;
+const {validCredentialFragment} = v1.examples;
 
 it('refreshService', () => {
   const input = {
-    ...validFragment,
+    ...validCredentialFragment,
     refreshService: {
       id: 'https://example.edu/refresh/3732',
       type: 'ManualRefreshService2018',

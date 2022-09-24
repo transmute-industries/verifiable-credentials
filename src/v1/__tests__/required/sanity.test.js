@@ -1,12 +1,20 @@
 const mod = require('../../..');
 const {v1} = mod;
 
-const {validFragment} = v1.examples;
+const {validCredentialFragment, validPresentationFragment} = v1.examples;
 
-it('minimal safe terms ', () => {
+it('minimal credential', () => {
   const input = {
-    ...validFragment,
+    ...validCredentialFragment,
   };
   const output = v1.credential.create(input);
+  expect(JSON.stringify(output)).toEqual(JSON.stringify(input));
+});
+
+it('minimal presentation', () => {
+  const input = {
+    ...validPresentationFragment,
+  };
+  const output = v1.presentation.create(input);
   expect(JSON.stringify(output)).toEqual(JSON.stringify(input));
 });

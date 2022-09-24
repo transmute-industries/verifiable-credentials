@@ -1,12 +1,12 @@
 const mod = require('../../../..');
 const {v1} = mod;
 
-const {validFragment} = v1.examples;
+const {validCredentialFragment} = v1.examples;
 
 describe('@context', () => {
   it('string', () => {
     const input = {
-      ...validFragment,
+      ...validCredentialFragment,
       '@context': 'https://www.w3.org/2018/credentials/v1',
     };
     const output = v1.credential.create(input);
@@ -15,7 +15,7 @@ describe('@context', () => {
 
   it('array of string', () => {
     const input = {
-      ...validFragment,
+      ...validCredentialFragment,
       '@context': [
         'https://www.w3.org/2018/credentials/v1',
         'https://www.w3.org/2018/credentials/examples/v1',
@@ -27,7 +27,7 @@ describe('@context', () => {
 
   it('array of string and object', () => {
     const input = {
-      ...validFragment,
+      ...validCredentialFragment,
       '@context': [
         'https://www.w3.org/2018/credentials/v1',
         'https://www.w3.org/2018/credentials/examples/v1',

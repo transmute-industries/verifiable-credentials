@@ -1,11 +1,11 @@
 const mod = require('../../../..');
 const {v1} = mod;
 
-const {validFragment} = v1.examples;
+const {validCredentialFragment} = v1.examples;
 
 it('termsOfUse', () => {
   const input = {
-    ...validFragment,
+    ...validCredentialFragment,
     termsOfUse: [
       {
         id: 'http://example.com/policies/credential/4',

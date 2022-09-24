@@ -1,11 +1,11 @@
 const mod = require('../../../..');
 const {v1} = mod;
 
-const {validFragment} = v1.examples;
+const {validCredentialFragment} = v1.examples;
 
 describe('type', () => {
   it('missing', () => {
-    const {type, ...withoutType} = validFragment;
+    const {type, ...withoutType} = validCredentialFragment;
     expect(() => {
       v1.credential.create({
         ...withoutType,
@@ -16,7 +16,7 @@ describe('type', () => {
   it('invalid data type', () => {
     expect(() => {
       v1.credential.create({
-        ...validFragment,
+        ...validCredentialFragment,
         type: 123,
       });
     }).toThrow();
@@ -25,7 +25,7 @@ describe('type', () => {
   it('invalid first element', () => {
     expect(() => {
       v1.credential.create({
-        ...validFragment,
+        ...validCredentialFragment,
         type: ['asdf'],
       });
     }).toThrow();

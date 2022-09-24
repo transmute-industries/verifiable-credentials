@@ -1,11 +1,11 @@
 const mod = require('../../../..');
 const {v1} = mod;
 
-const {validFragment} = v1.examples;
+const {validCredentialFragment} = v1.examples;
 
 it('credentialStatus', () => {
   const input = {
-    ...validFragment,
+    ...validCredentialFragment,
     credentialStatus: {
       id: 'https://example.edu/status/24',
       type: 'CredentialStatusList2017',

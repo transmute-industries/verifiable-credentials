@@ -1,12 +1,12 @@
 const mod = require('../../../..');
 const {v1} = mod;
 
-const {validFragment} = v1.examples;
+const {validCredentialFragment} = v1.examples;
 
 describe('id', () => {
   it('URL', () => {
     const input = {
-      ...validFragment,
+      ...validCredentialFragment,
       id: 'https://brand.example/credentials/123',
     };
     const output = v1.credential.create(input);
@@ -14,7 +14,7 @@ describe('id', () => {
   });
   it('URN', () => {
     const input = {
-      ...validFragment,
+      ...validCredentialFragment,
       id: 'urn:uuid:123',
     };
     const output = v1.credential.create(input);
@@ -22,7 +22,7 @@ describe('id', () => {
   });
   it('DID', () => {
     const input = {
-      ...validFragment,
+      ...validCredentialFragment,
       id: 'did:example:123',
     };
     const output = v1.credential.create(input);

@@ -1,11 +1,11 @@
 const mod = require('../../../..');
 const {v1} = mod;
 
-const {validFragment} = v1.examples;
+const {validCredentialFragment} = v1.examples;
 
 describe('issuer', () => {
   it('missing', () => {
-    const {issuer, ...withoutIssuer} = validFragment;
+    const {issuer, ...withoutIssuer} = validCredentialFragment;
     expect(() => {
       v1.credential.create({
         ...withoutIssuer,

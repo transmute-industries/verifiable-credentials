@@ -1,13 +1,13 @@
 const mod = require('../../../..');
 const {v1} = mod;
 
-const {validFragment} = v1.examples;
+const {validCredentialFragment} = v1.examples;
 
 describe('id', () => {
   it('missing id', () => {
     expect(() => {
       v1.credential.create({
-        ...validFragment,
+        ...validCredentialFragment,
         credentialSchema: {
           // "id": "https://example.org/examples/degree.json",
           type: 'JsonSchemaValidator2018',
@@ -19,7 +19,7 @@ describe('id', () => {
   it('id is not a valid IRI', () => {
     expect(() => {
       v1.credential.create({
-        ...validFragment,
+        ...validCredentialFragment,
         credentialSchema: {
           id: 'cool-story-bro',
           type: 'JsonSchemaValidator2018',
@@ -32,7 +32,7 @@ describe('id', () => {
 it('missing type', () => {
   expect(() => {
     v1.credential.create({
-      ...validFragment,
+      ...validCredentialFragment,
       credentialSchema: {
         id: 'https://example.org/examples/degree.json',
         // type: 'JsonSchemaValidator2018',

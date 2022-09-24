@@ -1,12 +1,12 @@
 const mod = require('../../../..');
 const {v1} = mod;
 
-const {validFragment} = v1.examples;
+const {validCredentialFragment} = v1.examples;
 
 describe('type', () => {
   it('string', () => {
     const input = {
-      ...validFragment,
+      ...validCredentialFragment,
       type: 'VerifiableCredential',
     };
     const output = v1.credential.create(input);
@@ -15,7 +15,7 @@ describe('type', () => {
 
   it('array of string', () => {
     const input = {
-      ...validFragment,
+      ...validCredentialFragment,
       type: ['VerifiableCredential', 'SoftwareLicense'],
     };
     const output = v1.credential.create(input);

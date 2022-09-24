@@ -1,12 +1,12 @@
 const mod = require('../../../..');
 const {v1} = mod;
 
-const {validFragment} = v1.examples;
+const {validCredentialFragment} = v1.examples;
 
 describe('credentialSubject', () => {
   it('array', () => {
     const input = {
-      ...validFragment,
+      ...validCredentialFragment,
       credentialSubject: [{id: 'did:example:456'}, {name: 'bob'}],
     };
     const output = v1.credential.create(input);

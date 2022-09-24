@@ -3,9 +3,11 @@ const ajv = new Ajv({strictTuples: false});
 
 const credentialSchema = require('./credential.schema.json');
 
+const presentationSchema = require('./presentation.schema.json');
+
 const validate = (schema, data) => {
   const valid = ajv.validate(schema, data);
   return {valid, errors: ajv.errors};
 };
 
-module.exports = {validate, credentialSchema};
+module.exports = {validate, credentialSchema, presentationSchema};
