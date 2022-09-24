@@ -6,7 +6,6 @@ const publicKey = {
   alg: 'ES256',
   x: 'bYiEZHQvqXVoT6RvpV3Lu3ub8_f04xow740DLc4M_W0',
   y: '0L0myoiAou4B0_hJpQz5dFDjnFrypVTRj4BpbKk0oW8',
-  d: '5RxtgEck3hPCCCorqivOezWtNv_1-wVMX1TpVKrBPEI',
 };
 
 const privateKey = {
