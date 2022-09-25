@@ -1,1 +1,11 @@
 __tests__
+examples
+badges
+scripts
+
+.eslintrc.js                          
+.github             
+.prettierrc.yaml                      
+.vscode
+
+jest.config.js 
