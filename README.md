@@ -6,6 +6,7 @@
 ![Lines](./badges/coverage-lines.svg)
 ![Statements](./badges/coverage-statements.svg)
 ![Jest coverage](./badges/coverage-jest%20coverage.svg)
+[![NPM](https://nodei.co/npm/@transmute/verifiable-credentials.png)](https://npmjs.org/package/@transmute/verifiable-credentials)
 
 <img src="./transmute-banner.png" />
 
