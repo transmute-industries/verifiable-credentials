@@ -4,13 +4,13 @@ const {v1} = mod;
 const {validPresentationFragment, privateKey, publicKey} = v1.examples;
 
 it('present & verify', async () => {
-  const vp = await v1.proof.presentation.secure({
+  const vp = await v1.presentation.proof.secure({
     presentation: validPresentationFragment,
     privateKey: privateKey,
     nonce: 123,
   });
 
-  const result = await v1.proof.presentation.verify({
+  const result = await v1.presentation.proof.verify({
     verifiablePresentation: vp,
     publicKey: publicKey,
     nonce: 123,
@@ -20,13 +20,13 @@ it('present & verify', async () => {
 });
 
 it('verify with dereferencer', async () => {
-  const vp = await v1.proof.presentation.secure({
+  const vp = await v1.presentation.proof.secure({
     presentation: validPresentationFragment,
     privateKey: privateKey,
     nonce: 123,
   });
 
-  const result = await v1.proof.presentation.verify({
+  const result = await v1.presentation.proof.verify({
     verifiablePresentation: vp,
     dereferencer: async (_id) => {
       return publicKey;
@@ -37,13 +37,13 @@ it('verify with dereferencer', async () => {
 });
 
 it('requires valid nonce', async () => {
-  const vp = await v1.proof.presentation.secure({
+  const vp = await v1.presentation.proof.secure({
     presentation: validPresentationFragment,
     privateKey: privateKey,
     nonce: 123,
   });
 
-  const result = await v1.proof.presentation.verify({
+  const result = await v1.presentation.proof.verify({
     verifiablePresentation: vp,
     publicKey: publicKey,
     nonce: 456,

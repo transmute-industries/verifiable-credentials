@@ -1,5 +1,8 @@
 const schema = require('./schema');
 
+const externalProof = require('./external-proof');
+const proof = externalProof.presentation;
+
 class Presentation {
   constructor(input) {
     const {valid, errors} = schema.validate(schema.presentationSchema, input);
@@ -32,4 +35,4 @@ const create = (data) => {
   return new Presentation(data);
 };
 
-module.exports = {create};
+module.exports = {create, proof};

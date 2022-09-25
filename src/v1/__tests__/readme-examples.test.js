@@ -15,7 +15,7 @@ for (const alg of algs) {
     });
     it('secure & verify credential', async () => {
       const [verifiableCredential] =
-        await authenticity.v1.proof.credential.secure({
+        await authenticity.v1.credential.proof.secure({
           credential: authenticity.v1.examples.validCredentialFragment,
           privateKey: fixture[alg].privateKeyJwk,
         });
@@ -23,7 +23,7 @@ for (const alg of algs) {
       fixture[alg].issued = verifiableCredential;
 
       fixture[alg].credential_verified =
-        await authenticity.v1.proof.credential.verify({
+        await authenticity.v1.credential.proof.verify({
           verifiableCredential,
           dereferencer: async (_id) => {
             return fixture[alg].publicKeyJwk;
@@ -32,7 +32,7 @@ for (const alg of algs) {
     });
     it('secure & verify presentation', async () => {
       const verifiablePresentation =
-        await authenticity.v1.proof.presentation.secure({
+        await authenticity.v1.presentation.proof.secure({
           presentation: authenticity.v1.examples.validPresentationFragment,
           privateKey: fixture[alg].privateKeyJwk,
           nonce: 123,
@@ -40,7 +40,7 @@ for (const alg of algs) {
 
       fixture[alg].presented = verifiablePresentation;
       fixture[alg].presentation_verified =
-        await authenticity.v1.proof.presentation.verify({
+        await authenticity.v1.presentation.proof.verify({
           verifiablePresentation: verifiablePresentation,
           nonce: 123,
           dereferencer: async (_id) => {

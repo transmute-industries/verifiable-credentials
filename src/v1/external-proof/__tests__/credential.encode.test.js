@@ -4,7 +4,7 @@ const {v1} = mod;
 const {validMultiSubjectCredentialFragment} = v1.examples;
 
 it('encode', () => {
-  const encodings = v1.proof.credential.encode(
+  const encodings = v1.credential.proof.encode(
       validMultiSubjectCredentialFragment,
   );
   expect(encodings).toEqual([

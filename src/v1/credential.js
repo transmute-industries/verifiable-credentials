@@ -1,5 +1,8 @@
 const schema = require('./schema');
 
+const externalProof = require('./external-proof');
+const proof = externalProof.credential;
+
 class Credential {
   constructor(input) {
     const {valid, errors} = schema.validate(schema.credentialSchema, input);
@@ -32,4 +35,4 @@ const create = (data) => {
   return new Credential(data);
 };
 
-module.exports = {create};
+module.exports = {create, proof};

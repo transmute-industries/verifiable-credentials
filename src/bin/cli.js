@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const axios = require('axios');
 const yargs = require('yargs');
 const {hideBin} = require('yargs/helpers');
 const authenticity = require('..');
@@ -55,7 +56,7 @@ yargs(hideBin(process.argv))
         async (argv) => {
           const privateKey = readJsonFromPath(argv, 'jwk');
           const credential = readJsonFromPath(argv, 'tmp');
-          const [vc] = await authenticity.v1.proof.credential.secure({
+          const [vc] = await authenticity.v1.credential.proof.secure({
             credential,
             privateKey,
           });
@@ -69,7 +70,7 @@ yargs(hideBin(process.argv))
         async (argv) => {
           const {jwt} = readJsonFromPath(argv, 'vc');
           const publicKey = readJsonFromPath(argv, 'jwk');
-          const verified = await authenticity.v1.proof.credential.verify({
+          const verified = await authenticity.v1.credential.proof.verify({
             verifiableCredential: jwt,
             publicKey,
           });
@@ -84,7 +85,7 @@ yargs(hideBin(process.argv))
           const {nonce} = argv;
           const privateKey = readJsonFromPath(argv, 'jwk');
           const presentation = readJsonFromPath(argv, 'tmp');
-          const vp = await authenticity.v1.proof.presentation.secure({
+          const vp = await authenticity.v1.presentation.proof.secure({
             presentation,
             nonce,
             privateKey,
@@ -100,12 +101,25 @@ yargs(hideBin(process.argv))
           const {nonce} = argv;
           const {jwt} = readJsonFromPath(argv, 'vc');
           const publicKey = readJsonFromPath(argv, 'jwk');
-          const verified = await authenticity.v1.proof.presentation.verify({
+          const verified = await authenticity.v1.presentation.proof.verify({
             verifiablePresentation: jwt,
             nonce,
             publicKey,
           });
           console.log(JSON.stringify(verified, null, 2));
+        },
+    )
+    .command(
+        'dereference <didUrl>',
+        'dereference a decentralized identifier url',
+        () => {},
+        async (argv) => {
+          const {didUrl} = argv;
+          const response = await axios.get(
+              `https://dev.uniresolver.io/1.0/identifiers/${didUrl}`,
+          );
+          const vm = authenticity.utils.dereference(response.data, didUrl);
+          console.log(JSON.stringify(vm, null, 2));
         },
     )
     .options({
