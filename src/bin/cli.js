@@ -24,7 +24,7 @@ const readJsonFromPath = (argv, argName) => {
 };
 
 yargs(hideBin(process.argv))
-    .scriptName('🔐 verifiable data 🕸️ ')
+    .scriptName('web5')
     .command(
         'generate-key <alg>',
         'generate a key pair',
