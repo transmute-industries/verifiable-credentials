@@ -11,7 +11,7 @@
 
 #### [Questions? Contact Transmute](https://transmute.typeform.com/to/RshfIw?typeform-source=did-eqt)
 
-## Use
+## Usage
 
 ```
 npm i @transmute/verifiable-credentials --save
