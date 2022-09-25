@@ -14,8 +14,16 @@
 
 ## Usage
 
+As a nodejs dependency:
+
 ```
 npm i @transmute/verifiable-credentials --save
+```
+
+As a CLI:
+
+```
+npm i -g @transmute/verifiable-credentials
 ```
 
 ### Credentials: Issue & Verify
