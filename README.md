@@ -7,6 +7,10 @@
 ![Statements](./badges/coverage-statements.svg)
 ![Jest coverage](./badges/coverage-jest%20coverage.svg)
 
+<img src="./transmute-banner.png" />
+
+#### [Questions? Contact Transmute](https://transmute.typeform.com/to/RshfIw?typeform-source=did-eqt)
+
 ## Use
 
 ```
