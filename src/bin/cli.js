@@ -51,7 +51,7 @@ yargs(hideBin(process.argv))
     )
     .command(
         'credential:issue <jwk> <tmp>',
-        'secure a verifiable credential with a private key',
+        'secure with a private key',
         () => {},
         async (argv) => {
           const privateKey = readJsonFromPath(argv, 'jwk');
@@ -65,7 +65,7 @@ yargs(hideBin(process.argv))
     )
     .command(
         'credential:verify <jwk> <vc>',
-        'verify a verifiable credential with a public key',
+        'verify with a public key',
         () => {},
         async (argv) => {
           const {jwt} = readJsonFromPath(argv, 'vc');
@@ -79,7 +79,7 @@ yargs(hideBin(process.argv))
     )
     .command(
         'presentation:issue <jwk> <tmp>',
-        'secure a verifiable presentation with a private key',
+        'secure with a private key',
         () => {},
         async (argv) => {
           const {nonce} = argv;
@@ -94,12 +94,12 @@ yargs(hideBin(process.argv))
         },
     )
     .command(
-        'presentation:verify <jwk> <vc>',
-        'verify a verifiable presentation with a public key',
+        'presentation:verify <jwk> <vp>',
+        'verify with a public key',
         () => {},
         async (argv) => {
           const {nonce} = argv;
-          const {jwt} = readJsonFromPath(argv, 'vc');
+          const {jwt} = readJsonFromPath(argv, 'vp');
           const publicKey = readJsonFromPath(argv, 'jwk');
           const verified = await authenticity.v1.presentation.proof.verify({
             verifiablePresentation: jwt,
@@ -111,7 +111,7 @@ yargs(hideBin(process.argv))
     )
     .command(
         'dereference <didUrl>',
-        'dereference a decentralized identifier url',
+        'dereference a DID URL',
         () => {},
         async (argv) => {
           const {didUrl} = argv;
