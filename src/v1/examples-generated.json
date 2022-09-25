@@ -1,0 +1,177 @@
+{
+  "ES256": {
+    "publicKeyJwk": {
+      "kid": "urn:ietf:params:oauth:jwk-thumbprint:sha-256:xa2dQ8iLTKxkFwjOQVl3hVqgPOjsKXXq3HZFv4b0uIw",
+      "kty": "EC",
+      "crv": "P-256",
+      "alg": "ES256",
+      "x": "qO6G-RHEzMhwLmwibVmnouXzUViZn8PcQTI-r-52kA4",
+      "y": "PbuP_WBR7y9o4SyNSFgvEOz66fjpDj8PGsAUztcyrrI"
+    },
+    "privateKeyJwk": {
+      "kid": "urn:ietf:params:oauth:jwk-thumbprint:sha-256:xa2dQ8iLTKxkFwjOQVl3hVqgPOjsKXXq3HZFv4b0uIw",
+      "kty": "EC",
+      "crv": "P-256",
+      "alg": "ES256",
+      "x": "qO6G-RHEzMhwLmwibVmnouXzUViZn8PcQTI-r-52kA4",
+      "y": "PbuP_WBR7y9o4SyNSFgvEOz66fjpDj8PGsAUztcyrrI",
+      "d": "R7XbW7KU91u_sS_9aYECgBec2vxYeRJ487v8yGzESyI"
+    },
+    "issued": "eyJ0eXAiOiJKV1QiLCJraWQiOiJ1cm46aWV0ZjpwYXJhbXM6b2F1dGg6andrLXRodW1icHJpbnQ6c2hhLTI1Njp4YTJkUThpTFRLeGtGd2pPUVZsM2hWcWdQT2pzS1hYcTNIWkZ2NGIwdUl3IiwiYWxnIjoiRVMyNTYifQ.eyJ2YyI6eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvMjAxOC9jcmVkZW50aWFscy92MSIseyJAdm9jYWIiOiJodHRwczovL2JyYW5kLmV4YW1wbGUvdm9jYWIjIn1dLCJ0eXBlIjpbIlZlcmlmaWFibGVDcmVkZW50aWFsIl0sImlzc3VlciI6eyJpZCI6ImRpZDpleGFtcGxlOjEyMyJ9LCJpc3N1YW5jZURhdGUiOiIyMDIyLTA5LTI0VDE2OjMxOjQwLjgxNVoiLCJjcmVkZW50aWFsU3ViamVjdCI6eyJpZCI6ImRpZDpleGFtcGxlOjQ1NiJ9fSwiaXNzIjoiZGlkOmV4YW1wbGU6MTIzIiwibmJmIjoxNjY0MDM3MTAwODE1LCJzdWIiOiJkaWQ6ZXhhbXBsZTo0NTYifQ.oKyPftik9LEISAhLc_xtgAHZ8nNp5AHHMb5jYFE8YGRg7FwUOyrZr15rC4qwjl5-NGrKbqi7yFjYxlRXMidZww",
+    "credential_verified": {
+      "verified": true,
+      "credential": {
+        "@context": [
+          "https://www.w3.org/2018/credentials/v1",
+          {
+            "@vocab": "https://brand.example/vocab#"
+          }
+        ],
+        "type": [
+          "VerifiableCredential"
+        ],
+        "issuer": {
+          "id": "did:example:123"
+        },
+        "issuanceDate": "2022-09-24T16:31:40.815Z",
+        "credentialSubject": {
+          "id": "did:example:456"
+        }
+      }
+    },
+    "presented": "eyJ0eXAiOiJKV1QiLCJraWQiOiJ1cm46aWV0ZjpwYXJhbXM6b2F1dGg6andrLXRodW1icHJpbnQ6c2hhLTI1Njp4YTJkUThpTFRLeGtGd2pPUVZsM2hWcWdQT2pzS1hYcTNIWkZ2NGIwdUl3IiwiYWxnIjoiRVMyNTYifQ.eyJ2cCI6eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvMjAxOC9jcmVkZW50aWFscy92MSIseyJAdm9jYWIiOiJodHRwczovL2JyYW5kLmV4YW1wbGUvdm9jYWIjIn1dLCJ0eXBlIjpbIlZlcmlmaWFibGVQcmVzZW50YXRpb24iXSwiaG9sZGVyIjp7ImlkIjoiZGlkOmV4YW1wbGU6MTIzIn19LCJpc3MiOiJkaWQ6ZXhhbXBsZToxMjMiLCJzdWIiOiJkaWQ6ZXhhbXBsZToxMjMiLCJub25jZSI6MTIzLCJuYmYiOjE2NjQxMTM5NzA2OTgsImlhdCI6MTY2NDExMzk3MDY5OCwiZXhwIjoxNjY0MTE0MDkwNjk4fQ.l93lf8vkAmDPMqTSG0aRNoBXBBH7-bWN8YM4eB25PPa55WMscUnmSE8Bxj44nXAMXuVEyxBE-lg8F46U4993uw",
+    "presentation_verified": {
+      "verified": true,
+      "presentation": {
+        "@context": [
+          "https://www.w3.org/2018/credentials/v1",
+          {
+            "@vocab": "https://brand.example/vocab#"
+          }
+        ],
+        "type": [
+          "VerifiablePresentation"
+        ],
+        "holder": {
+          "id": "did:example:123"
+        }
+      }
+    }
+  },
+  "EdDSA": {
+    "publicKeyJwk": {
+      "kid": "urn:ietf:params:oauth:jwk-thumbprint:sha-256:LemlpDfibWZ3GYmujRPtxbPyfcLi7VbmjTg0mnJb1yQ",
+      "kty": "OKP",
+      "crv": "Ed25519",
+      "alg": "EdDSA",
+      "x": "IZab0Fmyn2_j-7xksi1A1vnDQaptOqiBQaT91LdrwHY"
+    },
+    "privateKeyJwk": {
+      "kid": "urn:ietf:params:oauth:jwk-thumbprint:sha-256:LemlpDfibWZ3GYmujRPtxbPyfcLi7VbmjTg0mnJb1yQ",
+      "kty": "OKP",
+      "crv": "Ed25519",
+      "alg": "EdDSA",
+      "x": "IZab0Fmyn2_j-7xksi1A1vnDQaptOqiBQaT91LdrwHY",
+      "d": "y1fzNbcRf6euVGN60qObZmc0dOHVCru4nr3mTy1aEeE"
+    },
+    "issued": "eyJ0eXAiOiJKV1QiLCJraWQiOiJ1cm46aWV0ZjpwYXJhbXM6b2F1dGg6andrLXRodW1icHJpbnQ6c2hhLTI1NjpMZW1scERmaWJXWjNHWW11alJQdHhiUHlmY0xpN1ZibWpUZzBtbkpiMXlRIiwiYWxnIjoiRWREU0EifQ.eyJ2YyI6eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvMjAxOC9jcmVkZW50aWFscy92MSIseyJAdm9jYWIiOiJodHRwczovL2JyYW5kLmV4YW1wbGUvdm9jYWIjIn1dLCJ0eXBlIjpbIlZlcmlmaWFibGVDcmVkZW50aWFsIl0sImlzc3VlciI6eyJpZCI6ImRpZDpleGFtcGxlOjEyMyJ9LCJpc3N1YW5jZURhdGUiOiIyMDIyLTA5LTI0VDE2OjMxOjQwLjgxNVoiLCJjcmVkZW50aWFsU3ViamVjdCI6eyJpZCI6ImRpZDpleGFtcGxlOjQ1NiJ9fSwiaXNzIjoiZGlkOmV4YW1wbGU6MTIzIiwibmJmIjoxNjY0MDM3MTAwODE1LCJzdWIiOiJkaWQ6ZXhhbXBsZTo0NTYifQ.AWmqsZ9Mi7GY49Xt7MPh52JkDtvbN2UGVpmT6JmQVH3T6o4gMt-3E3wPPR8ARzWP9pRYsFAmiXgxtOfO1ZKZCg",
+    "credential_verified": {
+      "verified": true,
+      "credential": {
+        "@context": [
+          "https://www.w3.org/2018/credentials/v1",
+          {
+            "@vocab": "https://brand.example/vocab#"
+          }
+        ],
+        "type": [
+          "VerifiableCredential"
+        ],
+        "issuer": {
+          "id": "did:example:123"
+        },
+        "issuanceDate": "2022-09-24T16:31:40.815Z",
+        "credentialSubject": {
+          "id": "did:example:456"
+        }
+      }
+    },
+    "presented": "eyJ0eXAiOiJKV1QiLCJraWQiOiJ1cm46aWV0ZjpwYXJhbXM6b2F1dGg6andrLXRodW1icHJpbnQ6c2hhLTI1NjpMZW1scERmaWJXWjNHWW11alJQdHhiUHlmY0xpN1ZibWpUZzBtbkpiMXlRIiwiYWxnIjoiRWREU0EifQ.eyJ2cCI6eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvMjAxOC9jcmVkZW50aWFscy92MSIseyJAdm9jYWIiOiJodHRwczovL2JyYW5kLmV4YW1wbGUvdm9jYWIjIn1dLCJ0eXBlIjpbIlZlcmlmaWFibGVQcmVzZW50YXRpb24iXSwiaG9sZGVyIjp7ImlkIjoiZGlkOmV4YW1wbGU6MTIzIn19LCJpc3MiOiJkaWQ6ZXhhbXBsZToxMjMiLCJzdWIiOiJkaWQ6ZXhhbXBsZToxMjMiLCJub25jZSI6MTIzLCJuYmYiOjE2NjQxMTM5NzA3MDIsImlhdCI6MTY2NDExMzk3MDcwMiwiZXhwIjoxNjY0MTE0MDkwNzAyfQ.A8gF_pUy0OamFFGm39fcmBlB6QgsIbddjyCcNeRYoqxi7xRiMyN37vRxl3Uyx_1t9QSW4R0apBlZlDZ4QjEkDA",
+    "presentation_verified": {
+      "verified": true,
+      "presentation": {
+        "@context": [
+          "https://www.w3.org/2018/credentials/v1",
+          {
+            "@vocab": "https://brand.example/vocab#"
+          }
+        ],
+        "type": [
+          "VerifiablePresentation"
+        ],
+        "holder": {
+          "id": "did:example:123"
+        }
+      }
+    }
+  },
+  "ES256K": {
+    "publicKeyJwk": {
+      "kid": "urn:ietf:params:oauth:jwk-thumbprint:sha-256:6rNR63ofu7QwV89365olxKo6R4UKhauFGp5x6jn58NA",
+      "kty": "EC",
+      "crv": "secp256k1",
+      "alg": "ES256K",
+      "x": "xSmYhE4LbAoTFZVbTLoNxrVQS1skxCoj4-qA8VJJ7Og",
+      "y": "bY-rU3RMRMxafBoQBT-J9_9UTCqezqRou-UkqLJLiBI"
+    },
+    "privateKeyJwk": {
+      "kid": "urn:ietf:params:oauth:jwk-thumbprint:sha-256:6rNR63ofu7QwV89365olxKo6R4UKhauFGp5x6jn58NA",
+      "kty": "EC",
+      "crv": "secp256k1",
+      "alg": "ES256K",
+      "x": "xSmYhE4LbAoTFZVbTLoNxrVQS1skxCoj4-qA8VJJ7Og",
+      "y": "bY-rU3RMRMxafBoQBT-J9_9UTCqezqRou-UkqLJLiBI",
+      "d": "impMEPgpqjjudPe4-EHAKBrTMkzJMk-Pzu0wxnn_UhA"
+    },
+    "issued": "eyJ0eXAiOiJKV1QiLCJraWQiOiJ1cm46aWV0ZjpwYXJhbXM6b2F1dGg6andrLXRodW1icHJpbnQ6c2hhLTI1Njo2ck5SNjNvZnU3UXdWODkzNjVvbHhLbzZSNFVLaGF1RkdwNXg2am41OE5BIiwiYWxnIjoiRVMyNTZLIn0.eyJ2YyI6eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvMjAxOC9jcmVkZW50aWFscy92MSIseyJAdm9jYWIiOiJodHRwczovL2JyYW5kLmV4YW1wbGUvdm9jYWIjIn1dLCJ0eXBlIjpbIlZlcmlmaWFibGVDcmVkZW50aWFsIl0sImlzc3VlciI6eyJpZCI6ImRpZDpleGFtcGxlOjEyMyJ9LCJpc3N1YW5jZURhdGUiOiIyMDIyLTA5LTI0VDE2OjMxOjQwLjgxNVoiLCJjcmVkZW50aWFsU3ViamVjdCI6eyJpZCI6ImRpZDpleGFtcGxlOjQ1NiJ9fSwiaXNzIjoiZGlkOmV4YW1wbGU6MTIzIiwibmJmIjoxNjY0MDM3MTAwODE1LCJzdWIiOiJkaWQ6ZXhhbXBsZTo0NTYifQ.KMsC2RF-KkwoAyeA7qvFWjaqUjo66d58tZqlCo2kaTARujKV-pULeg9pEo7xRsXmILDrc6Hj2YYm1-eR5wWnyQ",
+    "credential_verified": {
+      "verified": true,
+      "credential": {
+        "@context": [
+          "https://www.w3.org/2018/credentials/v1",
+          {
+            "@vocab": "https://brand.example/vocab#"
+          }
+        ],
+        "type": [
+          "VerifiableCredential"
+        ],
+        "issuer": {
+          "id": "did:example:123"
+        },
+        "issuanceDate": "2022-09-24T16:31:40.815Z",
+        "credentialSubject": {
+          "id": "did:example:456"
+        }
+      }
+    },
+    "presented": "eyJ0eXAiOiJKV1QiLCJraWQiOiJ1cm46aWV0ZjpwYXJhbXM6b2F1dGg6andrLXRodW1icHJpbnQ6c2hhLTI1Njo2ck5SNjNvZnU3UXdWODkzNjVvbHhLbzZSNFVLaGF1RkdwNXg2am41OE5BIiwiYWxnIjoiRVMyNTZLIn0.eyJ2cCI6eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvMjAxOC9jcmVkZW50aWFscy92MSIseyJAdm9jYWIiOiJodHRwczovL2JyYW5kLmV4YW1wbGUvdm9jYWIjIn1dLCJ0eXBlIjpbIlZlcmlmaWFibGVQcmVzZW50YXRpb24iXSwiaG9sZGVyIjp7ImlkIjoiZGlkOmV4YW1wbGU6MTIzIn19LCJpc3MiOiJkaWQ6ZXhhbXBsZToxMjMiLCJzdWIiOiJkaWQ6ZXhhbXBsZToxMjMiLCJub25jZSI6MTIzLCJuYmYiOjE2NjQxMTM5NzA3MTUsImlhdCI6MTY2NDExMzk3MDcxNSwiZXhwIjoxNjY0MTE0MDkwNzE1fQ.oCW3seORk_APHIfkjjtQmXssywrbEUFeOHh_fdMBmk5yW6bhS8U1PgWmd-HhaVYPWXmhHczKfkWOQ2OD8_tqxg",
+    "presentation_verified": {
+      "verified": true,
+      "presentation": {
+        "@context": [
+          "https://www.w3.org/2018/credentials/v1",
+          {
+            "@vocab": "https://brand.example/vocab#"
+          }
+        ],
+        "type": [
+          "VerifiablePresentation"
+        ],
+        "holder": {
+          "id": "did:example:123"
+        }
+      }
+    }
+  }
+}

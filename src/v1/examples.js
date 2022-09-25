@@ -1,3 +1,5 @@
+const generated = require('./examples-generated.json');
+
 const publicKey = {
   // eslint-disable-next-line max-len
   kid: 'urn:ietf:params:oauth:jwk-thumbprint:sha-256:bd6mdWq8VLetwbVJpRPGUyiyeAQS0T_esB7rcNVkELA',
@@ -51,4 +53,6 @@ module.exports = {
   validPresentationFragment,
 
   validMultiSubjectCredentialFragment,
+
+  generated,
 };
