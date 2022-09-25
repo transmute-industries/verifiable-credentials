@@ -2,8 +2,12 @@
   "name": "@transmute/verifiable-credentials",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./src/index.js",
+  "bin": {
+    "web5": "./src/bin/cli.js"
+  },
   "scripts": {
+    "web5": "NODE_NO_WARNINGS=1 node ./src/bin/cli.js",
     "test": "jest",
     "test-ci": "jest --ci --coverage",
     "lint": "eslint ./src/**/*.js",
@@ -32,6 +36,7 @@
   "dependencies": {
     "ajv": "^8.11.0",
     "jose": "^4.9.3",
-    "moment": "^2.29.4"
+    "moment": "^2.29.4",
+    "yargs": "^17.5.1"
   }
 }
