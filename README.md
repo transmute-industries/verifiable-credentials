@@ -17,6 +17,12 @@
 
 ### CLI
 
+You can test all these at once using:
+
+```
+./scripts/cli-example-generate.sh
+```
+
 #### Generate Key
 
 ```

@@ -1,9 +1,9 @@
 {
-  "kid": "urn:ietf:params:oauth:jwk-thumbprint:sha-256:xG-xbn-73pqVcbn2GYyNot5poz8dwwEV8l_o6feYexU",
+  "kid": "urn:ietf:params:oauth:jwk-thumbprint:sha-256:fPvGxMl6wXlj1s6Q01XKt964b-AEwjH6_eI6bbiN4UE",
   "kty": "EC",
   "crv": "P-256",
   "alg": "ES256",
-  "x": "_IVCAKdvsefZuO-aQjM2KfJVCZRtUklr-GVVZexHIME",
-  "y": "l_jqUWcAMiEwFSCq9UoZoMVnZq41mvMU5wueXoYSBbA",
-  "d": "BZQW4h8t4k5lzOa5FalLPL2xDbukg4bSfLdIDTtuWRQ"
+  "x": "auCxWmOyNv4E_C76niPROo19BEwK5nUf5dK-Jxw3IWI",
+  "y": "vttohLwQXtytmRRYs6IAEnT2k2Uvy-5MquYmBRFJa7o",
+  "d": "Eb2Sk33t9gRXM1dZ8Ufg_WjIvrmjbVhM_EjjOZPeKb8"
 }
