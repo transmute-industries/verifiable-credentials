@@ -1,5 +1,5 @@
 import { decodeJwt, decodeProtectedHeader } from "jose"
-import api, { VerifiableCredentialClaimset } from '../src'
+import api, { VerifiablePresentationClaimset } from '../src'
 import mock from './mock'
 
 it('e2e', async () => {
@@ -8,23 +8,23 @@ it('e2e', async () => {
   const signer = await api.controller.key.attached.signer({
     privateKey
   })
-  const issuer = await api.vc.issuer({
+  const holder = await api.vc.holder({
     signer
   })
   const protectedHeader = {
     alg: publicKey.alg,
-    kid: mock.claimset.issuer + '#key-42'
+    kid: mock.claimset3.holder + '#key-42'
   }
-  const vc = await issuer.issue({
+  const vp = await holder.present({
     protectedHeader,
-    claimset: mock.claimset
+    claimset: mock.claimset3
   })
   const verifier = await api.vc.verifier({
-    issuer: async (vc: string) => {
-      // the entire vc is a hint for the verifier to discover the issuer's public keys.
-      const protectedHeader = decodeProtectedHeader(vc)
-      const claimset = decodeJwt(vc) as VerifiableCredentialClaimset
-      const isIssuerKid = protectedHeader.kid?.startsWith(`${claimset.issuer}`)
+    issuer: async (vp: string) => {
+      // the entire vp is a hint for the verifier to discover the issuer's public keys.
+      const protectedHeader = decodeProtectedHeader(vp)
+      const claimset = decodeJwt(vp) as VerifiablePresentationClaimset
+      const isIssuerKid = protectedHeader.kid?.startsWith(`${claimset.holder}`)
       if (isIssuerKid) {
         // return application/jwk+json
         return publicKey
@@ -32,7 +32,7 @@ it('e2e', async () => {
       throw new Error('Untrusted issuer.')
     }
   })
-  const verified = await verifier.verify(vc)
-  expect(verified.claimset).toEqual(mock.claimset)
+  const verified = await verifier.verify(vp)
+  expect(verified.claimset).toEqual(mock.claimset3)
   expect(verified.protectedHeader).toEqual(protectedHeader)
 })

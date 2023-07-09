@@ -1,6 +1,6 @@
 import { ProtectedHeaderParameters } from 'jose'
 import { AttachedSigner } from '../jose/attached'
-import { VerifiableCredentialClaimset } from './types'
+import { VerifiableCredentialClaimset, VerifiablePresentationClaimset } from './types'
 
 import attached from '../jose/attached'
 
@@ -12,12 +12,16 @@ export type AttachedIssuer = {
   signer: AttachedSigner
 }
 
-export type VerifiedClaimset = {
+export type VerifiedCredentialClaimset = {
   protectedHeader: ProtectedHeaderParameters
   claimset: VerifiableCredentialClaimset
 }
+export type VerifiedPresentationClaimset = {
+  protectedHeader: ProtectedHeaderParameters
+  claimset: VerifiableCredentialClaimset | VerifiablePresentationClaimset
+}
 
-export type RequestAttachedVerifiableCredential = VerifiedClaimset
+export type RequestAttachedVerifiableCredential = VerifiedCredentialClaimset
 
 export type AttachedVerifiableCredentialIssuer = {
   issue: ({ protectedHeader, claimset }: RequestAttachedVerifiableCredential) => Promise<string>
@@ -45,7 +49,7 @@ export type RequestAttachedVerifier = {
 export type VerifiableCredentialValidation = Record<string, unknown>
 
 export type AttachedVerifiableCredentialVerifier = {
-  verify: (vc: string) => Promise<VerifiedClaimset>
+  verify: (vc: string) => Promise<VerifiedCredentialClaimset>
 }
 
 const verifier = async ({ issuer }: RequestAttachedVerifier): Promise<AttachedVerifiableCredentialVerifier> => {
@@ -62,6 +66,30 @@ const verifier = async ({ issuer }: RequestAttachedVerifier): Promise<AttachedVe
   }
 }
 
-const api = { issuer, verifier }
+export type RequestAttachedVerifiablePresentation = VerifiedPresentationClaimset
+
+
+export type AttachedVerifiablePresentationHolder = {
+  present: ({ protectedHeader, claimset }: RequestAttachedVerifiablePresentation) => Promise<string>
+}
+
+export type RequestAttachedHolder = {
+  signer: AttachedSigner
+}
+
+const holder = async ({ signer }: RequestAttachedHolder): Promise<AttachedVerifiablePresentationHolder> => {
+  const encoder = new TextEncoder()
+  return {
+    present: async ({ protectedHeader, claimset }) => {
+      const serialized = JSON.stringify(claimset)
+      const payload = encoder.encode(serialized)
+      return signer.sign({
+        protectedHeader, payload
+      })
+    }
+  }
+}
+
+const api = { issuer, holder, verifier }
 
 export default api

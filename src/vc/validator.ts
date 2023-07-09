@@ -1,5 +1,5 @@
 import { base64url } from "jose"
-import { VerifiedClaimset } from "./attached"
+import { VerifiedCredentialClaimset } from "./attached"
 import credentialSchemaValidator, { CredentialSchemaValidation, ResolveCredentialSchema } from "./credentialSchema"
 import credentialStatusValdiator, { CredentialStatusValidation, ResolveCredentialStatusList } from "./credentialStatus"
 
@@ -16,7 +16,7 @@ export type CredentialValidation = {
 }
 
 export type VerifiedCredentialValidator = {
-  validate: ({ protectedHeader, claimset }: VerifiedClaimset) => Promise<CredentialValidation>
+  validate: ({ protectedHeader, claimset }: VerifiedCredentialClaimset) => Promise<CredentialValidation>
 }
 
 const validator = async ({ issuer, credentialSchema, credentialStatus }: RequestVerifiedCredentialValidator): Promise<VerifiedCredentialValidator> => {

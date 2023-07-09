@@ -4,7 +4,7 @@
 import yaml from 'js-yaml'
 
 
-import { VerifiableCredentialClaimset } from '../src';
+import { VerifiableCredentialClaimset, VerifiablePresentationClaimset } from '../src';
 
 const publicKey: any = {
   kid: 'urn:ietf:params:oauth:jwk-thumbprint:sha-256:ydGzq9NKXcEdJ-kOIXoL1HgEOTwmnyk8h8DxgyWGpAE',
@@ -85,6 +85,13 @@ const claimset2 = {
   },
 } as VerifiableCredentialClaimset;
 
+
+const claimset3 = {
+  "@context": ["https://www.w3.org/ns/credentials/v2"],
+  "type": ["VerifiablePresentation"],
+  "holder": "urn:ietf:params:oauth:jwk-thumbprint:sha-256:_Fpfe27AuGmEljZE9s2lw2UH-qrZLRFNrWbJrWIe4SI"
+} as VerifiablePresentationClaimset;
+
 const protectedHeader = {
   typ: 'vc+ld+jwt',
   alg: publicKey.alg,
@@ -128,6 +135,6 @@ const validator = {
   }
 }
 
-const mock = { publicKey, privateKey, protectedHeader, claimset, claimset2, credentialSchema, statusList, validator }
+const mock = { publicKey, privateKey, protectedHeader, claimset, claimset2, claimset3, credentialSchema, statusList, validator }
 
 export default mock

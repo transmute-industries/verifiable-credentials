@@ -52,3 +52,17 @@ export type VerifiableCredentialOptionalClaims = {
 }
 
 export type VerifiableCredentialClaimset = VerifiableCredentialRequiredClaims & VerifiableCredentialOptionalClaims & Record<string, unknown>
+
+
+export type VerifiablePresentationRequiredClaims = {
+  '@context': Context
+  type: Type
+}
+
+export type VerifiablePresentationOptionalClaims = {
+  id?: string
+  holder?: Holder
+  verifiableCredential?: Array<string | VerifiableCredentialClaimset>
+}
+
+export type VerifiablePresentationClaimset = VerifiablePresentationRequiredClaims & VerifiablePresentationOptionalClaims & Record<string, unknown>
