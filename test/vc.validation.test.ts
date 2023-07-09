@@ -1,4 +1,5 @@
 
+import moment from 'moment'
 import api from '../src'
 import mock from './mock'
 
@@ -58,14 +59,68 @@ describe('validation', () => {
   })
 
   it('credentialStatus', async () => {
-    expect.assertions(1)
-    const validator = await api.vc.validator(mock.validator)
+    expect.assertions(2)
+    const validator = await api.vc.validator({
+      ...mock.validator,
+      credentialStatus: async () => {
+        return mock.statusList
+      }
+    })
     const validation = await validator.validate({
       protectedHeader: mock.protectedHeader,
       claimset: mock.claimset
     })
     if (validation.credentialSchema) {
       expect(validation.credentialSchema.valid).toBe(true)
+    }
+    if (validation.credentialStatus) {
+      expect(validation.credentialStatus.valid).toBe(true)
+    }
+  })
+
+  it('multiple', async () => {
+    expect.assertions(2)
+    const validator = await api.vc.validator({
+      ...mock.validator,
+      credentialStatus: async (id: string) => {
+        // Rebuild concrete representation from virtual one
+        const issuer = await api.vc.attached.issuer({
+          signer: await api.controller.key.attached.signer({
+            privateKey: mock.privateKey
+          })
+        })
+        let claimset;
+        if (id === `https://contoso.example/credentials/status/4`) {
+          claimset = await api.vc.StatusList.create({
+            id: id,
+            purpose: 'suspension',
+            length: 8,
+          })
+        } else if (id === `https://contoso.example/credentials/status/5`) {
+          claimset = await api.vc.StatusList.create({
+            id: id,
+            purpose: 'revocation',
+            length: 8,
+          })
+        }
+        claimset.issuer = mock.claimset.issuer
+        claimset.validFrom = moment().toISOString()
+        const vc = await issuer.issue({
+          protectedHeader: mock.protectedHeader,
+          claimset
+        })
+        return vc
+      }
+    })
+    const validation = await validator.validate({
+      protectedHeader: mock.protectedHeader,
+      claimset: mock.claimset2
+    })
+    if (validation.credentialSchema) {
+      expect(validation.credentialSchema.valid).toBe(true)
+    }
+    if (validation.credentialStatus) {
+      expect(validation.credentialStatus.valid).toBe(true)
     }
   })
 

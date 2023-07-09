@@ -22,6 +22,9 @@ export type CredentialSchema = Record<string, unknown> & {
 export type CredentialStatus = Record<string, unknown> & {
   id: string
   type: string
+  statusPurpose?: 'revocation' | 'suspension' | string
+  statusListIndex?: string,
+  statusListCredential?: string
 }
 
 export type Proof = Record<string, unknown> & {

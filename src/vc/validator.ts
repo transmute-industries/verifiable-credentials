@@ -31,7 +31,7 @@ const validator = async ({ issuer, credentialSchema, credentialStatus }: Request
         result.credentialSchema = await credentialSchemaValidator.validate(claimset, credentialSchema)
       }
       if (claimset.credentialStatus) {
-        result.credentialStatus = await credentialStatusValdiator.validate(claimset, credentialStatus)
+        result.credentialStatus = await credentialStatusValdiator.validate(claimset, credentialStatus, issuer)
       }
       return result
     }

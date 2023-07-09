@@ -2,6 +2,8 @@
 import attached from './attached'
 import validator from './validator'
 
-const vc = { attached, validator }
+import StatusList from './StatusList'
+
+const vc = { StatusList, attached, validator }
 
 export default vc

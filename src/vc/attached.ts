@@ -36,9 +36,10 @@ const issuer = async ({ signer }: RequestAttachedIssuer): Promise<AttachedVerifi
   }
 }
 
+export type ResolveIssuerPublicKey = (vc: string) => Promise<any>
 
 export type RequestAttachedVerifier = {
-  issuer: (vc: string) => Promise<any>
+  issuer: ResolveIssuerPublicKey
 }
 
 export type VerifiableCredentialValidation = Record<string, unknown>
