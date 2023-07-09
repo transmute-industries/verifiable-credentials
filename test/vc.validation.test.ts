@@ -7,6 +7,7 @@ describe('validation', () => {
   it('must be able to resolve issuer public key', async () => {
     expect.assertions(1)
     const validator = await api.vc.validator({
+      ...mock.validator,
       issuer: async () => {
         throw new Error('Untrusted issuer')
       }
@@ -62,9 +63,6 @@ describe('validation', () => {
     expect.assertions(2)
     const validator = await api.vc.validator({
       ...mock.validator,
-      credentialStatus: async () => {
-        return mock.statusList
-      }
     })
     const validation = await validator.validate({
       protectedHeader: mock.protectedHeader,
@@ -80,15 +78,20 @@ describe('validation', () => {
 
   it('multiple', async () => {
     expect.assertions(2)
+    const issuer = await api.vc.issuer({
+      signer: await api.controller.key.attached.signer({
+        privateKey: mock.privateKey
+      })
+    })
+    const vc = await issuer.issue({
+      protectedHeader: mock.protectedHeader,
+      claimset: mock.claimset2
+    })
     const validator = await api.vc.validator({
       ...mock.validator,
+      vc: vc,
       credentialStatus: async (id: string) => {
         // Rebuild concrete representation from virtual one
-        const issuer = await api.vc.issuer({
-          signer: await api.controller.key.attached.signer({
-            privateKey: mock.privateKey
-          })
-        })
         let claimset;
         if (id === `https://contoso.example/credentials/status/4`) {
           claimset = await api.vc.StatusList.create({
@@ -122,7 +125,7 @@ describe('validation', () => {
     if (validation.credentialStatus) {
       expect(validation.credentialStatus.valid).toBe(true)
     }
-    console.log(JSON.stringify(validation, null, 2))
+
   })
 
 })

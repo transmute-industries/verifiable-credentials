@@ -1,9 +1,10 @@
-import { base64url } from "jose"
+
 import { VerifiedCredentialClaimset } from "./attached"
 import credentialSchemaValidator, { CredentialSchemaValidation, ResolveCredentialSchema } from "./credentialSchema"
 import credentialStatusValdiator, { CredentialStatusValidation, ResolveCredentialStatusList } from "./credentialStatus"
 
 export type RequestVerifiedCredentialValidator = {
+  vc: string
   issuer: (vc: string) => Promise<any>
   credentialSchema?: ResolveCredentialSchema
   credentialStatus?: ResolveCredentialStatusList
@@ -19,11 +20,11 @@ export type VerifiedCredentialValidator = {
   validate: ({ protectedHeader, claimset }: VerifiedCredentialClaimset) => Promise<CredentialValidation>
 }
 
-const validator = async ({ issuer, credentialSchema, credentialStatus }: RequestVerifiedCredentialValidator): Promise<VerifiedCredentialValidator> => {
+const validator = async ({ vc, issuer, credentialSchema, credentialStatus }: RequestVerifiedCredentialValidator): Promise<VerifiedCredentialValidator> => {
   return {
     validate: async ({ protectedHeader, claimset }) => {
-      const publicKey = await issuer(`${base64url.encode(JSON.stringify(protectedHeader))}.${base64url.encode(JSON.stringify(claimset))}`)
-      let result = {
+      const publicKey = await issuer(vc)
+      const result = {
         // TODO: consider issuer id.
         issuer: publicKey
       } as CredentialValidation

@@ -31,6 +31,7 @@ it('e2e', async () => {
       throw new Error('Untrusted issuer.')
     }
   })
+
   const verified = await verifier.verify(vc)
   expect(verified.claimset).toEqual(mock.claimset)
   expect(verified.protectedHeader).toEqual({ typ: 'vc+ld+jwt', ...protectedHeader })
