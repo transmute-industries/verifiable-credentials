@@ -21,11 +21,8 @@ describe('validation', () => {
   })
   it('must be able to resolve schema when present', async () => {
     expect.assertions(1)
-    const validator = await api.vc.validator({
-      issuer: async () => {
-        return mock.publicKey
-      }
-    })
+    const { credentialSchema, ...valdiatorWithoutCredentialSchema } = mock.validator
+    const validator = await api.vc.validator(valdiatorWithoutCredentialSchema)
     try {
       await validator.validate({
         protectedHeader: mock.protectedHeader,
@@ -33,6 +30,19 @@ describe('validation', () => {
       })
     } catch (e) {
       expect((e as Error).message).toBe('credentialSchema resolver required.')
+    }
+  })
+  it('must be able to resolve status when present', async () => {
+    expect.assertions(1)
+    const { credentialStatus, ...valdiatorWithoutCredentialStatus } = mock.validator
+    const validator = await api.vc.validator(valdiatorWithoutCredentialStatus)
+    try {
+      await validator.validate({
+        protectedHeader: mock.protectedHeader,
+        claimset: mock.claimset
+      })
+    } catch (e) {
+      expect((e as Error).message).toBe('credentialStatus resolver required.')
     }
   })
   it('credentialSchema', async () => {

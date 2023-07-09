@@ -33,6 +33,13 @@ const claimset = {
     id: "https://contoso.example/bafybeigdyr...lqabf3oclgtqy55fbzdi",
     type: "JsonSchema",
   },
+  "credentialStatus": {
+    "id": "https://contoso.example/credentials/status/4#3",
+    "type": "StatusList2021Entry",
+    "statusPurpose": "suspension",
+    "statusListIndex": "3",
+    "statusListCredential": "https://contoso.example/credentials/status/4"
+  },
   credentialSubject: {
     id: "did:example:1231588",
     type: "Person",
@@ -73,6 +80,10 @@ const validator = {
   credentialSchema: async () => {
     // this resolver MUST return application/schema+json
     return credentialSchema
+  },
+  credentialStatus: async () => {
+    // this resolver MUST return application/vc+ld+jwt
+    return 'token'
   }
 }
 
