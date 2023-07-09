@@ -122,6 +122,7 @@ describe('validation', () => {
     if (validation.credentialStatus) {
       expect(validation.credentialStatus.valid).toBe(true)
     }
+    console.log(JSON.stringify(validation, null, 2))
   })
 
 })

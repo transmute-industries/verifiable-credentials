@@ -5,11 +5,10 @@ import mock from './mock'
 it('e2e', async () => {
   const privateKey = await api.controller.key.createPrivateKey({ alg: 'ES384' })
   const publicKey = api.controller.key.publicFromPrivate(privateKey)
-  const signer = await api.controller.key.attached.signer({
-    privateKey
-  })
   const issuer = await api.vc.issuer({
-    signer
+    signer: await api.controller.key.attached.signer({
+      privateKey
+    })
   })
   const protectedHeader = {
     alg: publicKey.alg,
