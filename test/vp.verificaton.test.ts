@@ -34,5 +34,5 @@ it('e2e', async () => {
   })
   const verified = await verifier.verify(vp)
   expect(verified.claimset).toEqual(mock.claimset3)
-  expect(verified.protectedHeader).toEqual(protectedHeader)
+  expect(verified.protectedHeader).toEqual({ typ: 'vp+ld+jwt', ...protectedHeader })
 })

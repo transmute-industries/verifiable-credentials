@@ -28,7 +28,7 @@ const holder = async ({ signer }: RequestAttachedHolder): Promise<AttachedVerifi
       const serialized = JSON.stringify(claimset)
       const payload = encoder.encode(serialized)
       return signer.sign({
-        protectedHeader, payload
+        protectedHeader: { typ: 'vp+ld+jwt', ...protectedHeader }, payload
       })
     }
   }
