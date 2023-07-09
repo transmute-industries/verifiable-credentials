@@ -16,10 +16,7 @@ export type VerifiedCredentialClaimset = {
   protectedHeader: ProtectedHeaderParameters
   claimset: VerifiableCredentialClaimset
 }
-export type VerifiedPresentationClaimset = {
-  protectedHeader: ProtectedHeaderParameters
-  claimset: VerifiableCredentialClaimset | VerifiablePresentationClaimset
-}
+
 
 export type RequestAttachedVerifiableCredential = VerifiedCredentialClaimset
 
@@ -66,30 +63,8 @@ const verifier = async ({ issuer }: RequestAttachedVerifier): Promise<AttachedVe
   }
 }
 
-export type RequestAttachedVerifiablePresentation = VerifiedPresentationClaimset
 
 
-export type AttachedVerifiablePresentationHolder = {
-  present: ({ protectedHeader, claimset }: RequestAttachedVerifiablePresentation) => Promise<string>
-}
-
-export type RequestAttachedHolder = {
-  signer: AttachedSigner
-}
-
-const holder = async ({ signer }: RequestAttachedHolder): Promise<AttachedVerifiablePresentationHolder> => {
-  const encoder = new TextEncoder()
-  return {
-    present: async ({ protectedHeader, claimset }) => {
-      const serialized = JSON.stringify(claimset)
-      const payload = encoder.encode(serialized)
-      return signer.sign({
-        protectedHeader, payload
-      })
-    }
-  }
-}
-
-const api = { issuer, holder, verifier }
+const api = { issuer, verifier }
 
 export default api
