@@ -1,4 +1,4 @@
-# Transmute Verifiable Credentials
+# @transmute/verifiable-credentials
 
 [![CI](https://github.com/transmute-industries/verifiable-credentials/actions/workflows/ci.yml/badge.svg)](https://github.com/transmute-industries/verifiable-credentials/actions/workflows/ci.yml)
 ![Branches](./badges/coverage-branches.svg)
@@ -6,237 +6,279 @@
 ![Lines](./badges/coverage-lines.svg)
 ![Statements](./badges/coverage-statements.svg)
 ![Jest coverage](./badges/coverage-jest%20coverage.svg)
-[![NPM](https://nodei.co/npm/@transmute/verifiable-credentials.png?mini=true)](https://npmjs.org/package/@transmute/verifiable-credentials)
+
+<!-- [![NPM](https://nodei.co/npm/@transmute/verifiable-credentials.png?mini=true)](https://npmjs.org/package/@transmute/verifiable-credentials) -->
 
 <img src="./transmute-banner.png" />
 
-#### [Questions? Contact Transmute](https://transmute.typeform.com/to/RshfIw?typeform-source=did-eqt)
+#### [Questions? Contact Transmute](https://transmute.typeform.com/to/RshfIw?typeform-source=verifiable-credentials)
 
 ## Usage
 
-As a nodejs dependency:
-
-```
-npm i @transmute/verifiable-credentials --save
+```sh
+npm i @transmute/verifiable-credentials@latest --save
 ```
 
-As a CLI:
-
-```
-npm i -g @transmute/verifiable-credentials
+```ts
+import w3c from '@transmute/verifiable-credentials'
 ```
 
-### Credentials: Issue & Verify
+### Issuer
 
-```js
-const authenticity = require('@transmute/verifiable-credentials')
-
-const [verifiableCredential] = await authenticity.v1.credential.proof.secure({
-  credential: {
-    '@context': [
-      'https://www.w3.org/2018/credentials/v1',
-      {
-        '@vocab': 'https://brand.example/vocab#',
-      },
-    ],
-    type: ['VerifiableCredential'],
-    issuer: {
-      id: 'did:example:123',
-    },
-    issuanceDate: '2022-09-24T16:31:40.815Z',
-    credentialSubject: {
-      id: 'did:example:456',
-    },
-  },
-  privateKey: {
-    kid: 'urn:ietf:params:oauth:jwk-thumbprint:sha-256:d6Sn5q-KOIjK2e5pHHvotvAFEAoNif2RFkWASut2TtE',
-    kty: 'EC',
-    crv: 'P-256',
-    alg: 'ES256',
-    x: 'LLYP8HXfs4J4PmwMtELoR6JI8vDaKgtwEIchwo49IXk',
-    y: 'jvI53P21wE4B33qEFDpOnwRRMSmSyIUX79sexOop45g',
-    d: 'T0YeaounhR36mctdPbDHxw9P3qAicekqeeTIsPTIhng',
-  },
+```ts
+const alg = 'ES384'
+const privateKey = await w3c.controller.key.createPrivateKey({ alg })
+const issuer = await w3c.vc.issuer({
+  signer: await w3c.controller.key.attached.signer({
+    privateKey
+  })
 })
+// issue a vc+ld+jwt
+const vc = await issuer.issue({
+  protectedHeader: {
+    alg,
+    kid: 'did:web:contoso.example#key-42'
+  },
+  claimset: {
+    "@context": [
+      "https://www.w3.org/ns/credentials/v2",
+      "https://www.w3.org/ns/credentials/examples/v2"
+    ],
+    "id": "https://contoso.example/credentials/35327255",
+    "type": ["VerifiableCredential", "LegalEntityCredential"],
+    "issuer": "did:web:contoso.example",
+    "validFrom": "2019-05-25T03:10:16.992Z",
+    "validUntil": "2027-05-25T03:10:16.992Z",
+    "credentialSchema": [
+      {
+        "id": "https://contoso.example/bafybeigdyr...lqabf3oclgtqy55fbzdi",
+        "type": "JsonSchema"
+      },
+      {
+        "id": "https://contoso.example/kafka/43",
+        "type": "JsonSchema"
+      }
+    ],
+    "credentialStatus": [
+      {
+        "id": "https://contoso.example/credentials/status/4#3",
+        "type": "StatusList2021Entry",
+        "statusPurpose": "suspension",
+        "statusListIndex": "3",
+        "statusListCredential": "https://contoso.example/credentials/status/4"
+      },
+      {
+        "id": "https://contoso.example/credentials/status/5#5",
+        "type": "StatusList2021Entry",
+        "statusPurpose": "revocation",
+        "statusListIndex": "5",
+        "statusListCredential": "https://contoso.example/credentials/status/5"
+      }
+    ],
+    "credentialSubject": {
+      "id": "did:example:1231588",
+      "type": "Organization"
+    }
+  }
+})
+```
 
-const verification = await authenticity.v1.credential.proof.verify({
-  verifiableCredential,
-  dereferencer: async (_id) => {
-    return {
-      kid: 'urn:ietf:params:oauth:jwk-thumbprint:sha-256:d6Sn5q-KOIjK2e5pHHvotvAFEAoNif2RFkWASut2TtE',
-      kty: 'EC',
-      crv: 'P-256',
-      alg: 'ES256',
-      x: 'LLYP8HXfs4J4PmwMtELoR6JI8vDaKgtwEIchwo49IXk',
-      y: 'jvI53P21wE4B33qEFDpOnwRRMSmSyIUX79sexOop45g',
+### Holder
+
+```ts
+const alg = 'ES384'
+const privateKey = await w3c.controller.key.createPrivateKey({ alg })
+const holder = await w3c.vp.holder({
+  signer: await w3c.controller.key.attached.signer({
+    privateKey
+  })
+})
+// present a vp+ld+jwt
+const vp = await holder.present({
+    protectedHeader: {
+    alg,
+    kid: 'did:web:contoso.example#key-42',
+    // beware of very poor interop with verifiable presentations...
+    nonce: 'something-random-or-signed-by-the-verifier',
+    aud: ['verifier-system-1', 'verifier-system-2']
+  },
+  claimset: {
+    "@context": ["https://www.w3.org/ns/credentials/v2"],
+    "type": ["VerifiablePresentation"],
+    "holder": "urn:ietf:params:oauth:jwk-thumbprint:sha-256:_Fpfe27AuGmEljZE9s2lw2UH-qrZLRFNrWbJrWIe4SI"
+  }
+})
+```
+
+### Verifier
+
+```ts
+const verifier = await w3c.vc.verifier({
+  issuer: async (vc: string) => {
+    // the entire vc+ld+jwt is a hint for the verifier to discover the issuer's public keys.
+    const protectedHeader = decodeProtectedHeader(vc)
+    const claimset = decodeJwt(vc) as VerifiableCredentialClaimset
+    const isIssuerKid = protectedHeader.kid?.startsWith(`${claimset.issuer}`)
+    if (isIssuerKid) {
+      // return application/jwk+json
+      return publicKey
+    }
+    throw new Error('Untrusted issuer.')
+  }
+})
+const verified = await verifier.verify(vc)
+const { protectedHeader, claimset } = verified
+// protectedHeader.typ === vc+ld+jwt
+// claimset.issuer === did:web:contoso.example
+// etc...
+```
+
+### Validator
+
+```ts
+const validator = await w3c.vc.validator({
+  issuer: async () => {
+    // this resolver must return application/jwk+json
+    return publicKey
+  },
+  credentialSchema: async () => {
+    // this resolver MUST return application/schema+json
+    return credentialSchema
+  },
+  credentialStatus: async () => {
+    // this resolver MUST return application/vc+ld+jwt
+    return statusList
+  }
+})
+// validate after verify... 
+const validation = await validator.validate(verified)
+```
+
+<details>
+<summary>View Validation Results</summary>
+
+```json
+{
+  "issuer": {
+    "kid": "urn:ietf:params:oauth:jwk-thumbprint:sha-256:ydGzq9NKXcEdJ-kOIXoL1HgEOTwmnyk8h8DxgyWGpAE",
+    "kty": "EC",
+    "crv": "P-384",
+    "alg": "ES384",
+    "x": "05UO-Dc-s7r-mX6KxHePF7zKWIM0iGrrnKQbEvdBuE804LmGNbIJUwL0uyoRkdK9",
+    "y": "HdIk9SXvulq3HaJG9-X_0AhwQi7HBhGnC3ty2Wpbolp4FlIrrUk7nrkGckgiVcAL"
+  },
+  "credentialSchema": {
+    "valid": true,
+    "https://contoso.example/bafybeigdyr...lqabf3oclgtqy55fbzdi": {
+      "$id": "https://contoso.example/bafybeigdyr...lqabf3oclgtqy55fbzdi",
+      "title": "W3C Verifiable Credential",
+      "description": "A JSON-LD Object of RDF type https://www.w3.org/2018/credentials#VerifiableCredential.",
+      "type": "object",
+      "properties": {
+        "@context": {
+          "type": "array",
+          "readOnly": true,
+          "default": [
+            "https://www.w3.org/ns/credentials/v2"
+          ],
+          "items": [
+            {
+              "type": "string",
+              "const": "https://www.w3.org/ns/credentials/v2"
+            }
+          ],
+          "additionalItems": {
+            "type": "string",
+            "enum": [
+              "https://www.w3.org/ns/credentials/examples/v2"
+            ]
+          }
+        }
+      }
+    },
+    "https://contoso.example/kafka/43": {
+      "$id": "https://contoso.example/bafybeigdyr...lqabf3oclgtqy55fbzdi",
+      "title": "W3C Verifiable Credential",
+      "description": "A JSON-LD Object of RDF type https://www.w3.org/2018/credentials#VerifiableCredential.",
+      "type": "object",
+      "properties": {
+        "@context": {
+          "type": "array",
+          "readOnly": true,
+          "default": [
+            "https://www.w3.org/ns/credentials/v2"
+          ],
+          "items": [
+            {
+              "type": "string",
+              "const": "https://www.w3.org/ns/credentials/v2"
+            }
+          ],
+          "additionalItems": {
+            "type": "string",
+            "enum": [
+              "https://www.w3.org/ns/credentials/examples/v2"
+            ]
+          }
+        }
+      }
     }
   },
-})
-
-// {
-//   "verified": true,
-//   "credential": {
-//     "@context": [
-//       "https://www.w3.org/2018/credentials/v1",
-//       {
-//         "@vocab": "https://brand.example/vocab#"
-//       }
-//     ],
-//     "type": [
-//       "VerifiableCredential"
-//     ],
-//     "issuer": {
-//       "id": "did:example:123"
-//     },
-//     "issuanceDate": "2022-09-24T16:31:40.815Z",
-//     "credentialSubject": {
-//       "id": "did:example:456"
-//     }
-//   }
-// }
-```
-
-### Presentations: Issue & Verify
-
-```js
-const authenticity = require('@transmute/verifiable-credentials')
-
-const verifiablePresentation = await authenticity.v1.presentation.proof.secure({
-  presentation: {
-    '@context': [
-      'https://www.w3.org/2018/credentials/v1',
-      {
-        '@vocab': 'https://brand.example/vocab#',
-      },
-    ],
-    type: ['VerifiablePresentation'],
-    holder: {
-      id: 'did:example:123',
+  "credentialStatus": {
+    "valid": true,
+    "https://contoso.example/credentials/status/4#3": {
+      "suspension": false,
+      "list": {
+        "@context": [
+          "https://www.w3.org/ns/credentials/v2"
+        ],
+        "id": "https://contoso.example/credentials/status/4",
+        "type": [
+          "VerifiableCredential",
+          "StatusList2021Credential"
+        ],
+        "issuer": "did:web:contoso.example",
+        "validFrom": "2023-07-09T18:43:21.716Z",
+        "credentialSubject": {
+          "id": "https://contoso.example/credentials/status/4#list",
+          "type": "StatusList2021",
+          "statusPurpose": "suspension",
+          "encodedList": "H4sIAAAAAAAAA2MAAI3vAtIBAAAA"
+        }
+      }
     },
-  },
-  privateKey: {
-    kid: 'urn:ietf:params:oauth:jwk-thumbprint:sha-256:d6Sn5q-KOIjK2e5pHHvotvAFEAoNif2RFkWASut2TtE',
-    kty: 'EC',
-    crv: 'P-256',
-    alg: 'ES256',
-    x: 'LLYP8HXfs4J4PmwMtELoR6JI8vDaKgtwEIchwo49IXk',
-    y: 'jvI53P21wE4B33qEFDpOnwRRMSmSyIUX79sexOop45g',
-    d: 'T0YeaounhR36mctdPbDHxw9P3qAicekqeeTIsPTIhng',
-  },
-  nonce: 123,
-})
-
-const verified = await authenticity.v1.presentation.proof.verify({
-  verifiablePresentation: verifiablePresentation,
-  nonce: 123,
-  dereferencer: async (_id) => {
-    return {
-      kid: 'urn:ietf:params:oauth:jwk-thumbprint:sha-256:d6Sn5q-KOIjK2e5pHHvotvAFEAoNif2RFkWASut2TtE',
-      kty: 'EC',
-      crv: 'P-256',
-      alg: 'ES256',
-      x: 'LLYP8HXfs4J4PmwMtELoR6JI8vDaKgtwEIchwo49IXk',
-      y: 'jvI53P21wE4B33qEFDpOnwRRMSmSyIUX79sexOop45g',
+    "https://contoso.example/credentials/status/5#5": {
+      "revocation": false,
+      "list": {
+        "@context": [
+          "https://www.w3.org/ns/credentials/v2"
+        ],
+        "id": "https://contoso.example/credentials/status/5",
+        "type": [
+          "VerifiableCredential",
+          "StatusList2021Credential"
+        ],
+        "issuer": "did:web:contoso.example",
+        "validFrom": "2023-07-09T18:43:21.719Z",
+        "credentialSubject": {
+          "id": "https://contoso.example/credentials/status/5#list",
+          "type": "StatusList2021",
+          "statusPurpose": "revocation",
+          "encodedList": "H4sIAAAAAAAAA2MAAI3vAtIBAAAA"
+        }
+      }
     }
-  },
-})
-
-// {
-//   "verified": true,
-//   "presentation": {
-//     "@context": [
-//       "https://www.w3.org/2018/credentials/v1",
-//       {
-//         "@vocab": "https://brand.example/vocab#"
-//       }
-//     ],
-//     "type": [
-//       "VerifiablePresentation"
-//     ],
-//     "holder": {
-//       "id": "did:example:123"
-//     }
-//   }
-// }
+  }
+}
 ```
+</details>
 
-## Development
 
-### CLI
+## Develop
 
-You can test all these at once using:
-
-```
-./scripts/cli-example-generate.sh
-```
-
-#### Generate Private Key
-
-```
-npm run --silent web5 generate-key ES256 > ./examples/k0.json
-```
-
-#### Dereference Public Key
-
-This command uses [decentralized-identity/universal-resolver](https://github.com/decentralized-identity/universal-resolver).
-
-Please be respectful of this community resource.
-
-See also the warning about stability.
-
-If you have questions or are interested in the Universal Resolver please contact the maintainers via the repository above.
-
-```
-DID="did:jwk:eyJraWQiOiJ1cm46aWV0ZjpwYXJhbXM6b2F1dGg6andrLXRodW1icHJpbnQ6c2hhLTI1NjpkNlNuNXEtS09JaksyZTVwSEh2b3R2QUZFQW9OaWYyUkZrV0FTdXQyVHRFIiwia3R5IjoiRUMiLCJjcnYiOiJQLTI1NiIsImFsZyI6IkVTMjU2IiwieCI6IkxMWVA4SFhmczRKNFBtd010RUxvUjZKSTh2RGFLZ3R3RUljaHdvNDlJWGsiLCJ5IjoianZJNTNQMjF3RTRCMzNxRUZEcE9ud1JSTVNtU3lJVVg3OXNleE9vcDQ1ZyJ9"
-npm run --silent web5 dereference "$DID#0" | jq '.publicKeyJwk' > ./examples/k0.pub.json
-```
-
-If you have [@or13/did-jwk](https://github.com/OR13/did-jwk) CLI installed, you can generate a DID from a key like this:
-
-```
-DID=$(did-jwk create ./examples/k0.json | jq -r '.id')
-```
-
-#### Create Credential Template
-
-```
-npm run --silent web5 generate-template credential > ./examples/c0.json
-```
-
-#### Issue Verifiable Credential
-
-```
-npm run --silent web5 credential:issue ./examples/k0.json ./examples/c0.json > ./examples/vc0.json
-```
-
-#### Verify Verifiable Credential
-
-```
-npm run --silent web5 credential:verify ./examples/k0.json ./examples/vc0.json > ./examples/vc0.v0.json
-```
-
-#### Create Presentation Template
-
-```
-npm run --silent web5 generate-template presentation > ./examples/p0.json
-```
-
-#### Issue Verifiable Presentation
-
-```
-npm run --silent web5 presentation:issue ./examples/k0.json ./examples/p0.json -- --nonce 123 > ./examples/vp0.json
-```
-
-#### Verify Verifiable Presentation
-
-```
-npm run --silent web5 presentation:verify ./examples/k0.json ./examples/vp0.json -- --nonce 123 > ./examples/vp0.v0.json
-```
-
-#### Verifying with Decentralized Identifiers
-
-```
-DID="did:jwk:eyJraWQiOiJ1cm46aWV0ZjpwYXJhbXM6b2F1dGg6andrLXRodW1icHJpbnQ6c2hhLTI1NjpkNlNuNXEtS09JaksyZTVwSEh2b3R2QUZFQW9OaWYyUkZrV0FTdXQyVHRFIiwia3R5IjoiRUMiLCJjcnYiOiJQLTI1NiIsImFsZyI6IkVTMjU2IiwieCI6IkxMWVA4SFhmczRKNFBtd010RUxvUjZKSTh2RGFLZ3R3RUljaHdvNDlJWGsiLCJ5IjoianZJNTNQMjF3RTRCMzNxRUZEcE9ud1JSTVNtU3lJVVg3OXNleE9vcDQ1ZyJ9"
-npm run --silent web5 dereference "$DID#0" | jq '.publicKeyJwk' > ./examples/k0.pub.json
-npm run --silent web5 credential:verify ./examples/k0.pub.json ./examples/vc0.json
+```bash
+npm i
+npm t
+npm run lint
+npm run build
 ```
