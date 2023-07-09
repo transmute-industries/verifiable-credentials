@@ -84,7 +84,7 @@ describe('validation', () => {
       ...mock.validator,
       credentialStatus: async (id: string) => {
         // Rebuild concrete representation from virtual one
-        const issuer = await api.vc.attached.issuer({
+        const issuer = await api.vc.issuer({
           signer: await api.controller.key.attached.signer({
             privateKey: mock.privateKey
           })

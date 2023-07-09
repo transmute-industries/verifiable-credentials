@@ -4,6 +4,6 @@ import validator from './validator'
 
 import StatusList from './StatusList'
 
-const vc = { StatusList, attached, validator }
+const vc = { StatusList, validator, ...attached }
 
 export default vc
