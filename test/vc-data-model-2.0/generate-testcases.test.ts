@@ -27,6 +27,11 @@ it('generate spec files', async () => {
     }
 
     await handlePostValidation(spec)
+
+    if (test.name === 'secured-vc-status-list') {
+      fs.writeFileSync(`./test/vc-data-model-2.0/testcases/${test.name}/status-list.jwt`, spec.get('issued') as string)
+    }
+
     if (spec) {
       fs.writeFileSync(`./test/vc-data-model-2.0/testcases/${test.name}/spec.yaml`, SD.YAML.dumps(spec))
     }

@@ -7,19 +7,19 @@ payload:
     - https://www.w3.org/ns/credentials/v2
   type:
     - VerifiablePresentation
-issued: eyJhbGciOiJFUzM4NCIsInR5cCI6InZwK2xkK2pzb24rand0IiwiY3R5IjoidnArbGQranNvbiJ9.eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvbnMvY3JlZGVudGlhbHMvdjIiXSwidHlwZSI6WyJWZXJpZmlhYmxlUHJlc2VudGF0aW9uIl19.zpDZeBUEKRUaNQdZMKEYGKWzki-LlPcK2cusLJZuy6mvNk9onZmIUKnGW0S9fxvZ2FUqyHIZNZqUNnLeusXJNq0IK1UoGaBI8q20hZ3EBGJ1qFO0qYvaKKQVdbczx4NL
+issued: eyJhbGciOiJFUzM4NCIsInR5cCI6InZwK2xkK2pzb24rand0IiwiY3R5IjoidnArbGQranNvbiJ9.eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvbnMvY3JlZGVudGlhbHMvdjIiXSwidHlwZSI6WyJWZXJpZmlhYmxlUHJlc2VudGF0aW9uIl19.L-VczGPicnk9WIAt-3oA2RshUMbZp3bQRyOnrTrHYdh5V5CL59tZvjFpBdZLw4yZ66TI4HBwxjX8cuMKBlRMg6e35bgZ-IBqkubUDrNEGsiTkZ3JGneYB3kbVA0pYv2a
 holder:
   publicKeyJwk:
     kty: EC
-    x: _bZ25FMKmnGl2n7QnB0i1NPoOZPQE0Ao1ecS6M4lmLQHl2jFoyFpA1zozzdCFywa
-    y: ac-wHWI17PduBZSUIGIQYSW64_H2TeURRy4nAh33Y08JMmdMCZY0Ouj9LsqcSoUF
+    x: rWnk0XAaNoNtJtjBYp24LrWdr3qVP4Ez1Q9REGNZQN2YW_GRvymY5wnBOaysdwMF
+    y: FIvudcVaIm9-XMsou70mu9lDxmCf3Fkkc54WSc_Fm62rydgnZwFEEnPvdQTOhrOj
     crv: P-384
   secretKeyJwk:
     kty: EC
-    x: _bZ25FMKmnGl2n7QnB0i1NPoOZPQE0Ao1ecS6M4lmLQHl2jFoyFpA1zozzdCFywa
-    y: ac-wHWI17PduBZSUIGIQYSW64_H2TeURRy4nAh33Y08JMmdMCZY0Ouj9LsqcSoUF
+    x: rWnk0XAaNoNtJtjBYp24LrWdr3qVP4Ez1Q9REGNZQN2YW_GRvymY5wnBOaysdwMF
+    y: FIvudcVaIm9-XMsou70mu9lDxmCf3Fkkc54WSc_Fm62rydgnZwFEEnPvdQTOhrOj
     crv: P-384
-    d: Sqt_KqH2ELOOxSC2QOOZD7ETvHSX80V18xIKYMrP9eeJdlhawRTCorrj6tZp_831
+    d: 13PueircqRtw9HqUNkBwI5mkmJ-2i_xuK3RqJL9QxRegIEtaxh3cCkgVfeTmOpl6
 validated:
   protectedHeader:
     alg: ES384

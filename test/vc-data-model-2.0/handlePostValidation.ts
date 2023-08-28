@@ -69,6 +69,7 @@ const handlePostValidation = async (spec: any) => {
     const status = await validateCredentialStatus(specJson.validated.payload)
     spec.add(new yaml.Pair('status', status))
   }
+
 }
 
 export default handlePostValidation;
