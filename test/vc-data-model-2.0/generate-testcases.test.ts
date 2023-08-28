@@ -28,15 +28,21 @@ it('generate spec files', async () => {
     }
 
     await handlePostValidation(spec)
+    fs.writeFileSync(`./test/vc-data-model-2.0/testcases/${test.name}/spec.yaml`, SD.YAML.dumps(spec))
 
     if (test.name === 'secured-vc-status-list') {
       fs.writeFileSync(`./test/vc-data-model-2.0/testcases/${test.name}/status-list.jwt`, spec.get('issued') as string)
     }
 
-    if (test.name === 'secured-vc-with-schema') {
+    if (test.name === 'secured-vc-schema-credential') {
+      fs.writeFileSync(`./test/vc-data-model-2.0/testcases/${test.name}/schema.jwt`, spec.get('issued') as string)
+    }
+
+    // all credentials that are secured with schema have schemas saved next to them.
+    if (test.name.includes('secured-vc-with-schema')) {
       const schema = `
 {
-  "$id": "https://w3c.github.io/vc-jose-cose-test-suite/testcases/secured-vc-with-schema/schema.json",
+  "$id": "https://w3c.github.io/vc-jose-cose-test-suite/testcases/${test.name}/schema.json",
   "title": "Example JSON Schema",
   "description": "This is a test schema",
   "type": "object",
@@ -53,11 +59,10 @@ it('generate spec files', async () => {
   }
 }
       `.trim()
-      fs.writeFileSync(`./test/vc-data-model-2.0/testcases/secured-vc-with-schema/schema.json`, schema)
+      fs.writeFileSync(`./test/vc-data-model-2.0/testcases/${test.name}/schema.json`, schema)
     }
 
-    if (spec) {
-      fs.writeFileSync(`./test/vc-data-model-2.0/testcases/${test.name}/spec.yaml`, SD.YAML.dumps(spec))
-    }
+
+
   }
 })

@@ -25,10 +25,9 @@ const validateCredentialSchema = (payload: any) => {
         } else {
           return validate
         }
-
       } else if (credentialSchema.id === 'https://w3c.github.io/vc-jose-cose-test-suite/testcases/secured-vc-with-schema-credential/schema.jwt') {
         // todo how to inject errors related to verifying schema failure?
-        const token = fs.readFileSync(`./test/vc-data-model-2.0/testcases/secured-vc-with-schema-credential/schema.jwt`).toString()
+        const token = fs.readFileSync(`./test/vc-data-model-2.0/testcases/secured-vc-schema-credential/schema.jwt`).toString()
         const decodedCredential = jose.decodeJwt(token) as any
         validate = ajv.compile(decodedCredential.credentialSubject.jsonSchema)
       } else {

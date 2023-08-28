@@ -1,0 +1,38 @@
+protectedHeader:
+  alg: ES384
+  typ: vc+ld+json+jwt
+  cty: vc+ld+json
+payload:
+  "@context":
+    - https://www.w3.org/ns/credentials/v2
+  type:
+    - VerifiableCredential
+  issuer: https://vendor.example/issuers/42
+  credentialSubject:
+    id: https://vendor.example/issuers/42
+issued: eyJhbGciOiJFUzM4NCIsInR5cCI6InZjK2xkK2pzb24rand0IiwiY3R5IjoidmMrbGQranNvbiJ9.eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvbnMvY3JlZGVudGlhbHMvdjIiXSwidHlwZSI6WyJWZXJpZmlhYmxlQ3JlZGVudGlhbCJdLCJpc3N1ZXIiOiJodHRwczovL3ZlbmRvci5leGFtcGxlL2lzc3VlcnMvNDIiLCJjcmVkZW50aWFsU3ViamVjdCI6eyJpZCI6Imh0dHBzOi8vdmVuZG9yLmV4YW1wbGUvaXNzdWVycy80MiJ9fQ.rA6y2PllhDtva_N6C2odsq6StbbYZ4nt4hNzCETzuSph7G3SPJaQxq3vxRKyOsfbNlrICxNBoBMHDlBIk_9SZ48C9eCP9cR2qGiZ6FiL8ni11-Y-h4ZEPdhKiOym5ZtM
+issuer:
+  publicKeyJwk:
+    kty: EC
+    x: EF1tCxizEkd45P8rCM4eoiIZk5Q-Ftokc9WHja02HUFtf4xVUZi15XIfekC6KYpU
+    y: 8NcGNNARyUzbowO5Oxy7qkuvURRKFT6NGhW5mxkczT1kvys5zZqebMRTt8oZAtu7
+    crv: P-384
+  secretKeyJwk:
+    kty: EC
+    x: EF1tCxizEkd45P8rCM4eoiIZk5Q-Ftokc9WHja02HUFtf4xVUZi15XIfekC6KYpU
+    y: 8NcGNNARyUzbowO5Oxy7qkuvURRKFT6NGhW5mxkczT1kvys5zZqebMRTt8oZAtu7
+    crv: P-384
+    d: lHWf4HrmZv_pmffvIj6rI-6J1fDUZMLczWvcxWOkHi7nXOA01TAlcrOLpBjsZSwY
+validated:
+  protectedHeader:
+    alg: ES384
+    typ: vc+ld+json+jwt
+    cty: vc+ld+json
+  payload:
+    "@context":
+      - https://www.w3.org/ns/credentials/v2
+    type:
+      - VerifiableCredential
+    issuer: https://vendor.example/issuers/42
+    credentialSubject:
+      id: https://vendor.example/issuers/42
