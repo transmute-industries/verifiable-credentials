@@ -3,15 +3,15 @@ import fs from 'fs'
 import yaml from 'yaml'
 import SD from '@transmute/vc-jwt-sd'
 
-
 import handleSecuredSdjwt from './handleSecuredSdjwt';
+
 // TODO Remove when allowed to: ...
 import handleUnsecuredJwt from './handleUnsecuredJwt';
 import handleSecuredJwt from './handleSecuredJwt';
 
 import handlePostValidation from './handlePostValidation'
 
-it('generate spec files', async () => {
+it.skip('generate spec files', async () => {
   const testcases = fs.readdirSync('./test/vc-data-model-2.0/testcases/', { withFileTypes: true }) as any[];
   for (test of testcases) {
     let spec = new yaml.YAMLMap()
@@ -28,6 +28,8 @@ it('generate spec files', async () => {
     }
 
     await handlePostValidation(spec)
+
+    // write other files to the test case directory... 
     fs.writeFileSync(`./test/vc-data-model-2.0/testcases/${test.name}/spec.yaml`, SD.YAML.dumps(spec))
 
     if (test.name === 'secured-vc-status-list') {
@@ -38,7 +40,6 @@ it('generate spec files', async () => {
       fs.writeFileSync(`./test/vc-data-model-2.0/testcases/${test.name}/schema.jwt`, spec.get('issued') as string)
     }
 
-    // all credentials that are secured with schema have schemas saved next to them.
     if (test.name.includes('secured-vc-with-schema')) {
       const schema = `
 {

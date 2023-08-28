@@ -2,7 +2,6 @@ import { VerifiableCredentialClaimset } from "./types";
 
 import Ajv from 'ajv'
 
-
 export type JsonSchemaValidationErrors = any;
 export type JsonSchema = any;
 export type ResolveCredentialSchema = (id: string) => Promise<JsonSchema>
@@ -13,24 +12,31 @@ export type CredentialSchemaValidation = Record<string, JsonSchema | JsonSchemaV
 
 const credentialSchema = async (claimset: VerifiableCredentialClaimset, resolve?: ResolveCredentialSchema) => {
   const schemas: any = {}
-  const ajv = new Ajv({
-    strict: false,
-  })
   let hasValidationError = false;
   if (claimset.credentialSchema) {
     if (!resolve) {
       throw new Error("credentialSchema resolver required.")
     }
     const credentialSchemas = Array.isArray(claimset.credentialSchema) ? claimset.credentialSchema : [claimset.credentialSchema]
-    for (const cs of credentialSchemas) {
-      const schema = await resolve(cs.id)
-      const validate = ajv.compile(schema)
-      const valid = validate(claimset)
-      if (valid) {
-        schemas[cs.id] = { valid, jsonSchema: schema }
-      } else {
-        schemas[cs.id] = validate.errors
+    for (const credentialSchema of credentialSchemas) {
+      const ajv = new Ajv({
+        strict: false,
+      })
+      schemas[credentialSchema.id] = {}
+      try {
+        const schema = await resolve(credentialSchema.id)
+        const validate = ajv.compile(schema)
+        schemas[credentialSchema.id].valid = validate(claimset)
+        if (schema) {
+          schemas[credentialSchema.id].jsonSchema = schema
+        }
+        if (!schemas[credentialSchema.id].valid) {
+          hasValidationError = true
+          schemas[credentialSchema.id].errors = validate.errors
+        }
+      } catch (e) {
         hasValidationError = true
+        schemas[credentialSchema.id].errors = [{ message: (e as any).message }]
       }
     }
   }

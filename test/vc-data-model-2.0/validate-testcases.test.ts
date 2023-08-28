@@ -42,7 +42,6 @@ describe('validate secured jwt w3c verifiable credentials', () => {
         expect(verified.protectedHeader.typ).toBe('vc+ld+json+jwt')
         expect(verified.protectedHeader.cty).toBe('vc+ld+json')
       })
-
       if (spec.payload.credentialStatus) {
         it('credential-status', async () => {
           const statusListToken = fs.readFileSync(`./test/vc-data-model-2.0/testcases/secured-vc-status-list/status-list.jwt`).toString()
@@ -77,6 +76,7 @@ describe('validate secured jwt w3c verifiable credentials', () => {
       }
 
       if (spec.payload.credentialSchema) {
+        const schemaToken = fs.readFileSync(`./test/vc-data-model-2.0/testcases/secured-vc-schema-credential/schema.jwt`).toString()
         it('credential-schema', async () => {
           const verifier = await api.vc.verifier({
             issuer: async () => {
@@ -89,9 +89,20 @@ describe('validate secured jwt w3c verifiable credentials', () => {
               return spec.issuer.publicKeyJwk
             },
             vc: spec.issued,
-            credentialSchema: async () => {
-              const schema = fs.readFileSync(`./test/vc-data-model-2.0/testcases/secured-vc-with-schema/schema.json`).toString()
-              return JSON.parse(schema)
+            credentialSchema: async (id: string) => {
+              if (id.endsWith('.json')) {
+                const schema = fs.readFileSync(`./test/vc-data-model-2.0/testcases/secured-vc-with-schema/schema.json`).toString()
+                return JSON.parse(schema)
+              }
+              const specYaml2 = fs.readFileSync(`./test/vc-data-model-2.0/testcases/secured-vc-schema-credential/spec.yaml`).toString()
+              const spec2 = JSON.parse(JSON.stringify(yaml.parse(specYaml2)))
+              const schemaVerifier = await api.vc.verifier({
+                issuer: async () => {
+                  return spec2.issuer.publicKeyJwk
+                }
+              })
+              const verified = await schemaVerifier.verify(schemaToken) as any
+              return verified.claimset.credentialSubject.jsonSchema
             }
           })
           const validation = await validator.validate({

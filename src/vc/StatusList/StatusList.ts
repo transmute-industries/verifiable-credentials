@@ -1,5 +1,5 @@
 
-import moment from 'moment'
+
 import { Bitstring } from './Bitstring'
 
 import {
@@ -27,6 +27,7 @@ const statusListCredentialTemplate = {
 }
 
 export class StatusList {
+  static defaultLength = 131072;
   static create = async ({
     id,
     length,

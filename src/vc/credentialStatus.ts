@@ -28,21 +28,21 @@ const credentialStatus = async (claimset: VerifiableCredentialClaimset, resolveC
         issuer: resolveIssuerPublicKey
       })
       const verified = await verifier.verify(vc)
-      const statusList = verified.claimset as StatusList2021Credential
+      const statusListCredential = verified.claimset as StatusList2021Credential
       const value = await StatusList.checkStatus({
-        claimset: statusList,
+        claimset: statusListCredential,
         purpose: `${cs.statusPurpose}`,
         position: parseInt(`${cs.statusListIndex}`, 10)
       })
-      status[`${cs.id}`] = { [`${cs.statusPurpose}`]: value, list: statusList }
+      status[`${cs.id}`] = { [`${cs.statusPurpose}`]: value, statusListCredential }
     }
   }
   const allTrue = Object.values(status).map((status) => {
-    const list = status.list as StatusList2021Credential
+    const list = status.statusListCredential as StatusList2021Credential
     return status[list.credentialSubject.statusPurpose]
-  }).every((status) => status)
+  }).every((status) => status === false)
 
-  return { valid: !allTrue, ...status } as CredentialStatusValidation
+  return { valid: allTrue, ...status } as CredentialStatusValidation
 }
 
 const credentialStatusValidator = {

@@ -1,0 +1,6 @@
+{
+  "typ": "vc+ld+json+jwt",
+  "alg": "ES384",
+  "kid": "did:web:contoso.example#key-42",
+  "cty": "vc+ld+json"
+}
