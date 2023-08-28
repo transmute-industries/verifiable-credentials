@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 import fs from 'fs'
 import yaml from 'yaml'
 import SD from '@transmute/vc-jwt-sd'
@@ -30,6 +31,29 @@ it('generate spec files', async () => {
 
     if (test.name === 'secured-vc-status-list') {
       fs.writeFileSync(`./test/vc-data-model-2.0/testcases/${test.name}/status-list.jwt`, spec.get('issued') as string)
+    }
+
+    if (test.name === 'secured-vc-with-schema') {
+      const schema = `
+{
+  "$id": "https://w3c.github.io/vc-jose-cose-test-suite/testcases/secured-vc-with-schema/schema.json",
+  "title": "Example JSON Schema",
+  "description": "This is a test schema",
+  "type": "object",
+  "properties": {
+    "credentialSubject": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "https:\/\/(.+)\/issuers\/(.+)"
+        }
+      }
+    }
+  }
+}
+      `.trim()
+      fs.writeFileSync(`./test/vc-data-model-2.0/testcases/secured-vc-with-schema/schema.json`, schema)
     }
 
     if (spec) {

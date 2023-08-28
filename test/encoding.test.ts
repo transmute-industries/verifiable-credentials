@@ -49,6 +49,7 @@ it('e2e', async () => {
 
   const verified = await verifier.verify(vc)
   const validation = await validator.validate(verified)
-  console.log(validation)
+  expect(validation.issuer).toBeDefined()
+  // console.log(validation)
 
 })

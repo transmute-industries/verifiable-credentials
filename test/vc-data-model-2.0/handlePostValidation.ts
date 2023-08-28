@@ -9,6 +9,8 @@ import loadJson from "./loadJson";
 
 const ajv = new Ajv({ allErrors: true });
 
+const map = new Map<string, any>();
+
 const validateCredentialSchema = (payload: any) => {
   const credentialSchemas = Array.isArray(payload.credentialSchema) ? payload.credentialSchema : [payload.credentialSchema]
   const result = {} as any
@@ -16,7 +18,14 @@ const validateCredentialSchema = (payload: any) => {
     let validate
     try {
       if (credentialSchema.id === 'https://w3c.github.io/vc-jose-cose-test-suite/testcases/secured-vc-with-schema/schema.json') {
-        validate = ajv.compile(loadJson(`./test/vc-data-model-2.0/testcases/secured-vc-with-schema/schema.json`))
+        validate = map.get(credentialSchema.id)
+        if (!validate) {
+          validate = ajv.compile(loadJson(`./test/vc-data-model-2.0/testcases/secured-vc-with-schema/schema.json`))
+          map.set(credentialSchema.id, validate)
+        } else {
+          return validate
+        }
+
       } else if (credentialSchema.id === 'https://w3c.github.io/vc-jose-cose-test-suite/testcases/secured-vc-with-schema-credential/schema.jwt') {
         // todo how to inject errors related to verifying schema failure?
         const token = fs.readFileSync(`./test/vc-data-model-2.0/testcases/secured-vc-with-schema-credential/schema.jwt`).toString()

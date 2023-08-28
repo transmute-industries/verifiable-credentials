@@ -13,7 +13,7 @@ export type CredentialStatusValidation = StatusListCheck & { valid: boolean }
 
 const credentialStatus = async (claimset: VerifiableCredentialClaimset, resolveCredentialStatus?: ResolveCredentialStatusList,
   resolveIssuerPublicKey?: ResolveIssuerPublicKey) => {
-  let status: Record<string, Record<string, boolean | StatusList2021Credential>> = {}
+  const status: Record<string, Record<string, boolean | StatusList2021Credential>> = {}
   if (claimset.credentialStatus) {
     if (!resolveCredentialStatus) {
       throw new Error("credentialStatus resolver required.")

@@ -45,43 +45,66 @@ describe('validate secured jwt w3c verifiable credentials', () => {
 
       if (spec.payload.credentialStatus) {
         it('credential-status', async () => {
-          // const statusListToken = fs.readFileSync(`./test/vc-data-model-2.0/testcases/secured-vc-status-list/status-list.jwt`).toString()
-          // const verifier = await api.vc.verifier({
-          //   issuer: async () => {
-          //     return spec.issuer.publicKeyJwk
-          //   }
-          // })
-          // const validator = await api.vc.validator({
-          //   issuer: async (token: string) => {
-          //     if (token === statusListToken) {
-
-          //       const specYaml2 = fs.readFileSync(`./test/vc-data-model-2.0/testcases/secured-vc-status-list/spec.yaml`).toString()
-          //       const spec2 = JSON.parse(JSON.stringify(yaml.parse(specYaml2)))
-          //       // console.log(spec2)
-          //       return spec2.issuer.publicKeyJwk
-          //     } else {
-          //       return spec.issuer.publicKeyJwk
-          //     }
-
-          //   },
-          //   vc: spec.issued,
-          //   credentialStatus: async () => {
-
-          //     console.log(statusListToken)
-          //     return statusListToken
-          //   }
-          // })
-
-          // const verified = await verifier.verify(spec.issued)
-
-          // const validation = await validator.validate({
-          //   protectedHeader: verified.protectedHeader,
-          //   claimset: verified.claimset
-          // })
-          // console.log(validation)
+          const statusListToken = fs.readFileSync(`./test/vc-data-model-2.0/testcases/secured-vc-status-list/status-list.jwt`).toString()
+          const verifier = await api.vc.verifier({
+            issuer: async () => {
+              return spec.issuer.publicKeyJwk
+            }
+          })
+          const verified = await verifier.verify(spec.issued)
+          const validator = await api.vc.validator({
+            issuer: async (token: string) => {
+              if (token === statusListToken) {
+                const specYaml2 = fs.readFileSync(`./test/vc-data-model-2.0/testcases/secured-vc-status-list/spec.yaml`).toString()
+                const spec2 = JSON.parse(JSON.stringify(yaml.parse(specYaml2)))
+                return spec2.issuer.publicKeyJwk
+              } else {
+                return spec.issuer.publicKeyJwk
+              }
+            },
+            vc: spec.issued,
+            credentialStatus: async () => {
+              return statusListToken
+            }
+          })
+          const validation = await validator.validate({
+            protectedHeader: verified.protectedHeader,
+            claimset: verified.claimset
+          })
+          expect(validation.issuer).toEqual(spec.issuer.publicKeyJwk)
+          expect((validation as any).credentialStatus['https://vendor.example/status-list.jwt#0'].suspension).toBe(spec.status['https://vendor.example/status-list.jwt#0'])
         })
       }
 
+      if (spec.payload.credentialSchema) {
+        it('credential-schema', async () => {
+          const verifier = await api.vc.verifier({
+            issuer: async () => {
+              return spec.issuer.publicKeyJwk
+            }
+          })
+          const verified = await verifier.verify(spec.issued)
+          const validator = await api.vc.validator({
+            issuer: async () => {
+              return spec.issuer.publicKeyJwk
+            },
+            vc: spec.issued,
+            credentialSchema: async () => {
+              const schema = fs.readFileSync(`./test/vc-data-model-2.0/testcases/secured-vc-with-schema/schema.json`).toString()
+              return JSON.parse(schema)
+            }
+          })
+          const validation = await validator.validate({
+            protectedHeader: verified.protectedHeader,
+            claimset: verified.claimset
+          })
+          if (!validation.credentialSchema) {
+            throw new Error('Validation expected credentialSchema but there was none.')
+          }
+          expect(validation.issuer).toEqual(spec.issuer.publicKeyJwk)
+          expect(validation.credentialSchema.valid).toBe(true)
+        })
+      }
     })
   }
 })

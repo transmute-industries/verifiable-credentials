@@ -2,21 +2,20 @@ import { VerifiableCredentialClaimset } from "./types";
 
 import Ajv from 'ajv'
 
-const ajv = new Ajv({
-  strict: false,
-})
 
 export type JsonSchemaValidationErrors = any;
 export type JsonSchema = any;
 export type ResolveCredentialSchema = (id: string) => Promise<JsonSchema>
-
 
 export type CredentialSchemaValidation = Record<string, JsonSchema | JsonSchemaValidationErrors> & {
   valid: boolean
 }
 
 const credentialSchema = async (claimset: VerifiableCredentialClaimset, resolve?: ResolveCredentialSchema) => {
-  let schemas: any = {}
+  const schemas: any = {}
+  const ajv = new Ajv({
+    strict: false,
+  })
   let hasValidationError = false;
   if (claimset.credentialSchema) {
     if (!resolve) {
@@ -28,7 +27,7 @@ const credentialSchema = async (claimset: VerifiableCredentialClaimset, resolve?
       const validate = ajv.compile(schema)
       const valid = validate(claimset)
       if (valid) {
-        schemas[cs.id] = schema
+        schemas[cs.id] = { valid, jsonSchema: schema }
       } else {
         schemas[cs.id] = validate.errors
         hasValidationError = true

@@ -9,7 +9,7 @@
       "properties": {
         "id": {
           "type": "string",
-          "pattern": "https:\/\/(.+)\/issuers\/(.+)"
+          "pattern": "https://(.+)/issuers/(.+)"
         }
       }
     }
