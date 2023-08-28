@@ -1,0 +1,10 @@
+"@context":
+  - True
+  - False
+type: 
+  - True
+  - True
+credentialSubject: True
+proof:
+  verificationMethod: True
+  proofValue: False

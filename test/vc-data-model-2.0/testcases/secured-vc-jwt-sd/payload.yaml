@@ -1,0 +1,21 @@
+"@context":
+  - https://www.w3.org/ns/credentials/v2
+  - !sd https://www.w3.org/ns/credentials/examples/v2
+id: http://university.example/credentials/1872
+type:
+  - VerifiableCredential
+  - !sd ExampleAlumniCredential
+issuer: https://university.example/issuers/565049
+validFrom: 2010-01-01T19:23:24Z
+credentialSubject:
+  id: did:example:ebfeb1f712ebc6f1c276e12ec21
+  alumniOf:
+    id: !sd did:example:c276e12ec21ebfeb1f712ebc6f1
+    name: Example University
+!sd proof:
+  type: DataIntegrityProof
+  cryptosuite: eddsa-2022
+  created: 2023-06-18T21:19:10Z
+  proofPurpose: assertionMethod
+  !sd verificationMethod: https://university.example/issuers/565049#key-123
+  !sd proofValue: zQeVbY4oey5q2M3XKaxup3tmzN4DRFTLVqpLMweBrSxMY2xHX5XTYV8nQApmEcqaqA3Q1gVHMrXFkXJeV6doDwLWx

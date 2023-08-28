@@ -1,0 +1,5 @@
+{
+  "alg": "none",
+  "typ": "vp+ld+json+jwt",
+  "cty": "vp+ld+json"
+}

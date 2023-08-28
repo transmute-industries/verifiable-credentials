@@ -1,0 +1,26 @@
+protectedHeader:
+  alg: none
+  typ: vc+ld+json+jwt
+  cty: vc+ld+json
+payload:
+  "@context":
+    - https://www.w3.org/ns/credentials/v2
+  type:
+    - VerifiableCredential
+  issuer: https://vendor.example/issuers/42
+  credentialSubject:
+    id: https://vendor.example/issuers/42
+issued: eyJhbGciOiJub25lIiwidHlwIjoidmMrbGQranNvbitqd3QiLCJjdHkiOiJ2YytsZCtqc29uIn0.eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvbnMvY3JlZGVudGlhbHMvdjIiXSwidHlwZSI6WyJWZXJpZmlhYmxlQ3JlZGVudGlhbCJdLCJpc3N1ZXIiOiJodHRwczovL3ZlbmRvci5leGFtcGxlL2lzc3VlcnMvNDIiLCJjcmVkZW50aWFsU3ViamVjdCI6eyJpZCI6Imh0dHBzOi8vdmVuZG9yLmV4YW1wbGUvaXNzdWVycy80MiJ9fQ.
+validated:
+  decodedHeader:
+    alg: none
+    typ: vc+ld+json+jwt
+    cty: vc+ld+json
+  decodedClaimset:
+    "@context":
+      - https://www.w3.org/ns/credentials/v2
+    type:
+      - VerifiableCredential
+    issuer: https://vendor.example/issuers/42
+    credentialSubject:
+      id: https://vendor.example/issuers/42

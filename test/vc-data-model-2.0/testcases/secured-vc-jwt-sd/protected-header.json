@@ -1,0 +1,6 @@
+{
+  "alg": "ES384",
+  "kid": "https://university.example/issuers/565049#key-123",
+  "typ": "vc+ld+json+sd-jwt",
+  "cty": "vc+ld+json"
+}

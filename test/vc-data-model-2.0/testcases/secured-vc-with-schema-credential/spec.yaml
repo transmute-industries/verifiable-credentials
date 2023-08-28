@@ -1,0 +1,46 @@
+protectedHeader:
+  alg: ES384
+  typ: vc+ld+json+jwt
+  cty: vc+ld+json
+payload:
+  "@context":
+    - https://www.w3.org/ns/credentials/v2
+  type:
+    - VerifiableCredential
+  issuer: https://vendor.example/issuers/42
+  credentialSchema:
+    id: https://w3c.github.io/vc-jose-cose-test-suite/testcases/secured-vc-with-schema-credential/schema.jwt
+    type: JsonSchemaCredential
+  credentialSubject:
+    id: https://vendor.example/issuers/42
+issued: eyJhbGciOiJFUzM4NCIsInR5cCI6InZjK2xkK2pzb24rand0IiwiY3R5IjoidmMrbGQranNvbiJ9.eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvbnMvY3JlZGVudGlhbHMvdjIiXSwidHlwZSI6WyJWZXJpZmlhYmxlQ3JlZGVudGlhbCJdLCJpc3N1ZXIiOiJodHRwczovL3ZlbmRvci5leGFtcGxlL2lzc3VlcnMvNDIiLCJjcmVkZW50aWFsU2NoZW1hIjp7ImlkIjoiaHR0cHM6Ly93M2MuZ2l0aHViLmlvL3ZjLWpvc2UtY29zZS10ZXN0LXN1aXRlL3Rlc3RjYXNlcy9zZWN1cmVkLXZjLXdpdGgtc2NoZW1hLWNyZWRlbnRpYWwvc2NoZW1hLmp3dCIsInR5cGUiOiJKc29uU2NoZW1hQ3JlZGVudGlhbCJ9LCJjcmVkZW50aWFsU3ViamVjdCI6eyJpZCI6Imh0dHBzOi8vdmVuZG9yLmV4YW1wbGUvaXNzdWVycy80MiJ9fQ.w8mQD5CpwYmTbNvF0FNxTJ2HtdJIvpqdpWeZEht-2Cy7redYEaZyzQZfhG3nZz2y2Hw0WXcgTYkuxVARvkmLwl2Ffbg73YQhxtrh2RU3LbN0gQ-dABgiwGndzg9fzCxY
+issuer:
+  publicKeyJwk:
+    kty: EC
+    x: RwsILhWTXhDroNjVGUjDSBbHeWNqpn0tob87GMkA5J3LPV5_f1TUllFPijTs_MIj
+    y: jKNBnIBXc76WVjNejRoIFKFqBVJALM3CjR5Zr0m5FimpNiDoxit19W2JxRGtFYkz
+    crv: P-384
+  secretKeyJwk:
+    kty: EC
+    x: RwsILhWTXhDroNjVGUjDSBbHeWNqpn0tob87GMkA5J3LPV5_f1TUllFPijTs_MIj
+    y: jKNBnIBXc76WVjNejRoIFKFqBVJALM3CjR5Zr0m5FimpNiDoxit19W2JxRGtFYkz
+    crv: P-384
+    d: SLul5iDs_Uzi6viOVIHX-UWK99gbZoK1VLIRFsclIzIqQE4dFTV2-vJaY8cCxSpt
+validated:
+  protectedHeader:
+    alg: ES384
+    typ: vc+ld+json+jwt
+    cty: vc+ld+json
+  payload:
+    "@context":
+      - https://www.w3.org/ns/credentials/v2
+    type:
+      - VerifiableCredential
+    issuer: https://vendor.example/issuers/42
+    credentialSchema:
+      id: https://w3c.github.io/vc-jose-cose-test-suite/testcases/secured-vc-with-schema-credential/schema.jwt
+      type: JsonSchemaCredential
+    credentialSubject:
+      id: https://vendor.example/issuers/42
+schema:
+  https://w3c.github.io/vc-jose-cose-test-suite/testcases/secured-vc-with-schema-credential/schema.jwt: true

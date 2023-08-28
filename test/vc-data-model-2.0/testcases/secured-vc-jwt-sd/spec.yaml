@@ -1,0 +1,121 @@
+protectedHeader:
+  alg: ES384
+  kid: https://university.example/issuers/565049#key-123
+  typ: vc+ld+json+sd-jwt
+  cty: vc+ld+json
+claimset:
+  "@context":
+    - https://www.w3.org/ns/credentials/v2
+    - !sd https://www.w3.org/ns/credentials/examples/v2
+  id: http://university.example/credentials/1872
+  type:
+    - VerifiableCredential
+    - !sd ExampleAlumniCredential
+  issuer: https://university.example/issuers/565049
+  validFrom: 2010-01-01T19:23:24Z
+  credentialSubject:
+    id: did:example:ebfeb1f712ebc6f1c276e12ec21
+    alumniOf:
+      id: !sd did:example:c276e12ec21ebfeb1f712ebc6f1
+      name: Example University
+  !sd proof:
+    type: DataIntegrityProof
+    cryptosuite: eddsa-2022
+    created: 2023-06-18T21:19:10Z
+    proofPurpose: assertionMethod
+    !sd verificationMethod: https://university.example/issuers/565049#key-123
+    !sd proofValue: zQeVbY4oey5q2M3XKaxup3tmzN4DRFTLVqpLMweBrSxMY2xHX5XTYV8nQApmEcqaqA3Q1gVHMrXFkXJeV6doDwLWx
+payload:
+  "@context":
+    - https://www.w3.org/ns/credentials/v2
+    - ...: 24NlMumGLGZ1umdDDR319I8R5OvJ5xXvmZYErI-bh7o
+  id: http://university.example/credentials/1872
+  type:
+    - VerifiableCredential
+    - ...: ST33jiWccwK4lgqcndU0868MQ3dao6ganO8bfSq9Zbk
+  issuer: https://university.example/issuers/565049
+  validFrom: 2010-01-01T19:23:24Z
+  credentialSubject:
+    id: did:example:ebfeb1f712ebc6f1c276e12ec21
+    alumniOf:
+      id: did:example:c276e12ec21ebfeb1f712ebc6f1
+      name: Example University
+  _sd:
+    - _ZgH5JPzT1dmyQVXxfnnVr0uzPbgs265z86k2ghzjlE
+  _sd_alg: sha-256
+  iss: https://university.example/issuers/565049
+  iat: 1692818104
+  exp: 1695496504
+  cnf:
+    jwk:
+      kty: EC
+      crv: P-384
+      alg: ES384
+      x: FDK5IQt1T4EEj3kO95TZDF8s9cYtwxB87frw-xvtvSApwmeMrViLeR33ytrOrqJH
+      y: JlKqymzO74F9p3PmF2rPdHS_HYHuI35hb4VjL7e5Yg4-BZnSbtsghgVmAj7V9ppa
+issuer:
+  publicKeyJwk:
+    kty: EC
+    crv: P-384
+    alg: ES384
+    x: O5ZdBHSsQ5N7--fMy59GNKZ_NWn3iME1HM261ZMf4n_fLdsk5IaDEUMnd-jbgrDv
+    y: Q1z1xCfcrgK-ctW8JcxbZ_3LHPCrxKXc2dHryO3afmgglJ5QnGmdOYr4A0FnhPz2
+  secretKeyJwk:
+    kty: EC
+    crv: P-384
+    alg: ES384
+    x: O5ZdBHSsQ5N7--fMy59GNKZ_NWn3iME1HM261ZMf4n_fLdsk5IaDEUMnd-jbgrDv
+    y: Q1z1xCfcrgK-ctW8JcxbZ_3LHPCrxKXc2dHryO3afmgglJ5QnGmdOYr4A0FnhPz2
+    d: kVrOP2rPiy5GLHOLLtJyPfc-m0lf0ltsw_FF4-RvaFvhlckpsKRKNrD0rDHMJuOR
+issued: eyJhbGciOiJFUzM4NCIsImtpZCI6Imh0dHBzOi8vdW5pdmVyc2l0eS5leGFtcGxlL2lzc3VlcnMvNTY1MDQ5I2tleS0xMjMiLCJ0eXAiOiJ2YytsZCtqc29uK3NkLWp3dCIsImN0eSI6InZjK2xkK2pzb24ifQ.eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvbnMvY3JlZGVudGlhbHMvdjIiLHsiLi4uIjoiMjRObE11bUdMR1oxdW1kRERSMzE5SThSNU92SjV4WHZtWllFckktYmg3byJ9XSwiaWQiOiJodHRwOi8vdW5pdmVyc2l0eS5leGFtcGxlL2NyZWRlbnRpYWxzLzE4NzIiLCJ0eXBlIjpbIlZlcmlmaWFibGVDcmVkZW50aWFsIix7Ii4uLiI6IlNUMzNqaVdjY3dLNGxncWNuZFUwODY4TVEzZGFvNmdhbk84YmZTcTlaYmsifV0sImlzc3VlciI6Imh0dHBzOi8vdW5pdmVyc2l0eS5leGFtcGxlL2lzc3VlcnMvNTY1MDQ5IiwidmFsaWRGcm9tIjoiMjAxMC0wMS0wMVQxOToyMzoyNFoiLCJjcmVkZW50aWFsU3ViamVjdCI6eyJpZCI6ImRpZDpleGFtcGxlOmViZmViMWY3MTJlYmM2ZjFjMjc2ZTEyZWMyMSIsImFsdW1uaU9mIjp7ImlkIjoiZGlkOmV4YW1wbGU6YzI3NmUxMmVjMjFlYmZlYjFmNzEyZWJjNmYxIiwibmFtZSI6IkV4YW1wbGUgVW5pdmVyc2l0eSJ9fSwiX3NkIjpbIl9aZ0g1SlB6VDFkbXlRVlh4Zm5uVnIwdXpQYmdzMjY1ejg2azJnaHpqbEUiXSwiX3NkX2FsZyI6InNoYS0yNTYiLCJpc3MiOiJodHRwczovL3VuaXZlcnNpdHkuZXhhbXBsZS9pc3N1ZXJzLzU2NTA0OSIsImlhdCI6MTY5MjgxODEwNCwiZXhwIjoxNjk1NDk2NTA0LCJjbmYiOnsiandrIjp7Imt0eSI6IkVDIiwiY3J2IjoiUC0zODQiLCJhbGciOiJFUzM4NCIsIngiOiJGREs1SVF0MVQ0RUVqM2tPOTVUWkRGOHM5Y1l0d3hCODdmcncteHZ0dlNBcHdtZU1yVmlMZVIzM3l0ck9ycUpIIiwieSI6IkpsS3F5bXpPNzRGOXAzUG1GMnJQZEhTX0hZSHVJMzVoYjRWakw3ZTVZZzQtQlpuU2J0c2doZ1ZtQWo3VjlwcGEifX19.kGuTigIo93-izlpnKJoIHgZXwM3F_lCzSdGPSw77Fcc6JTkJwt09zZ-fB9y8Z6ga_7HGN-G4_QvgaP2lDDu1ca5rzvsVqY-wZwkBDOE9IlZ0wPjR05WslqtfEYi3sUIj~WyJzWmRtX3pQSWlmdEk4dXJsb3p0SlRnIiwgImh0dHBzOiAvL3d3dy53My5vcmcvbnMvY3JlZGVudGlhbHMvZXhhbXBsZXMvdjIiXQ~WyJVWmdnWTJQVF9jcHZ5a05kc1BfN3ZRIiwgIkV4YW1wbGVBbHVtbmlDcmVkZW50aWFsIl0~WyJCVjl6MmZkQWE2aE1LZjJHSjV0dWhBIiwgInZlcmlmaWNhdGlvbk1ldGhvZCIsICJodHRwczovL3VuaXZlcnNpdHkuZXhhbXBsZS9pc3N1ZXJzLzU2NTA0OSNrZXktMTIzIl0~WyJRMDNTdUpRd3RZQVk2bGJKU2pYYnhRIiwgInByb29mVmFsdWUiLCAielFlVmJZNG9leTVxMk0zWEtheHVwM3Rtek40RFJGVExWcXBMTXdlQnJTeE1ZMnhIWDVYVFlWOG5RQXBtRWNxYXFBM1ExZ1ZITXJYRmtYSmVWNmRvRHdMV3giXQ~WyJyUGp6eW1IeTR1VkxieTN6SlNzXzRBIiwgInByb29mIiwgeyJfc2QiOiBbIjdWX2pHTDJQaE1DR215Tzh5ZFVxdzhJdkFleXJjekxEcE1tOGt4Yi1YdFkiLCAiSDB1RHo0QklsT0RkODlwUlRVTVlfX21WMXlyVENxQVZKcUlPSnZwZG12SSJdLCAidHlwZSI6ICJEYXRhSW50ZWdyaXR5UHJvb2YiLCAiY3J5cHRvc3VpdGUiOiAiZWRkc2EtMjAyMiIsICJjcmVhdGVkIjogIjIwMjMtMDYtMThUMjE6MTk6MTBaIiwgInByb29mUHVycG9zZSI6ICJhc3NlcnRpb25NZXRob2QifV0
+holder:
+  publicKeyJwk:
+    kty: EC
+    crv: P-384
+    alg: ES384
+    x: FDK5IQt1T4EEj3kO95TZDF8s9cYtwxB87frw-xvtvSApwmeMrViLeR33ytrOrqJH
+    y: JlKqymzO74F9p3PmF2rPdHS_HYHuI35hb4VjL7e5Yg4-BZnSbtsghgVmAj7V9ppa
+  secretKeyJwk:
+    kty: EC
+    crv: P-384
+    alg: ES384
+    x: FDK5IQt1T4EEj3kO95TZDF8s9cYtwxB87frw-xvtvSApwmeMrViLeR33ytrOrqJH
+    y: JlKqymzO74F9p3PmF2rPdHS_HYHuI35hb4VjL7e5Yg4-BZnSbtsghgVmAj7V9ppa
+    d: V_2OeXhrBnrUG9JveyhAvmT-1uTlivPcsZJxWUQRr9T8bhk6EE23ogM99HZBBbB-
+presented: eyJhbGciOiJFUzM4NCIsImtpZCI6Imh0dHBzOi8vdW5pdmVyc2l0eS5leGFtcGxlL2lzc3VlcnMvNTY1MDQ5I2tleS0xMjMiLCJ0eXAiOiJ2YytsZCtqc29uK3NkLWp3dCIsImN0eSI6InZjK2xkK2pzb24ifQ.eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvbnMvY3JlZGVudGlhbHMvdjIiLHsiLi4uIjoiMjRObE11bUdMR1oxdW1kRERSMzE5SThSNU92SjV4WHZtWllFckktYmg3byJ9XSwiaWQiOiJodHRwOi8vdW5pdmVyc2l0eS5leGFtcGxlL2NyZWRlbnRpYWxzLzE4NzIiLCJ0eXBlIjpbIlZlcmlmaWFibGVDcmVkZW50aWFsIix7Ii4uLiI6IlNUMzNqaVdjY3dLNGxncWNuZFUwODY4TVEzZGFvNmdhbk84YmZTcTlaYmsifV0sImlzc3VlciI6Imh0dHBzOi8vdW5pdmVyc2l0eS5leGFtcGxlL2lzc3VlcnMvNTY1MDQ5IiwidmFsaWRGcm9tIjoiMjAxMC0wMS0wMVQxOToyMzoyNFoiLCJjcmVkZW50aWFsU3ViamVjdCI6eyJpZCI6ImRpZDpleGFtcGxlOmViZmViMWY3MTJlYmM2ZjFjMjc2ZTEyZWMyMSIsImFsdW1uaU9mIjp7ImlkIjoiZGlkOmV4YW1wbGU6YzI3NmUxMmVjMjFlYmZlYjFmNzEyZWJjNmYxIiwibmFtZSI6IkV4YW1wbGUgVW5pdmVyc2l0eSJ9fSwiX3NkIjpbIl9aZ0g1SlB6VDFkbXlRVlh4Zm5uVnIwdXpQYmdzMjY1ejg2azJnaHpqbEUiXSwiX3NkX2FsZyI6InNoYS0yNTYiLCJpc3MiOiJodHRwczovL3VuaXZlcnNpdHkuZXhhbXBsZS9pc3N1ZXJzLzU2NTA0OSIsImlhdCI6MTY5MjgxODEwNCwiZXhwIjoxNjk1NDk2NTA0LCJjbmYiOnsiandrIjp7Imt0eSI6IkVDIiwiY3J2IjoiUC0zODQiLCJhbGciOiJFUzM4NCIsIngiOiJGREs1SVF0MVQ0RUVqM2tPOTVUWkRGOHM5Y1l0d3hCODdmcncteHZ0dlNBcHdtZU1yVmlMZVIzM3l0ck9ycUpIIiwieSI6IkpsS3F5bXpPNzRGOXAzUG1GMnJQZEhTX0hZSHVJMzVoYjRWakw3ZTVZZzQtQlpuU2J0c2doZ1ZtQWo3VjlwcGEifX19.kGuTigIo93-izlpnKJoIHgZXwM3F_lCzSdGPSw77Fcc6JTkJwt09zZ-fB9y8Z6ga_7HGN-G4_QvgaP2lDDu1ca5rzvsVqY-wZwkBDOE9IlZ0wPjR05WslqtfEYi3sUIj~WyJVWmdnWTJQVF9jcHZ5a05kc1BfN3ZRIiwgIkV4YW1wbGVBbHVtbmlDcmVkZW50aWFsIl0~WyJyUGp6eW1IeTR1VkxieTN6SlNzXzRBIiwgInByb29mIiwgeyJfc2QiOiBbIjdWX2pHTDJQaE1DR215Tzh5ZFVxdzhJdkFleXJjekxEcE1tOGt4Yi1YdFkiLCAiSDB1RHo0QklsT0RkODlwUlRVTVlfX21WMXlyVENxQVZKcUlPSnZwZG12SSJdLCAidHlwZSI6ICJEYXRhSW50ZWdyaXR5UHJvb2YiLCAiY3J5cHRvc3VpdGUiOiAiZWRkc2EtMjAyMiIsICJjcmVhdGVkIjogIjIwMjMtMDYtMThUMjE6MTk6MTBaIiwgInByb29mUHVycG9zZSI6ICJhc3NlcnRpb25NZXRob2QifV0~WyJCVjl6MmZkQWE2aE1LZjJHSjV0dWhBIiwgInZlcmlmaWNhdGlvbk1ldGhvZCIsICJodHRwczovL3VuaXZlcnNpdHkuZXhhbXBsZS9pc3N1ZXJzLzU2NTA0OSNrZXktMTIzIl0~eyJhbGciOiJFUzM4NCIsInR5cCI6ImtiK2p3dCJ9.eyJub25jZSI6Ijk4NzY1NDMyMTAiLCJhdWQiOiJkaWQ6d2ViOnZlcmlmaWVyLmV4YW1wbGUiLCJpYXQiOjE2OTI4MTgxMDR9.U_7SyqFKZvVRcUeVt5I3mKdDLmCRuTJlA9MRFxC-HeD5qADj30d58EKeY7aSMhlMuJcp2u7MyXoxIRdzvjqHwRaE3rxPiq4exOdRcZXJRRERoCagvXqHi7mEPdmY54sD
+validated:
+  protectedHeader:
+    alg: ES384
+    kid: https://university.example/issuers/565049#key-123
+    typ: vc+ld+json+sd-jwt
+    cty: vc+ld+json
+  claimset:
+    "@context":
+      - https://www.w3.org/ns/credentials/v2
+    id: http://university.example/credentials/1872
+    type:
+      - VerifiableCredential
+      - ExampleAlumniCredential
+    issuer: https://university.example/issuers/565049
+    validFrom: 2010-01-01T19:23:24Z
+    credentialSubject:
+      id: did:example:ebfeb1f712ebc6f1c276e12ec21
+      alumniOf:
+        id: did:example:c276e12ec21ebfeb1f712ebc6f1
+        name: Example University
+    iss: https://university.example/issuers/565049
+    iat: 1692818104
+    exp: 1695496504
+    cnf:
+      jwk:
+        kty: EC
+        crv: P-384
+        alg: ES384
+        x: FDK5IQt1T4EEj3kO95TZDF8s9cYtwxB87frw-xvtvSApwmeMrViLeR33ytrOrqJH
+        y: JlKqymzO74F9p3PmF2rPdHS_HYHuI35hb4VjL7e5Yg4-BZnSbtsghgVmAj7V9ppa
+    proof:
+      type: DataIntegrityProof
+      cryptosuite: eddsa-2022
+      created: 2023-06-18T21:19:10Z
+      proofPurpose: assertionMethod
+      verificationMethod: https://university.example/issuers/565049#key-123

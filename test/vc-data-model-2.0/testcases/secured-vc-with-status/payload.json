@@ -1,0 +1,19 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2"
+  ],
+  "type": ["VerifiableCredential"],
+  "issuer": "https://vendor.example/issuers/42",
+  "credentialStatus": [
+    {
+      "id": "https://vendor.example/status-list.jwt#0",
+      "type": "StatusList2021Entry",
+      "statusPurpose": "suspension",
+      "statusListIndex": "0",
+      "statusListCredential": "https://vendor.example/status-list.jwt"
+    }
+  ],
+  "credentialSubject": {
+    "id": "https://vendor.example/issuers/42"
+  }
+}

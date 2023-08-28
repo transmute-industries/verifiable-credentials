@@ -1,0 +1,14 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2"
+  ],
+  "type": ["VerifiableCredential"],
+  "issuer": "https://vendor.example/issuers/42",
+  "credentialSchema": {
+    "id": "https://w3c.github.io/vc-jose-cose-test-suite/testcases/secured-vc-with-schema/schema.json",
+    "type": "JsonSchema"
+  },
+  "credentialSubject": {
+    "id": "https://vendor.example/issuers/42"
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "alg": "ES384",
+  "typ": "vc+ld+json+jwt",
+  "cty": "vc+ld+json"
+}

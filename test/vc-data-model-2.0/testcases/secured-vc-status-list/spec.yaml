@@ -1,0 +1,50 @@
+protectedHeader:
+  alg: ES384
+  typ: vc+ld+json+jwt
+  cty: vc+ld+json
+payload:
+  "@context":
+    - https://www.w3.org/ns/credentials/v2
+  id: https://vendor.example/status-list.jwt
+  type:
+    - VerifiableCredential
+    - StatusList2021Credential
+  issuer: https://vendor.example/issuers/42
+  validFrom: 2000-07-15T12:00:00.992Z
+  credentialSubject:
+    id: https://vendor.example/status-list.jwt
+    type: StatusList2021
+    statusPurpose: suspension
+    encodedList: H4sIAAAAAAAAA2MAAI3vAtIBAAAA
+issued: eyJhbGciOiJFUzM4NCIsInR5cCI6InZjK2xkK2pzb24rand0IiwiY3R5IjoidmMrbGQranNvbiJ9.eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvbnMvY3JlZGVudGlhbHMvdjIiXSwiaWQiOiJodHRwczovL3ZlbmRvci5leGFtcGxlL3N0YXR1cy1saXN0Lmp3dCIsInR5cGUiOlsiVmVyaWZpYWJsZUNyZWRlbnRpYWwiLCJTdGF0dXNMaXN0MjAyMUNyZWRlbnRpYWwiXSwiaXNzdWVyIjoiaHR0cHM6Ly92ZW5kb3IuZXhhbXBsZS9pc3N1ZXJzLzQyIiwidmFsaWRGcm9tIjoiMjAwMC0wNy0xNVQxMjowMDowMC45OTJaIiwiY3JlZGVudGlhbFN1YmplY3QiOnsiaWQiOiJodHRwczovL3ZlbmRvci5leGFtcGxlL3N0YXR1cy1saXN0Lmp3dCIsInR5cGUiOiJTdGF0dXNMaXN0MjAyMSIsInN0YXR1c1B1cnBvc2UiOiJzdXNwZW5zaW9uIiwiZW5jb2RlZExpc3QiOiJINHNJQUFBQUFBQUFBMk1BQUkzdkF0SUJBQUFBIn19.T27ssq-_pMrpp3wywwpi3zvHu6DJVJtQW80H-44ppu4x1k0jYUP-AQU3_iI7xNKiJuy5mafVQuOo3fW7CC0Sx-4BlsY9dxzRx8sdOEwC7zIOd1LOfs2mCUVtjuiiuhNn
+issuer:
+  publicKeyJwk:
+    kty: EC
+    x: xcGmDsJoOBzDCR4ZbG_OM6vdL4scYVVpbucg3S1Q3VWLba1Y7x5ngDBa9pQr5dt6
+    y: nND-u2XrSM_vD4xzaMlh6ETkKLtdTVmhiZLJZd-c2slkklI65dEXGnKU_ilde__A
+    crv: P-384
+  secretKeyJwk:
+    kty: EC
+    x: xcGmDsJoOBzDCR4ZbG_OM6vdL4scYVVpbucg3S1Q3VWLba1Y7x5ngDBa9pQr5dt6
+    y: nND-u2XrSM_vD4xzaMlh6ETkKLtdTVmhiZLJZd-c2slkklI65dEXGnKU_ilde__A
+    crv: P-384
+    d: sudrKkvkW3oU3a7APnPemH4348uuKUVHusCl4z5CwQ_PqdrAEDQIqNRvxxNy_F_s
+validated:
+  protectedHeader:
+    alg: ES384
+    typ: vc+ld+json+jwt
+    cty: vc+ld+json
+  payload:
+    "@context":
+      - https://www.w3.org/ns/credentials/v2
+    id: https://vendor.example/status-list.jwt
+    type:
+      - VerifiableCredential
+      - StatusList2021Credential
+    issuer: https://vendor.example/issuers/42
+    validFrom: 2000-07-15T12:00:00.992Z
+    credentialSubject:
+      id: https://vendor.example/status-list.jwt
+      type: StatusList2021
+      statusPurpose: suspension
+      encodedList: H4sIAAAAAAAAA2MAAI3vAtIBAAAA

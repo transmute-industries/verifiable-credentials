@@ -1,0 +1,52 @@
+protectedHeader:
+  alg: ES384
+  typ: vc+ld+json+jwt
+  cty: vc+ld+json
+payload:
+  "@context":
+    - https://www.w3.org/ns/credentials/v2
+  type:
+    - VerifiableCredential
+  issuer: https://vendor.example/issuers/42
+  credentialStatus:
+    - id: https://vendor.example/status-list.jwt#0
+      type: StatusList2021Entry
+      statusPurpose: suspension
+      statusListIndex: "0"
+      statusListCredential: https://vendor.example/status-list.jwt
+  credentialSubject:
+    id: https://vendor.example/issuers/42
+issued: eyJhbGciOiJFUzM4NCIsInR5cCI6InZjK2xkK2pzb24rand0IiwiY3R5IjoidmMrbGQranNvbiJ9.eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvbnMvY3JlZGVudGlhbHMvdjIiXSwidHlwZSI6WyJWZXJpZmlhYmxlQ3JlZGVudGlhbCJdLCJpc3N1ZXIiOiJodHRwczovL3ZlbmRvci5leGFtcGxlL2lzc3VlcnMvNDIiLCJjcmVkZW50aWFsU3RhdHVzIjpbeyJpZCI6Imh0dHBzOi8vdmVuZG9yLmV4YW1wbGUvc3RhdHVzLWxpc3Quand0IzAiLCJ0eXBlIjoiU3RhdHVzTGlzdDIwMjFFbnRyeSIsInN0YXR1c1B1cnBvc2UiOiJzdXNwZW5zaW9uIiwic3RhdHVzTGlzdEluZGV4IjoiMCIsInN0YXR1c0xpc3RDcmVkZW50aWFsIjoiaHR0cHM6Ly92ZW5kb3IuZXhhbXBsZS9zdGF0dXMtbGlzdC5qd3QifV0sImNyZWRlbnRpYWxTdWJqZWN0Ijp7ImlkIjoiaHR0cHM6Ly92ZW5kb3IuZXhhbXBsZS9pc3N1ZXJzLzQyIn19.g87-mwove2BZW2ixTg_ec55jEzE2umJaOrOa3bNmtX4aHkIR0edF75Xd0nmwv_N7eGTJe-K9nLo6zzxb7TZ_KZBHTmCufh6cgW7iAfqxMaVySlXcjXY1CLnX_ghvQVu7
+issuer:
+  publicKeyJwk:
+    kty: EC
+    x: D5nA-bfDj8Rei4T539Pd_6Wmc7fiuDoD9DmYo2tXty16AODHGnRlWjHo7BWXG6QN
+    y: 4L0F5MR8NwcrNMJj4Sii7Hv8wGVHKBf-b1Gw8Mo1LQEiEnVo9zKO4jWTxWqu92fh
+    crv: P-384
+  secretKeyJwk:
+    kty: EC
+    x: D5nA-bfDj8Rei4T539Pd_6Wmc7fiuDoD9DmYo2tXty16AODHGnRlWjHo7BWXG6QN
+    y: 4L0F5MR8NwcrNMJj4Sii7Hv8wGVHKBf-b1Gw8Mo1LQEiEnVo9zKO4jWTxWqu92fh
+    crv: P-384
+    d: ajaTKPQS1fbtZokd7IydV103NtDTx54P3yJgfr3mjnLrP6lYDg9gVIXeAmEFd693
+validated:
+  protectedHeader:
+    alg: ES384
+    typ: vc+ld+json+jwt
+    cty: vc+ld+json
+  payload:
+    "@context":
+      - https://www.w3.org/ns/credentials/v2
+    type:
+      - VerifiableCredential
+    issuer: https://vendor.example/issuers/42
+    credentialStatus:
+      - id: https://vendor.example/status-list.jwt#0
+        type: StatusList2021Entry
+        statusPurpose: suspension
+        statusListIndex: "0"
+        statusListCredential: https://vendor.example/status-list.jwt
+    credentialSubject:
+      id: https://vendor.example/issuers/42
+status:
+  https://vendor.example/status-list.jwt#0: false

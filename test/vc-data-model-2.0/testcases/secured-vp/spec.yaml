@@ -1,0 +1,32 @@
+protectedHeader:
+  alg: ES384
+  typ: vp+ld+json+jwt
+  cty: vp+ld+json
+payload:
+  "@context":
+    - https://www.w3.org/ns/credentials/v2
+  type:
+    - VerifiablePresentation
+issued: eyJhbGciOiJFUzM4NCIsInR5cCI6InZwK2xkK2pzb24rand0IiwiY3R5IjoidnArbGQranNvbiJ9.eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvbnMvY3JlZGVudGlhbHMvdjIiXSwidHlwZSI6WyJWZXJpZmlhYmxlUHJlc2VudGF0aW9uIl19.vWAAwvyxQCdQoR-7qWJ6a5w6YBqn_Buj1SpQ6fYhWG_xpBafmZo3-SCAiedvr9FSOLBOp0qbJBT1LrUyz6Xcgra0SfKWzfHT_yCSbDdXfo8Z7fUBLtRuSmyPr2E4Yq7B
+holder:
+  publicKeyJwk:
+    kty: EC
+    x: nWiYdELAGp-I_SKhZaZouhmZZNCzHfyOy8570OlGATWUywJNzUnlGFOM3Rw5VhKT
+    y: X24SE4Ea1-z4Jmc-MagW1aoeS4K64eMHcEXsdo36vOwQi2TfGR1zURCRqMU4PlQz
+    crv: P-384
+  secretKeyJwk:
+    kty: EC
+    x: nWiYdELAGp-I_SKhZaZouhmZZNCzHfyOy8570OlGATWUywJNzUnlGFOM3Rw5VhKT
+    y: X24SE4Ea1-z4Jmc-MagW1aoeS4K64eMHcEXsdo36vOwQi2TfGR1zURCRqMU4PlQz
+    crv: P-384
+    d: tbBeMgLlVnqXHSUtFaWcDqp129MzMZ0cXWBcUwvOmK9TaxQbYAj0RUDkvb-RYEDf
+validated:
+  protectedHeader:
+    alg: ES384
+    typ: vp+ld+json+jwt
+    cty: vp+ld+json
+  payload:
+    "@context":
+      - https://www.w3.org/ns/credentials/v2
+    type:
+      - VerifiablePresentation
