@@ -1,13 +1,12 @@
 
 import yaml from 'yaml'
 import * as jose from 'jose'
-
 import loadJson from './loadJson'
 
-const handleUnsecuredJwt = async (testName) => {
+const handleUnsecuredJwt = async (testName: string) => {
   const spec = new yaml.YAMLMap()
   const protectedHeader = loadJson(`./test/vc-data-model-2.0/testcases/${testName}/protected-header.json`)
-  const payload = loadJson(`./test/vc-data-model-2.0/${testName}/payload.json`)
+  const payload = loadJson(`./test/vc-data-model-2.0/testcases/${testName}/payload.json`)
   spec.add(new yaml.Pair('protectedHeader', protectedHeader))
   spec.add(new yaml.Pair('payload', payload))
 
