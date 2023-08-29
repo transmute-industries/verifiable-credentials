@@ -95,7 +95,7 @@
           "StatusList2021Credential"
         ],
         "issuer": "did:web:contoso.example",
-        "validFrom": "2023-08-28T22:17:17.116Z",
+        "validFrom": "2023-08-29T13:38:41.520Z",
         "credentialSubject": {
           "id": "https://contoso.example/credentials/suspension-list/4#list",
           "type": "StatusList2021",
@@ -116,7 +116,7 @@
           "StatusList2021Credential"
         ],
         "issuer": "did:web:contoso.example",
-        "validFrom": "2023-08-28T22:17:17.121Z",
+        "validFrom": "2023-08-29T13:38:41.525Z",
         "credentialSubject": {
           "id": "https://contoso.example/credentials/revocation-list/5#list",
           "type": "StatusList2021",
