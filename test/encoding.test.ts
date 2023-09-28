@@ -25,7 +25,6 @@ it('e2e', async () => {
     }
   })
   const validator = await api.vc.validator({
-    vc: vc,
     issuer: async () => {
       return publicKey
     },

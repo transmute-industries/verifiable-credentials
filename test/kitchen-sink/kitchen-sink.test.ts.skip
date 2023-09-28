@@ -5,6 +5,8 @@ import moment from 'moment'
 import api from '../../src'
 import mock from '../mock'
 
+// return to this after sd-jwt dust settles
+
 const protectedHeader = { ...mock.protectedHeader, typ: 'vc+ld+json+jwt', cty: 'vc+ld+json' }
 
 const claimset = {
@@ -210,7 +212,8 @@ properties:
       protectedHeader,
       claimset
     })
-    const validation = await validator.validate(vc)
+    const verified = await verifier.verify(vc)
+    const validation = await validator.validate(verified)
     fs.writeFileSync(`./test/vc-data-model-2.0/testcases/secured-vc-kitchen-sink-valid/validation.json`, JSON.stringify(validation, null, 2))
 
   })

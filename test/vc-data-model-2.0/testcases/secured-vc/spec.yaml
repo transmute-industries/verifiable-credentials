@@ -10,19 +10,19 @@ payload:
   issuer: https://vendor.example/issuers/42
   credentialSubject:
     id: https://vendor.example/issuers/42
-issued: eyJhbGciOiJFUzM4NCIsInR5cCI6InZjK2xkK2pzb24rand0IiwiY3R5IjoidmMrbGQranNvbiJ9.eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvbnMvY3JlZGVudGlhbHMvdjIiXSwidHlwZSI6WyJWZXJpZmlhYmxlQ3JlZGVudGlhbCJdLCJpc3N1ZXIiOiJodHRwczovL3ZlbmRvci5leGFtcGxlL2lzc3VlcnMvNDIiLCJjcmVkZW50aWFsU3ViamVjdCI6eyJpZCI6Imh0dHBzOi8vdmVuZG9yLmV4YW1wbGUvaXNzdWVycy80MiJ9fQ.rA6y2PllhDtva_N6C2odsq6StbbYZ4nt4hNzCETzuSph7G3SPJaQxq3vxRKyOsfbNlrICxNBoBMHDlBIk_9SZ48C9eCP9cR2qGiZ6FiL8ni11-Y-h4ZEPdhKiOym5ZtM
+issued: eyJhbGciOiJFUzM4NCIsInR5cCI6InZjK2xkK2pzb24rand0IiwiY3R5IjoidmMrbGQranNvbiJ9.eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvbnMvY3JlZGVudGlhbHMvdjIiXSwidHlwZSI6WyJWZXJpZmlhYmxlQ3JlZGVudGlhbCJdLCJpc3N1ZXIiOiJodHRwczovL3ZlbmRvci5leGFtcGxlL2lzc3VlcnMvNDIiLCJjcmVkZW50aWFsU3ViamVjdCI6eyJpZCI6Imh0dHBzOi8vdmVuZG9yLmV4YW1wbGUvaXNzdWVycy80MiJ9fQ.bIPc6WfRpossMhI-iONlJIRMbGdzwW3fVrGsPmSWHVPpPRxSEC7wrYwXrSwF-tv6nECciEYdrpaWtARMfDr67xyFgxG8ylHECC3wZzedrYDLffcOn-yVoVJ9IXDjZsYy
 issuer:
   publicKeyJwk:
     kty: EC
-    x: EF1tCxizEkd45P8rCM4eoiIZk5Q-Ftokc9WHja02HUFtf4xVUZi15XIfekC6KYpU
-    y: 8NcGNNARyUzbowO5Oxy7qkuvURRKFT6NGhW5mxkczT1kvys5zZqebMRTt8oZAtu7
+    x: k3t1D7rNAIL_jAn9sCFVHWIb8lw-K79jqyX8k7W4a7sLYihKaR5g8pYCwbh1r8wX
+    y: ldM-YWwlwZJTbHuerLPwt-Js3hfQzPn6KUZnKp086ZUq_jvT2d1CcE5X7urobTx6
     crv: P-384
   secretKeyJwk:
     kty: EC
-    x: EF1tCxizEkd45P8rCM4eoiIZk5Q-Ftokc9WHja02HUFtf4xVUZi15XIfekC6KYpU
-    y: 8NcGNNARyUzbowO5Oxy7qkuvURRKFT6NGhW5mxkczT1kvys5zZqebMRTt8oZAtu7
+    x: k3t1D7rNAIL_jAn9sCFVHWIb8lw-K79jqyX8k7W4a7sLYihKaR5g8pYCwbh1r8wX
+    y: ldM-YWwlwZJTbHuerLPwt-Js3hfQzPn6KUZnKp086ZUq_jvT2d1CcE5X7urobTx6
     crv: P-384
-    d: lHWf4HrmZv_pmffvIj6rI-6J1fDUZMLczWvcxWOkHi7nXOA01TAlcrOLpBjsZSwY
+    d: YmrHifdmtp6CzuIuq8nNrhYZEV9DD9RJCRL75gjz9GDN6rxfHwDk13wvnUFuiIRH
 validated:
   protectedHeader:
     alg: ES384

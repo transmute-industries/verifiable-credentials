@@ -3,8 +3,6 @@ import moment from "moment"
 import credentialSchemaValidator, { CredentialSchemaValidation, ResolveCredentialSchema } from "./credentialSchema"
 import credentialStatusValdiator, { CredentialStatusValidation, ResolveCredentialStatusList } from "./credentialStatus"
 
-import attached from "./attached"
-
 export type RequestVerifiedCredentialValidator = {
 
   issuer: (vc: string) => Promise<any>
@@ -19,22 +17,18 @@ export type CredentialValidation = {
 }
 
 export type VerifiedCredentialValidator = {
-  validate: (token: string) => Promise<CredentialValidation>
+  validate: ({ protectedHeader, claimset }: { protectedHeader: any, claimset: any }) => Promise<CredentialValidation>
 }
 
 const validator = async ({ issuer, credentialSchema, credentialStatus }: RequestVerifiedCredentialValidator): Promise<VerifiedCredentialValidator> => {
   return {
-    validate: async (token: string) => {
-      const publicKey = await issuer(token)
-      const verifier = await attached.verifier({ issuer })
-      const verified = await verifier.verify(token);
-      const { protectedHeader, claimset } = verified;
+    validate: async ({ protectedHeader, claimset }: any) => {
       if (!protectedHeader.alg) {
         throw new Error('alg is required in protected header.')
       }
       const result = {} as CredentialValidation as any
 
-      result.issuer = { valid: protectedHeader.alg !== 'none', id: typeof claimset.issuer === 'string' ? claimset.issuer : claimset.issuer.id, publicKeyJwk: publicKey }
+      result.issuer = { valid: protectedHeader.alg !== 'none', id: typeof claimset.issuer === 'string' ? claimset.issuer : claimset.issuer.id }
 
       if (claimset.validFrom) {
         result.validityPeriod = result.validityPeriod || {};

@@ -89,7 +89,6 @@ describe('validation', () => {
     })
     const validator = await api.vc.validator({
       ...mock.validator,
-      vc: vc,
       credentialStatus: async (id: string) => {
         // Rebuild concrete representation from virtual one
         let claimset;
