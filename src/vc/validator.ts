@@ -33,22 +33,17 @@ const validator = async ({ issuer, credentialSchema, credentialStatus }: Request
         throw new Error('alg is required in protected header.')
       }
       const result = {} as CredentialValidation as any
-
       result.issuer = { valid: protectedHeader.alg !== 'none', id: typeof claimset.issuer === 'string' ? claimset.issuer : claimset.issuer.id }
-
       result.validityPeriod = { valid: false }
-
       if (claimset.validFrom) {
         result.validityPeriod.activated = moment(claimset.validFrom).fromNow()
         result.validityPeriod.validFrom = claimset.validFrom;
       }
-
       if (claimset.validUntil) {
         result.validityPeriod.expires = moment(claimset.validUntil).fromNow()
         result.validityPeriod.validUntil = claimset.validUntil;
 
       }
-
       if (claimset.validFrom) {
         if (claimset.validUntil) {
           const diff = moment(claimset.validUntil).diff(moment(claimset.validFrom));
@@ -59,20 +54,13 @@ const validator = async ({ issuer, credentialSchema, credentialStatus }: Request
           result.validityPeriod.valid = moment(moment()).isAfter(claimset.validFrom)
         }
       }
-
-
-
       result.validityPeriod = sortValidityPeriod(result.validityPeriod)
-
       if (claimset.credentialSchema) {
         result.credentialSchema = await credentialSchemaValidator.validate(claimset, credentialSchema)
       }
       if (claimset.credentialStatus) {
         result.credentialStatus = await credentialStatusValdiator.validate(claimset, credentialStatus, issuer)
       }
-
-
-
       return result
     }
   }
