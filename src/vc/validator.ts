@@ -36,15 +36,14 @@ const validator = async ({ issuer, credentialSchema, credentialStatus }: Request
 
       result.issuer = { valid: protectedHeader.alg !== 'none', id: typeof claimset.issuer === 'string' ? claimset.issuer : claimset.issuer.id }
 
+      result.validityPeriod = { valid: false }
+
       if (claimset.validFrom) {
-        result.validityPeriod = result.validityPeriod || {};
         result.validityPeriod.activated = moment(claimset.validFrom).fromNow()
         result.validityPeriod.validFrom = claimset.validFrom;
-
       }
 
       if (claimset.validUntil) {
-        result.validityPeriod = result.validityPeriod || {};
         result.validityPeriod.expires = moment(claimset.validUntil).fromNow()
         result.validityPeriod.validUntil = claimset.validUntil;
 
@@ -60,6 +59,8 @@ const validator = async ({ issuer, credentialSchema, credentialStatus }: Request
           result.validityPeriod.valid = moment(moment()).isAfter(claimset.validFrom)
         }
       }
+
+
 
       result.validityPeriod = sortValidityPeriod(result.validityPeriod)
 
