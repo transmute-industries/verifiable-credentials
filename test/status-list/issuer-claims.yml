@@ -1,0 +1,31 @@
+"@context":
+  - https://www.w3.org/ns/credentials/v2
+  - https://www.w3.org/ns/credentials/examples/v2
+id: http://university.example/credentials/3732
+type:
+  - VerifiableCredential
+  - ExampleDegreeCredential
+issuer:
+  id: https://university.example/issuers/565049
+validFrom: 2015-05-10T12:30:00Z
+credentialSchema:
+  - id: https://example.com/schemas/vc.json
+    type: JsonSchema
+  - id: https://example.com/schemas/vc.yaml
+    type: JsonSchema
+credentialStatus:
+  - id: https://example.com/status-list/revocation/123#0
+    type: StatusList2021Entry
+    statusPurpose: revocation
+    statusListIndex: "0"
+    statusListCredential: https://example.com/status-list/revocation/123
+  - id: https://example.com/status-list/suspension/456#1
+    type: StatusList2021Entry
+    statusPurpose: suspension
+    statusListIndex: "1"
+    statusListCredential: https://example.com/status-list/suspension/456
+credentialSubject:
+  id: did:example:ebfeb1f712ebc6f1c276e12ec21
+  degree:
+    type: ExampleBachelorDegree
+    subtype: Bachelor of Science and Arts

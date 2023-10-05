@@ -12,12 +12,18 @@ export type RequestVerifiedCredentialValidator = {
 
 export type CredentialValidation = {
   issuer: any
+  validityPeriod: any
   credentialSchema?: CredentialSchemaValidation
   credentialStatus?: CredentialStatusValidation
 }
 
 export type VerifiedCredentialValidator = {
   validate: ({ protectedHeader, claimset }: { protectedHeader: any, claimset: any }) => Promise<CredentialValidation>
+}
+
+const sortValidityPeriod = (data: Record<string, unknown>) => {
+  const { valid, activated, validFrom, validUntil } = data
+  return JSON.parse(JSON.stringify({ valid, activated, validFrom, validUntil }))
 }
 
 const validator = async ({ issuer, credentialSchema, credentialStatus }: RequestVerifiedCredentialValidator): Promise<VerifiedCredentialValidator> => {
@@ -43,11 +49,19 @@ const validator = async ({ issuer, credentialSchema, credentialStatus }: Request
         result.validityPeriod.validUntil = claimset.validUntil;
 
       }
-      if (claimset.validFrom && claimset.validUntil) {
-        const diff = moment(claimset.validUntil).diff(moment(claimset.validFrom));
-        const cryptoPeriod = moment.duration(diff).humanize()
-        result.validityPeriod.lifeSpan = cryptoPeriod
+
+      if (claimset.validFrom) {
+        if (claimset.validUntil) {
+          const diff = moment(claimset.validUntil).diff(moment(claimset.validFrom));
+          const cryptoPeriod = moment.duration(diff).humanize()
+          result.validityPeriod.lifeSpan = cryptoPeriod
+          result.validityPeriod.valid = moment(moment()).isAfter(claimset.validFrom) && moment(moment()).isBefore(claimset.validUntil)
+        } else {
+          result.validityPeriod.valid = moment(moment()).isAfter(claimset.validFrom)
+        }
       }
+
+      result.validityPeriod = sortValidityPeriod(result.validityPeriod)
 
       if (claimset.credentialSchema) {
         result.credentialSchema = await credentialSchemaValidator.validate(claimset, credentialSchema)

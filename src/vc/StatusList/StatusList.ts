@@ -27,6 +27,7 @@ const statusListCredentialTemplate = {
 }
 
 export class StatusList {
+  static Bitstring = Bitstring
   static defaultLength = 131072;
   static create = async ({
     id,

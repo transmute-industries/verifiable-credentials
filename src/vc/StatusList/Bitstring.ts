@@ -116,7 +116,7 @@ export class Bitstring {
     return base64url.encode(gzip(this.bits))
   }
 
-  static async decodeBits({ encoded }: EncodedBits) {
+  static decodeBits({ encoded }: EncodedBits): Uint8Array {
     assert.isString(encoded, 'encoded')
     return ungzip(base64url.decode(encoded))
   }

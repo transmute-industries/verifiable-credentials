@@ -99,7 +99,7 @@ const protectedHeader = {
 const credentialSchema = JSON.parse(JSON.stringify(yaml.load(`
 $id: https://contoso.example/bafybeigdyr...lqabf3oclgtqy55fbzdi
 title: W3C Verifiable Credential 
-description: A JSON-LD Object of RDF type https://www.w3.org/2018/credentials#VerifiableCredential.
+description: A JSON-LD Object of RDF type https://www.w3.org/2018/credentials#VerifiableCredential
 type: object
 properties:
   '@context':
@@ -120,7 +120,6 @@ const statusList = `eyJ0eXAiOiJ2YytsZCtqd3QiLCJhbGciOiJFUzM4NCIsImtpZCI6ImRpZDp3
 
 const vc = `eyJ0eXAiOiJ2YytsZCtqd3QiLCJhbGciOiJFUzM4NCIsImtpZCI6ImRpZDp3ZWI6Y29udG9zby5leGFtcGxlI2tleS00MiJ9.eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvbnMvY3JlZGVudGlhbHMvdjIiLCJodHRwczovL3d3dy53My5vcmcvbnMvY3JlZGVudGlhbHMvZXhhbXBsZXMvdjIiXSwiaWQiOiJodHRwczovL2NvbnRvc28uZXhhbXBsZS9jcmVkZW50aWFscy8zNTMyNzI1NSIsInR5cGUiOlsiVmVyaWZpYWJsZUNyZWRlbnRpYWwiLCJLWUNFeGFtcGxlIl0sImlzc3VlciI6ImRpZDp3ZWI6Y29udG9zby5leGFtcGxlIiwidmFsaWRGcm9tIjoiMjAxOS0wNS0yNVQwMzoxMDoxNi45OTJaIiwidmFsaWRVbnRpbCI6IjIwMjctMDUtMjVUMDM6MTA6MTYuOTkyWiIsImNyZWRlbnRpYWxTY2hlbWEiOnsiaWQiOiJodHRwczovL2NvbnRvc28uZXhhbXBsZS9iYWZ5YmVpZ2R5ci4uLmxxYWJmM29jbGd0cXk1NWZiemRpIiwidHlwZSI6Ikpzb25TY2hlbWEifSwiY3JlZGVudGlhbFN0YXR1cyI6eyJpZCI6Imh0dHBzOi8vY29udG9zby5leGFtcGxlL2NyZWRlbnRpYWxzL3N0YXR1cy80IzMiLCJ0eXBlIjoiU3RhdHVzTGlzdDIwMjFFbnRyeSIsInN0YXR1c1B1cnBvc2UiOiJzdXNwZW5zaW9uIiwic3RhdHVzTGlzdEluZGV4IjoiMyIsInN0YXR1c0xpc3RDcmVkZW50aWFsIjoiaHR0cHM6Ly9jb250b3NvLmV4YW1wbGUvY3JlZGVudGlhbHMvc3RhdHVzLzQifSwiY3JlZGVudGlhbFN1YmplY3QiOnsiaWQiOiJkaWQ6ZXhhbXBsZToxMjMxNTg4IiwidHlwZSI6IlBlcnNvbiJ9fQ.RXZksqR1B-8_ioUztg_ZFXEGwCd9lxmZToe7BIs_sl9PcBVrgHi4tzmKmdDq6I7yBNVQf25TQkS34BeCmzcimHADPEvCo1J_EAcZsGRjfB31jMgVRZTY5JJNer8V3xeN`
 const validator = {
-  vc: vc,
   issuer: async () => {
     // this resolver must return application/jwk+json
     return publicKey
@@ -130,7 +129,7 @@ const validator = {
     return credentialSchema
   },
   credentialStatus: async () => {
-    // this resolver MUST return application/vc+ld+jwt
+    // this resolver MUST return application/vc+ld+json+sd-jwt
     return statusList
   }
 }
