@@ -36,7 +36,6 @@ it('e2e', async () => {
         if (kid === holderRole.publicKeyJwk.kid) {
           return holderRole.publicKeyJwk
         }
-
         throw new Error('Unsupported kid: ' + kid)
       }
     }
