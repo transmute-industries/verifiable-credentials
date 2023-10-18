@@ -3,16 +3,17 @@ import moment from "moment"
 import credentialSchemaValidator, { CredentialSchemaValidation, ResolveCredentialSchema } from "./credentialSchema"
 import credentialStatusValdiator, { CredentialStatusValidation, ResolveCredentialStatusList } from "./credentialStatus"
 
-export type RequestVerifiedCredentialValidator = {
+export type PublicKeyJwk = any
 
-  issuer: (vc: string) => Promise<any>
+export type RequestVerifiedCredentialValidator = {
+  issuer: (vc: string) => Promise<PublicKeyJwk>
   credentialSchema?: ResolveCredentialSchema
   credentialStatus?: ResolveCredentialStatusList
 }
 
 export type CredentialValidation = {
-  issuer: any
-  validityPeriod: any
+  issuer: { valid: boolean, id: string }
+  validityPeriod: { valid: boolean }
   credentialSchema?: CredentialSchemaValidation
   credentialStatus?: CredentialStatusValidation
 }
