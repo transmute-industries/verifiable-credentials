@@ -27,7 +27,15 @@ it('e2e', async () => {
       audience: audience,
       disclosure: fs.readFileSync('test/vc-data-model-2.0/example1/disclosure-claims.yaml').toString()
     })
-  const verification = await transmute.vc.sd.verifier({
+  type VerifiedSdJwtPresentationWithStatusList = {
+    protectedHeader: any
+    claimset: {
+      cnf: {
+        jkt: string
+      }
+    }
+  }
+  const verification = await transmute.vc.sd.verifier<VerifiedSdJwtPresentationWithStatusList>({
     resolver: {
       resolve: async (kid: string) => {
         if (kid === issuerRole.publicKeyJwk.kid) {

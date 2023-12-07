@@ -28,7 +28,16 @@ it('one shot test end to end', async () => {
       audience: audience,
       disclosure: fs.readFileSync('test/vc-data-model-2.0/example2/disclosure-claims.yaml').toString()
     })
-  const verification = await transmute.vc.sd.verifier({
+
+  type VerifiedSdJwtPresentationWithStatusList = {
+    protectedHeader: any
+    claimset: {
+      cnf: {
+        jkt: string
+      }
+    }
+  }
+  const verification = await transmute.vc.sd.verifier<VerifiedSdJwtPresentationWithStatusList>({
     resolver: {
       resolve: async (kid: string) => {
         if (kid === issuerRole.publicKeyJwk.kid) {
@@ -100,7 +109,7 @@ properties:
   } as Record<string, JsonSchemaObject>
 
   const validator = await transmute.vc.validator({
-    issuer: (token: string) => {
+    issuer: async (token: string) => {
       // credential validators need the ability to verify other credentials
       // for example, when checking credential status.
       expect(typeof token).toBe('string')
