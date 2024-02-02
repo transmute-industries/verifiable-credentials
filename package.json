@@ -42,6 +42,7 @@
   "dependencies": {
     "@transmute/cose": "^0.1.0",
     "jose": "^5.2.0",
-    "moment": "^2.30.1"
+    "moment": "^2.30.1",
+    "yaml": "^2.3.4"
   }
 }
