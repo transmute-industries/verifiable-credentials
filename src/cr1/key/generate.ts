@@ -4,8 +4,7 @@ import * as cose from '@transmute/cose'
 
 import { SupportedSignatureAlgorithms, SupportedKeyFormats } from '../types'
 
-
-
+const encoder = new TextEncoder();
 
 export type RequestGenerateCredentialKey = {
   alg: SupportedSignatureAlgorithms
@@ -17,9 +16,6 @@ export type RequestGenerateCredentialKey = {
   exp?: string
 
 }
-
-
-const encoder = new TextEncoder();
 
 export const generate = async (req: RequestGenerateCredentialKey): Promise<Uint8Array> => {
   if (req.cty === 'application/jwk+json') {
