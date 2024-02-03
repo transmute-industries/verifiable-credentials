@@ -45,9 +45,11 @@ const publicKey = await transmute.key.publicFromPrivate({
 const vc = await transmute
   .issuer({
     alg: "ES384",
+    // 🔥 TODO eliminate as much metadata from this layer as possible
     iss: "https://university.example/issuers/565049",
     kid: "key-42",
     cty: "application/vc+ld+json+jwt",
+    // 🔥 All top level APIs must take signers, not private keys
     privateKey: {
       cty: "application/jwk+json",
       content: privateKey,
@@ -78,6 +80,7 @@ const vc = await transmute
   });
 const verified = await cr1
   .verifier({
+    // 🔥 All top level APIs must take verifiers, not public keys
     resolver: {
       resolve: async () => {
         return {
