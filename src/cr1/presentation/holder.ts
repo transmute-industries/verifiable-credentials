@@ -3,7 +3,15 @@
 
 import * as jose from 'jose'
 import sd from '@transmute/vc-jwt-sd'
-import { SupportedPresentationFormats, SupportedJwtSignatureFormats, SupportedSignatureAlgorithms, RequestSigner, RequestPrivateKeySigner } from '../types'
+import {
+  SupportedPresentationFormats,
+  SupportedJwtSignatureFormats,
+  SupportedSignatureAlgorithms,
+  RequestSigner,
+  RequestPrivateKeySigner,
+  VerifiablePresentation,
+  SdJwt
+} from '../types'
 
 import * as claimset from '../claimset'
 
@@ -37,10 +45,20 @@ export type RequestPresentationHolder = {
   aud?: string | string[]
 } & RequestSigner
 
+
+export type SdJwtDisclosure = {
+  credential: Uint8Array
+  disclosure: Uint8Array
+  audience?: string | string[]
+  nonce?: string
+} & RequestSigner
+
+export type SdJwtVpDisclosures = SdJwtDisclosure[]
+
 export type RequestCredentialPresentation = {
   claimset?: Uint8Array,
-  credential?: Uint8Array
-  disclosure?: Uint8Array
+  presentation?: VerifiablePresentation
+  disclosures?: SdJwtVpDisclosures
   audience?: string | string[]
   nonce?: string
 }
@@ -84,6 +102,9 @@ const jwtPresentationIssuer = (holder: RequestPresentationHolder) => {
 const sdJwtPresentationIssuer = (holder: RequestPresentationHolder) => {
   return {
     issue: async (req: RequestCredentialPresentation) => {
+      if (!req.disclosures) {
+        throw new Error('disclosures are required for this presentation type')
+      }
       const privateKey = await importKeyLike(holder.privateKey as any)
       const sdJwsSigner = {
         sign: async ({ protectedHeader, claimset }: any) => {
@@ -106,13 +127,58 @@ const sdJwtPresentationIssuer = (holder: RequestPresentationHolder) => {
         digester: sdJwsDigester,
         signer: sdJwsSigner
       })
-      const sdJwtFnard = await sdHolder.issue({
-        token: decoder.decode(req.credential), // todo for each...
-        disclosure: decoder.decode(req.disclosure),
-        nonce: req.nonce,
-        audience: req.audience as any,
+      // address undefined behavior for presentations of multiple dislosable credentials
+      // with distinct disclosure choices...
+      // https://w3c.github.io/vc-data-model/#example-basic-structure-of-a-presentation-0
+      const vp = req.presentation || {
+        "@context": [
+          "https://www.w3.org/ns/credentials/v2",
+        ],
+        "type": ["VerifiablePresentation"],
+        holder: holder.iss,
+        "verifiableCredential": [{
+          // "@context": "https://www.w3.org/ns/credentials/v2",
+          // "id": "data:application/vc+ld+json+sd-jwt;QzVjV...RMjU",
+          // "type": "EnvelopedVerifiableCredential"
+        }]
+      }
+      vp.verifiableCredential = []
+      for (const d of req.disclosures) {
+        const sdJwtFnard = await sdHolder.issue({
+          token: decoder.decode(d.credential), // todo for each...
+          disclosure: decoder.decode(d.disclosure),
+          nonce: d.nonce,
+          audience: d.audience as any, // https://github.com/transmute-industries/vc-jwt-sd/issues/7
+        }) as SdJwt
+
+        vp.verifiableCredential.push({
+          "@context": "https://www.w3.org/ns/credentials/v2",
+          "id": `data:application/vc+ld+json+sd-jwt;${sdJwtFnard}`, // great job everyone.
+          "type": "EnvelopedVerifiableCredential"
+        })
+      }
+
+      const sdIssuer = await sd.issuer({
+        alg: holder.alg,
+        iss: holder.iss,
+        kid: holder.kid,
+        salter: sdJwsSalter,
+        digester: sdJwsDigester,
+        signer: sdJwsSigner
       })
-      return encoder.encode(sdJwtFnard)
+
+      const sdJwt = await sdIssuer.issue({
+        // its possible to bind this vp to a key for proof of posession
+        // for now, we will assume thats not a feature.
+
+        // holder: publicKeyJwk,
+
+        // its possible to mark credentials disclosable here...
+        // for now, we will assume thats not a feature.
+        claimset: sd.YAML.dumps(vp)
+      })
+
+      return encoder.encode(sdJwt)
     }
   }
 }
