@@ -86,4 +86,5 @@ describe('credentials issue and verify', () => {
 
 })
 
+// refactor cose to support signer apis first.
 it.todo('cose credentials')
