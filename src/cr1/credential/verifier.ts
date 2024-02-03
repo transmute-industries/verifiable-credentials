@@ -5,7 +5,7 @@ import * as jose from 'jose'
 
 import { SupportedKeyFormats, VerifiableCredential } from '../types'
 
-const decoder = new TextDecoder();
+import { decoder } from '../text'
 
 export type RequestCredentialVerifier = {
   publicKey: {

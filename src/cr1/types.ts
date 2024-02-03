@@ -16,8 +16,11 @@ export type SdJwt = `${Jwt}${string}~${string}`
 export type JwtEnvelopedVerifiableCredential = `data:${VcContentType}+jwt;${Jwt}`
 export type SdJwtEnvelopedVerifiableCredential = `data:${VcContentType}+sd-jwt;${SdJwt}`
 
+
 export type SupportedCredentialFormats = `${VcContentType}+jwt`
 export type SupportedPresentationFormats = `${VpContentType}+jwt`
+
+export type SupportedJwtSignatureFormats = `application/jwt` | `${VcContentType}+jwt` | `${VpContentType}+jwt`
 
 export type SupportedEnvelopedVerifiableCredential = SdJwtEnvelopedVerifiableCredential
 

@@ -1,15 +1,10 @@
 
-
-import * as jose from 'jose'
-
-import * as cose from '@transmute/cose'
-
 import { SupportedCredentialFormats, SupportedKeyFormats, SupportedSignatureAlgorithms } from '../types'
 
 import * as claimset from '../claimset'
 
-
-import { importJWK } from '../key'
+import { signer } from '../signer'
+import { encoder } from '../text'
 
 export type RequestCredentialIssuer = {
   iss: string
@@ -17,9 +12,12 @@ export type RequestCredentialIssuer = {
   alg: SupportedSignatureAlgorithms
   cty: SupportedCredentialFormats
   aud?: string | string[]
-  privateKey: {
+  privateKey?: {
     cty: SupportedKeyFormats,
     content: Uint8Array
+  }
+  signer?: {
+    sign: (bytes: Uint8Array) => Promise<Uint8Array>
   }
 }
 
@@ -27,30 +25,36 @@ export type RequestIssueCredential = {
   claimset: string,
 }
 
+
 export const issuer = (issuer: RequestCredentialIssuer) => {
   if (issuer.cty === 'application/vc+ld+json+jwt') {
-
     return {
       issue: async (credential: RequestIssueCredential) => {
-        const privateKey = await importJWK(issuer.privateKey)
+        let tokenSigner = issuer.signer
+        if (issuer.privateKey) {
+          tokenSigner = await signer({
+            header: {
+              alg: issuer.alg,
+              kid: issuer.kid,
+              typ: issuer.cty,
+              cty: `application/vc+ld+json`
+            },
+            privateKey:
+              issuer.privateKey
+          })
+        }
+        if (tokenSigner === undefined) {
+          throw new Error('No signer available.')
+        }
         let claims = claimset.parse(credential.claimset)
+        claims.iss = issuer.iss; // required for verify
         if (issuer.aud) {
           claims = {
             aud: issuer.aud,
             ...claims
           }
         }
-        const jwt = await new jose.SignJWT(claims)
-          .setProtectedHeader({
-            alg: issuer.alg,
-            kid: issuer.kid,
-            typ: issuer.cty,
-            cty: `application/vc+ld+json`
-          })
-          .setIssuer(issuer.iss)
-          .setIssuedAt()
-          .sign(privateKey)
-        return jwt
+        return tokenSigner.sign(encoder.encode(JSON.stringify(claims)))
       }
     }
   }
