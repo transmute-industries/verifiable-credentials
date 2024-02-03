@@ -120,24 +120,35 @@ const sdJwtSigner = async (req: RequestPrivateKeySigner) => {
 const sdJwtPresentationIssuer = (holder: RequestPresentationHolder) => {
   return {
     issue: async (req: RequestCredentialPresentation) => {
-      let tokenSigner = holder.signer
-      if (holder.privateKey) {
-        tokenSigner = await sdJwtSigner({
-          protectedHeader: {
-            alg: holder.alg,
-            kid: holder.kid,
-            typ: holder.cty as any,
-            cty: `application/vc+ld+json`
-          },
-          privateKey:
-            holder.privateKey
-        })
+      const privateKey = await importJWK(holder.privateKey as any)
+      const sdJwsSigner = {
+        sign: async ({ protectedHeader, claimset }: any) => {
+          const bytes = encoder.encode(JSON.stringify(claimset))
+          const jws = await new jose.CompactSign(
+            bytes
+          )
+            .setProtectedHeader(protectedHeader)
+            .sign(privateKey)
+          return jws
+        }
       }
-      if (tokenSigner === undefined) {
-        throw new Error('No signer available.')
-      }
-      console.log('todo')
-      return tokenSigner.sign(req.claimset as Uint8Array)
+      const sdJwsSalter = await sd.salter()
+      const sdJwsDigester = await sd.digester()
+      const sdHolder = await sd.holder({
+        alg: holder.alg,
+        iss: holder.iss,
+        kid: holder.kid,
+        salter: sdJwsSalter,
+        digester: sdJwsDigester,
+        signer: sdJwsSigner
+      })
+      const sdJwtFnard = await sdHolder.issue({
+        token: decoder.decode(req.credential), // todo for each...
+        disclosure: decoder.decode(req.disclosure),
+        nonce: req.nonce,
+        audience: req.audience as any,
+      })
+      return encoder.encode(sdJwtFnard)
     }
   }
 }

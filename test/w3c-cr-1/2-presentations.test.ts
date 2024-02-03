@@ -35,60 +35,64 @@ describe('presentations issue and verify', () => {
           content: publicKeyContent
         }
       })
-      .verify<cr1.VerifiablePresentationWithHolderObject>({
+      .verify<cr1.VerifiablePresentationWithHolderObject & cr1.VerifiablePresentationOfEnveloped>({
         cty: 'application/vp+ld+json+jwt',
         content: vp,
         iss: 'https://university.example/issuers/565049'
       })
     expect(verified.holder.id).toBe('https://university.example/issuers/565049')
+    expect(verified.verifiableCredential[0].id.startsWith('data:application/vc+ld+json+sd-jwt;')).toBe(true)
   })
 
   it.only('application/vp+ld+json+sd-jwt (without binding)', async () => {
-    // const vc = await cr1
-    //   .issuer({
-    //     alg: 'ES384',
-    //     iss: claims.issuer.id,
-    //     kid: 'key-42',
-    //     cty: 'application/vc+ld+json+sd-jwt',
-    //     privateKey: {
-    //       cty: privateKeyType,
-    //       content: privateKeyContent
-    //     }
-    //   })
-    //   .issue({
-    //     claimset: fixtures.claimset_disclosable_0,
-    //   })
+    const vc = await cr1
+      .issuer({
+        alg: 'ES384',
+        iss: 'https://university.example/issuers/565049',
+        kid: 'key-42',
+        cty: 'application/vc+ld+json+sd-jwt',
+        privateKey: {
+          cty: privateKeyType,
+          content: privateKeyContent
+        }
+      })
+      .issue({
+        claimset: fixtures.claimset_disclosable_0,
+      })
 
-    // const vp = await cr1
-    //   .holder({
-    //     alg: 'ES384',
-    //     iss: claims.issuer.id,
-    //     kid: 'key-42',
-    //     cty: 'application/vp+ld+json+sd-jwt',
-    //     privateKey: {
-    //       cty: privateKeyType,
-    //       content: privateKeyContent
-    //     }
-    //   })
-    //   .issue({
-    //     credential: vc,
-    //     disclosure: fixtures.claimset_disclosable_0_disclosure,
-    //     audience: undefined,
-    //     nonce: undefined
-    //   })
-    // const verified = await cr1.
-    //   verifier({
-    //     publicKey: {
-    //       cty: privateKeyType,
-    //       content: publicKeyContent
-    //     }
-    //   })
-    //   .verify<cr1.VerifiablePresentationWithHolderObject>({
-    //     cty: 'application/vp+ld+json+sd-jwt',
-    //     content: vp,
-    //     iss: claims.holder.id
-    //   })
-    // expect(verified.holder.id).toBe(claims.holder.id)
+
+    const vp = await cr1
+      .holder({
+        alg: 'ES384',
+        iss: 'https://university.example/issuers/565049',
+        kid: 'key-42',
+        cty: 'application/vp+ld+json+sd-jwt',
+        privateKey: {
+          cty: privateKeyType,
+          content: privateKeyContent
+        }
+      })
+      .issue({
+        // TODO: agility for multiple disclosures
+        credential: vc,
+        disclosure: fixtures.claimset_disclosable_0_disclosure,
+        audience: undefined,
+        nonce: undefined
+      })
+
+    const verified = await cr1.
+      verifier({
+        publicKey: {
+          cty: privateKeyType,
+          content: publicKeyContent
+        }
+      })
+      .verify<cr1.VerifiablePresentationWithHolderObject>({
+        cty: 'application/vp+ld+json+sd-jwt',
+        content: vp,
+        iss: 'https://university.example/issuers/565049'
+      })
+    expect(verified.holder.id).toBe('https://university.example/issuers/565049')
   })
 
 })

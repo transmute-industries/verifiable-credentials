@@ -75,6 +75,10 @@ export type VerifiablePresentationWithHolderObject = VerifiablePresentation & {
   holder: JsonLdObjectWithId
 }
 
+export type VerifiablePresentationOfEnveloped = VerifiablePresentation & {
+  verifiableCredential: Array<EnvelopedVerifiableCredential>
+}
+
 
 export type RequestSigner = {
   privateKey?: {
