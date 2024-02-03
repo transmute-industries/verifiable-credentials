@@ -30,7 +30,7 @@ export const holder = (holder: RequestPresentationHolder) => {
         let tokenSigner = holder.signer
         if (holder.privateKey) {
           tokenSigner = await signer({
-            header: {
+            protectedHeader: {
               alg: holder.alg,
               kid: holder.kid,
               typ: holder.cty as SupportedJwtSignatureFormats,

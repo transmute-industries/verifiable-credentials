@@ -24,7 +24,7 @@ const jwtCredentialIssuer = (issuer: RequestCredentialIssuer) => {
       let tokenSigner = issuer.signer
       if (issuer.privateKey) {
         tokenSigner = await signer({
-          header: {
+          protectedHeader: {
             alg: issuer.alg,
             kid: issuer.kid,
             typ: issuer.cty as SupportedJwtSignatureFormats,
@@ -53,9 +53,23 @@ const jwtCredentialIssuer = (issuer: RequestCredentialIssuer) => {
 const sdJwtCredentialIssuer = (issuer: RequestCredentialIssuer) => {
   return {
     issue: async (credential: RequestIssueCredential) => {
-      //
-
-      return new Uint8Array()
+      let tokenSigner = issuer.signer
+      if (issuer.privateKey) {
+        tokenSigner = await signer({
+          protectedHeader: {
+            alg: issuer.alg,
+            kid: issuer.kid,
+            typ: issuer.cty as SupportedSdJwtSignatureFormats,
+            cty: `application/vc+ld+json`
+          },
+          privateKey:
+            issuer.privateKey
+        })
+      }
+      if (tokenSigner === undefined) {
+        throw new Error('No signer available.')
+      }
+      return tokenSigner.sign(encoder.encode(credential.claimset))
     }
   }
 }
