@@ -44,7 +44,7 @@ describe('credentials issue and verify', () => {
     // fs.writeFileSync('./src/cr1/__fixtures__/issuer-0-vc-jwt.json', JSON.stringify({ vc }))
   })
 
-  it.only('application/vc+ld+json+sd-jwt', async () => {
+  it('application/vc+ld+json+sd-jwt', async () => {
     const claims = cr1.claimset.parse<cr1.VerifiableCredentialWithIssuerObject>(fixtures.claimset_0)
     const vc = await cr1
       .issuer({

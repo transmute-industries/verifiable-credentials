@@ -43,4 +43,27 @@ describe('presentations issue and verify', () => {
     expect(verified.holder.id).toBe(claims.holder.id)
     // fs.writeFileSync('./src/cr1/__fixtures__/holder-0-vp-jwt.json', JSON.stringify({ vp }))
   })
+
+  it.only('application/vp+ld+json+sd-jwt (without binding)', async () => {
+    const claims = cr1.claimset.parse<cr1.VerifiablePresentationWithHolderObject>(fixtures.claimset_1)
+    const vp = await cr1
+      .holder({
+        alg: 'ES384',
+        iss: claims.holder.id,
+        kid: 'key-42',
+        cty: 'application/vp+ld+json+sd-jwt',
+        privateKey: {
+          cty: privateKeyType,
+          content: privateKeyContent
+        }
+      })
+      .issue({
+        claimset: fixtures.claimset_disclosable_0,
+        disclosure: fixtures.claimset_disclosable_0_disclosure,
+        audience: undefined,
+        nonce: undefined
+      })
+    console.log(vp)
+  })
+
 })

@@ -85,3 +85,23 @@ export type RequestSigner = {
     sign: (bytes: Uint8Array) => Promise<Uint8Array>
   }
 }
+
+export type SignatureHeader = Record<string, unknown> & {
+  alg: SupportedSignatureAlgorithms
+  typ: SupportedJwtSignatureFormats | SupportedSdJwtSignatureFormats
+  iss?: string
+  kid?: string
+  cty?: string
+}
+
+export type RequestPrivateKeySigner = {
+  protectedHeader: SignatureHeader,
+  privateKey: {
+    cty: SupportedKeyFormats,
+    content: Uint8Array
+  }
+}
+
+export type RequestIssueCredential = {
+  claimset: string,
+}

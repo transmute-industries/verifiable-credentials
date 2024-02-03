@@ -1,10 +1,14 @@
+import * as jose from 'jose'
+import sd from '@transmute/vc-jwt-sd'
 
-import { SupportedJwtSignatureFormats, SupportedSdJwtSignatureFormats, SupportedSignatureAlgorithms, RequestSigner } from '../types'
+import { SupportedJwtSignatureFormats, SupportedSdJwtSignatureFormats, SupportedSignatureAlgorithms, RequestSigner, RequestPrivateKeySigner } from '../types'
 
 import * as claimset from '../claimset'
 
-import { signer } from '../signer'
-import { encoder } from '../text'
+
+import { encoder, decoder } from '../text'
+
+import { importJWK } from '../key'
 
 export type RequestCredentialIssuer = {
   iss: string
@@ -18,12 +22,26 @@ export type RequestIssueCredential = {
   claimset: string,
 }
 
+const jwtSigner = async (req: RequestPrivateKeySigner) => {
+  const privateKey = await importJWK(req.privateKey)
+  return {
+    sign: async (bytes: Uint8Array) => {
+      const jws = await new jose.CompactSign(
+        bytes
+      )
+        .setProtectedHeader(req.protectedHeader)
+        .sign(privateKey)
+      return encoder.encode(jws)
+    }
+  }
+}
+
 const jwtCredentialIssuer = (issuer: RequestCredentialIssuer) => {
   return {
     issue: async (credential: RequestIssueCredential) => {
       let tokenSigner = issuer.signer
       if (issuer.privateKey) {
-        tokenSigner = await signer({
+        tokenSigner = await jwtSigner({
           protectedHeader: {
             alg: issuer.alg,
             kid: issuer.kid,
@@ -50,12 +68,48 @@ const jwtCredentialIssuer = (issuer: RequestCredentialIssuer) => {
   }
 }
 
+const sdJwtSigner = async (req: RequestPrivateKeySigner) => {
+  const privateKey = await importJWK(req.privateKey)
+  const sdJwsSigner = {
+    sign: async ({ protectedHeader, claimset }: any) => {
+      const bytes = encoder.encode(JSON.stringify(claimset))
+      const jws = await new jose.CompactSign(
+        bytes
+      )
+        .setProtectedHeader(protectedHeader)
+        .sign(privateKey)
+      return jws
+    }
+  }
+  const sdJwsSalter = await sd.salter()
+  const sdJwsDigester = await sd.digester()
+  const sdIssuer = await sd.issuer({
+    alg: req.protectedHeader.alg,
+    iss: req.protectedHeader.iss,
+    kid: req.protectedHeader.kid,
+    typ: req.protectedHeader.typ,
+    cty: req.protectedHeader.cty,
+    salter: sdJwsSalter,
+    digester: sdJwsDigester,
+    signer: sdJwsSigner
+  })
+  return {
+    sign: async (bytes: Uint8Array) => {
+      const sdJwt = await sdIssuer.issue({
+        // holder: publicKeyJwk,
+        claimset: decoder.decode(bytes)
+      })
+      return encoder.encode(sdJwt)
+    }
+  }
+}
+
 const sdJwtCredentialIssuer = (issuer: RequestCredentialIssuer) => {
   return {
     issue: async (credential: RequestIssueCredential) => {
       let tokenSigner = issuer.signer
       if (issuer.privateKey) {
-        tokenSigner = await signer({
+        tokenSigner = await sdJwtSigner({
           protectedHeader: {
             alg: issuer.alg,
             kid: issuer.kid,

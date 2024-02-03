@@ -1,0 +1,23 @@
+"@context":
+  - https://www.w3.org/ns/credentials/v2
+  - https://www.w3.org/ns/credentials/examples/v2
+id: http://university.example/credentials/3732
+type:
+  - VerifiableCredential
+  - ExampleDegreeCredential
+issuer:
+  id: https://university.example/issuers/565049
+  name:
+    - value: test value 0
+      lang: en
+    - True
+    - value: test value 2
+      lang: en
+    - True
+    - value: test value 4
+      lang: en
+credentialSubject:
+  id: did:example:ebfeb1f712ebc6f1c276e12ec21
+  degree:
+    type: ExampleBachelorDegree
+    subtype: Bachelor of Science and Arts
