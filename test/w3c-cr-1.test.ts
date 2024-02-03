@@ -84,6 +84,7 @@ describe('credentials issue and verify', () => {
         }
       })
       .verify<cr1.VerifiableCredentialWithIssuerObject>({
+        cty: 'application/vc+ld+json+jwt',
         content: vc,
         iss: claims.issuer.id
       })
@@ -121,6 +122,7 @@ describe('presentations issue and verify', () => {
         }
       })
       .verify<cr1.VerifiablePresentationWithHolderObject>({
+        cty: 'application/vp+ld+json+jwt',
         content: vp,
         iss: claims.holder.id
       })

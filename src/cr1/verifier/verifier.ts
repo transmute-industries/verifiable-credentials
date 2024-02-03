@@ -3,7 +3,13 @@
 
 import * as jose from 'jose'
 
-import { SupportedKeyFormats, VerifiableCredential } from '../types'
+import {
+  SupportedKeyFormats,
+  SupportedCredentialFormats,
+  SupportedPresentationFormats,
+  VerifiableCredential,
+  VerifiablePresentation
+} from '../types'
 
 import { importJWK } from '../key';
 
@@ -14,22 +20,34 @@ export type RequestCredentialVerifier = {
   }
 }
 
-export type RequestCredentialVerify = {
-  content: string
+export type VerifyJwtOpts = {
   iss?: string
   aud?: string | string[]
 }
 
+export type RequestVerify = {
+  cty: SupportedCredentialFormats | SupportedPresentationFormats,
+  content: string
+} & VerifyJwtOpts
+
+const verifyJwt = async (jwt: string, publicKey: jose.KeyLike | Uint8Array, opts: VerifyJwtOpts) => {
+  const { payload } = await jose.jwtVerify(jwt, publicKey, {
+    issuer: opts.iss,
+    audience: opts.aud,
+  })
+  return payload
+}
+
 export const verifier = (req: RequestCredentialVerifier) => {
   return {
-    verify: async <T = VerifiableCredential>({ content, iss, aud }: RequestCredentialVerify): Promise<T> => {
+    verify: async <T = VerifiableCredential | VerifiablePresentation>({ cty, content, ...opts }: RequestVerify): Promise<T> => {
       const publicKey = await importJWK(req.publicKey)
-      const opts = {
-        issuer: iss,
-        audience: aud,
+      if (cty === 'application/vc+ld+json+jwt') {
+        return verifyJwt(content, publicKey, opts) as T
+      } else if (cty === 'application/vp+ld+json+jwt') {
+        return verifyJwt(content, publicKey, opts) as T
       }
-      const { payload } = await jose.jwtVerify(content, publicKey, opts)
-      return payload as T
+      throw new Error('Unsupported content type')
     }
   }
 }
