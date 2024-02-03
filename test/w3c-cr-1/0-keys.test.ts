@@ -12,6 +12,21 @@ it('has version', () => {
   expect(cr1.version).toBe('https://www.w3.org/TR/2024/CR-vc-data-model-2.0-20240201/')
 })
 
+it('publicFromPrivate', async () => {
+  const privateKey = await cr1.key.generate({
+    alg: 'ES384',
+    cty: 'application/jwk+json'
+  })
+  const publicKey = await cr1.key.publicFromPrivate({
+    cty: 'application/jwk+json',
+    content: privateKey
+  })
+  const parsed0 = JSON.parse(decoder.decode(privateKey))
+  delete parsed0.d
+  const parsed1 = JSON.parse(decoder.decode(publicKey))
+  expect(parsed0).toEqual(parsed1)
+})
+
 describe.skip('key generation', () => {
   it('application/jwk+json', async () => {
     const k1 = await cr1.key.generate({
