@@ -137,7 +137,7 @@ const sdJwtPresentationIssuer = (holder: RequestPresentationHolder) => {
         throw new Error('No signer available.')
       }
       console.log('todo')
-      // return tokenSigner.sign(req.claimset as Uint8Array)
+      return tokenSigner.sign(req.claimset as Uint8Array)
     }
   }
 }
