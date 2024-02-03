@@ -199,7 +199,6 @@ describe('presentations issue and verify', () => {
     expect(verified.verifiableCredential[0].id.startsWith('data:application/vc+ld+json+sd-jwt;ey')).toBe(true)
 
     // ok now verify the nested vc as well.
-
     const envelopedVc = verified.verifiableCredential[0].id.replace('data:application/vc+ld+json+sd-jwt;', '')
     const verified2 = await cr1.
       verifier({
@@ -216,12 +215,12 @@ describe('presentations issue and verify', () => {
         nonce: 'nonce-456',
       })
     expect(verified2.cnf).toBeDefined()
-
     // for extra sanity verify the key binding token again
     const kbt = envelopedVc.split('~').pop()
     const verified3 = await cr1.verifier({
       publicKey: {
         cty: `application/jwk+json`,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         content: encoder.encode(JSON.stringify((verified2.cnf as any).jwk))
       }
     }).verify({
