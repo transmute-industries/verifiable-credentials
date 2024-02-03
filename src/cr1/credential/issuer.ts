@@ -19,7 +19,7 @@ export type RequestCredentialIssuer = {
 } & RequestSigner
 
 export type RequestIssueCredential = {
-  claimset: string,
+  claimset: Uint8Array,
 }
 
 const jwtSigner = async (req: RequestPrivateKeySigner) => {
@@ -55,7 +55,7 @@ const jwtCredentialIssuer = (issuer: RequestCredentialIssuer) => {
       if (tokenSigner === undefined) {
         throw new Error('No signer available.')
       }
-      let claims = claimset.parse(credential.claimset)
+      let claims = claimset.parse(decoder.decode(credential.claimset))
       claims.iss = issuer.iss; // required for verify
       if (issuer.aud) {
         claims = {
@@ -123,7 +123,7 @@ const sdJwtCredentialIssuer = (issuer: RequestCredentialIssuer) => {
       if (tokenSigner === undefined) {
         throw new Error('No signer available.')
       }
-      return tokenSigner.sign(encoder.encode(credential.claimset))
+      return tokenSigner.sign(credential.claimset)
     }
   }
 }

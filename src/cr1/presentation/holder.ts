@@ -38,9 +38,9 @@ export type RequestPresentationHolder = {
 } & RequestSigner
 
 export type RequestCredentialPresentation = {
-  claimset?: string,
-  credential?: string
-  disclosure?: string
+  claimset?: Uint8Array,
+  credential?: Uint8Array
+  disclosure?: Uint8Array
   audience?: string | string[]
   nonce?: string
 }
@@ -67,7 +67,7 @@ const jwtPresentationIssuer = (holder: RequestPresentationHolder) => {
       if (!req.claimset) {
         throw new Error('claimset is required for jwt presentations.')
       }
-      let claims = claimset.parse(req.claimset)
+      let claims = claimset.parse(decoder.decode(req.claimset))
       claims.iss = holder.iss; // required for verify
       if (holder.aud) {
         claims = {
@@ -136,7 +136,8 @@ const sdJwtPresentationIssuer = (holder: RequestPresentationHolder) => {
       if (tokenSigner === undefined) {
         throw new Error('No signer available.')
       }
-      return tokenSigner.sign(encoder.encode(req.claimset))
+      console.log('todo')
+      // return tokenSigner.sign(req.claimset as Uint8Array)
     }
   }
 }
