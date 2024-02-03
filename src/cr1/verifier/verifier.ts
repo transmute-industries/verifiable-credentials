@@ -55,7 +55,7 @@ export const verifier = (req: RequestCredentialVerifier) => {
         const verifier = sd.verifier({
           resolver: {
             resolve: async (_token: string) => {
-              // user resolver here...
+              // todo: use resolver here...
               if (req.publicKey.cty === 'application/jwk+json') {
                 return JSON.parse(decoder.decode(req.publicKey.content))
               }
