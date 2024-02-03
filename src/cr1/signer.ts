@@ -27,19 +27,23 @@ export type RequestIssueCredential = {
   claimset: string,
 }
 
-export const signer = async (req: RequestSigner) => {
+const jwtSigner = async (req: RequestSigner) => {
   const privateKey = await importJWK(req.privateKey)
-  if (['application/jwt', 'application/vc+ld+json+jwt', 'application/vp+ld+json+jwt'].includes(req.header.typ)) {
-    return {
-      sign: async (bytes: Uint8Array) => {
-        const jws = await new jose.CompactSign(
-          bytes
-        )
-          .setProtectedHeader(req.header)
-          .sign(privateKey)
-        return encoder.encode(jws)
-      }
+  return {
+    sign: async (bytes: Uint8Array) => {
+      const jws = await new jose.CompactSign(
+        bytes
+      )
+        .setProtectedHeader(req.header)
+        .sign(privateKey)
+      return encoder.encode(jws)
     }
+  }
+}
+
+export const signer = async (req: RequestSigner) => {
+  if (['application/jwt', 'application/vc+ld+json+jwt', 'application/vp+ld+json+jwt'].includes(req.header.typ)) {
+    return jwtSigner(req)
   }
   throw new Error('signature type is not supported.')
 }
