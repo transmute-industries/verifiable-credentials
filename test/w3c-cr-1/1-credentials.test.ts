@@ -31,9 +31,13 @@ describe('credentials issue and verify', () => {
       })
     const verified = await cr1.
       verifier({
-        publicKey: {
-          cty: privateKeyType,
-          content: publicKeyContent
+        resolver: {
+          resolve: async () => {
+            return {
+              cty: privateKeyType,
+              content: publicKeyContent
+            }
+          }
         }
       })
       .verify<cr1.VerifiableCredentialWithIssuerObject>({
@@ -63,9 +67,13 @@ describe('credentials issue and verify', () => {
       })
     const verified = await cr1.
       verifier({
-        publicKey: {
-          cty: privateKeyType,
-          content: publicKeyContent
+        resolver: {
+          resolve: async () => {
+            return {
+              cty: privateKeyType,
+              content: publicKeyContent
+            }
+          }
         }
       })
       .verify<cr1.VerifiableCredentialWithIssuerObject>({

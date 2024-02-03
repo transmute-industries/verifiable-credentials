@@ -37,9 +37,13 @@ describe('presentations issue and verify', () => {
       })
     const verified = await cr1.
       verifier({
-        publicKey: {
-          cty: privateKeyType,
-          content: publicKeyContent
+        resolver: {
+          resolve: async () => {
+            return {
+              cty: privateKeyType,
+              content: publicKeyContent
+            }
+          }
         }
       })
       .verify<cr1.VerifiablePresentationWithHolderObject & cr1.VerifiablePresentationOfEnveloped>({
@@ -108,9 +112,13 @@ describe('presentations issue and verify', () => {
       })
     const verified = await cr1.
       verifier({
-        publicKey: {
-          cty: privateKeyType,
-          content: publicKeyContent
+        resolver: {
+          resolve: async () => {
+            return {
+              cty: privateKeyType,
+              content: publicKeyContent
+            }
+          }
         }
       })
       .verify<cr1.VerifiablePresentationWithHolderObject & cr1.VerifiablePresentationOfEnveloped>({
@@ -183,9 +191,13 @@ describe('presentations issue and verify', () => {
       })
     const verified = await cr1.
       verifier({
-        publicKey: {
-          cty: privateKeyType,
-          content: publicKeyContent
+        resolver: {
+          resolve: async () => {
+            return {
+              cty: privateKeyType,
+              content: publicKeyContent
+            }
+          }
         }
       })
       .verify<cr1.VerifiablePresentationWithHolderObject & cr1.VerifiablePresentationOfEnveloped>({
@@ -202,9 +214,13 @@ describe('presentations issue and verify', () => {
     const envelopedVc = verified.verifiableCredential[0].id.replace('data:application/vc+ld+json+sd-jwt;', '')
     const verified2 = await cr1.
       verifier({
-        publicKey: {
-          cty: privateKeyType,
-          content: publicKeyContent
+        resolver: {
+          resolve: async () => {
+            return {
+              cty: privateKeyType,
+              content: publicKeyContent
+            }
+          }
         }
       })
       .verify<cr1.VerifiablePresentationWithHolderObject & cr1.VerifiablePresentationOfEnveloped>({
@@ -218,10 +234,13 @@ describe('presentations issue and verify', () => {
     // for extra sanity verify the key binding token again
     const kbt = envelopedVc.split('~').pop()
     const verified3 = await cr1.verifier({
-      publicKey: {
-        cty: `application/jwk+json`,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        content: encoder.encode(JSON.stringify((verified2.cnf as any).jwk))
+      resolver: {
+        resolve: async () => {
+          return {
+            cty: privateKeyType,
+            content: publicKeyContent
+          }
+        }
       }
     }).verify({
       cty: 'application/kb+jwt',

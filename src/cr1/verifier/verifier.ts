@@ -11,20 +11,35 @@ import {
   SupportedPresentationFormats,
   VerifiableCredential,
   VerifiablePresentation,
-  SupportedJwtSignatureFormats
+  SupportedJwtSignatureFormats,
+  SupportedSdJwtSignatureFormats
 } from '../types'
 
 import { importKeyLike, importJWK } from '../key';
 
 import { decoder } from '../text';
 
-export type RequestVerifier = {
-  // TODO resolver
-  publicKey: {
-    cty: SupportedKeyFormats,
-    content: Uint8Array
-  }
+export type PublicKeyWithContentType = {
+  cty: SupportedKeyFormats,
+  content: Uint8Array
+}
 
+// here the word  "credential" means 
+// "anything that is signed and as an associated media type that indicates it is signed"
+// application/vc+ld+json is not a "credential" in this sense but...
+// application/vc+ld+json+jwt is a "credential" in this sense
+
+export type CredentialWithContentType = {
+  cty: SupportedCredentialFormats | SupportedPresentationFormats | SupportedJwtSignatureFormats | SupportedSdJwtSignatureFormats,
+  content: Uint8Array
+}
+
+export type VerifierResolver = {
+  resolve: (req: CredentialWithContentType) => Promise<PublicKeyWithContentType>
+}
+
+export type RequestVerifier = {
+  resolver: VerifierResolver
 }
 
 export type VerifyJwtOpts = {
@@ -49,13 +64,11 @@ const verifyJwt = async (jwt: string, publicKey: jose.KeyLike | Uint8Array, opts
   return payload
 }
 
-
-
-// todo pass resolver here...
 export const verifier = (req: RequestVerifier) => {
   return {
     verify: async <T = VerifiableCredential | VerifiablePresentation>({ cty, content, ...opts }: RequestVerify): Promise<T> => {
-      const publicKey = await importKeyLike(req.publicKey)
+      const key = await req.resolver.resolve({ cty, content })
+      const publicKey = await importKeyLike(key)
       if (cty === 'application/kb+jwt') {
         return verifyJwt(decoder.decode(content), publicKey, opts) as T
       } else if (cty === 'application/vc+ld+json+jwt') {
@@ -65,9 +78,12 @@ export const verifier = (req: RequestVerifier) => {
       } else if (cty === 'application/vc+ld+json+sd-jwt') {
         const verifier = sd.verifier({
           resolver: {
-            resolve: async (_token: string) => {
-              // todo: use resolver here...
-              return importJWK(req.publicKey)
+            resolve: async () => {
+              const key = await req.resolver.resolve({
+                cty: 'application/vc+ld+json+sd-jwt',
+                content // same a token
+              })
+              return importJWK(key)
             }
           }
         })
@@ -80,9 +96,12 @@ export const verifier = (req: RequestVerifier) => {
       } else if (cty === 'application/vp+ld+json+sd-jwt') {
         const verifier = sd.verifier({
           resolver: {
-            resolve: async (_token: string) => {
-              // todo: use resolver here...
-              return importJWK(req.publicKey)
+            resolve: async () => {
+              const key = await req.resolver.resolve({
+                cty: 'application/vp+ld+json+sd-jwt',
+                content // same a token
+              })
+              return importJWK(key)
             }
           }
         })
