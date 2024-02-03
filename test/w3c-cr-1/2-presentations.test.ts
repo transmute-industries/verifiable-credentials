@@ -63,7 +63,20 @@ describe('presentations issue and verify', () => {
         audience: undefined,
         nonce: undefined
       })
-    console.log(vp)
+
+    const verified = await cr1.
+      verifier({
+        publicKey: {
+          cty: privateKeyType,
+          content: publicKeyContent
+        }
+      })
+      .verify<cr1.VerifiablePresentationWithHolderObject>({
+        cty: 'application/vp+ld+json+sd-jwt',
+        content: vp,
+        iss: claims.holder.id
+      })
+    expect(verified.holder.id).toBe(claims.holder.id)
   })
 
 })

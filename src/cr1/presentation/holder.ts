@@ -41,6 +41,8 @@ export type RequestCredentialPresentation = {
   claimset?: string,
   credential?: string
   disclosure?: string
+  audience?: string | string[]
+  nonce?: string
 }
 
 const jwtPresentationIssuer = (holder: RequestPresentationHolder) => {
