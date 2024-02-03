@@ -69,6 +69,7 @@ describe('credentials issue and verify', () => {
       verifier({
         resolver: {
           resolve: async () => {
+            // checking of issuer should happen in here (3 party friendly)
             return {
               cty: privateKeyType,
               content: publicKeyContent
@@ -79,9 +80,11 @@ describe('credentials issue and verify', () => {
       .verify<cr1.VerifiableCredentialWithIssuerObject>({
         cty: 'application/vc+ld+json+sd-jwt',
         content: vc,
-        iss: 'https://university.example/issuers/565049'
+        iss: 'https://university.example/issuers/565049' //  not here... (2 party friendly)
       })
     expect(verified.issuer.id).toBe('https://university.example/issuers/565049')
   })
 
 })
+
+it.todo('cose credentials')
