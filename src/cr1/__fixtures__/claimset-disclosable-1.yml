@@ -1,0 +1,35 @@
+"@context":
+  - https://www.w3.org/ns/credentials/v2
+  - https://www.w3.org/ns/credentials/examples/v2
+id: http://university.example/credentials/3732
+type:
+  - VerifiableCredential
+  - ExampleDegreeCredential
+issuer:
+  id: https://university.example/issuers/565049
+  name:
+    - value: test value 0
+      lang: en
+    - !sd
+      value: test value 1
+      lang: en
+    - value: test value 2
+      lang: en
+    - !sd
+      value: test value 3
+      lang: en
+    - value: test value 4
+      lang: en
+cnf:
+  jwk:
+    kid: xTh5yfRrYa97-rainE5NIUP3KX5NTMsdtan2rZeJuhw
+    alg: ES384
+    kty: EC
+    crv: P-384
+    x: MafGoWIX2sKXRki4sAaH_HQRLZ99vs7HRXPUSi0DHCOqLRN0Cd-cZ_kaeB_M14Y7
+    y: mmMUwnLN7BBdnGwnD0WnZcaYoHecTbPzKxifZlxbi1mkqg8WdYK98KeKrls7DhzZ
+credentialSubject:
+  id: did:example:ebfeb1f712ebc6f1c276e12ec21
+  degree:
+    type: ExampleBachelorDegree
+    subtype: Bachelor of Science and Arts

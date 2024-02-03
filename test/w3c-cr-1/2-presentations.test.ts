@@ -1,8 +1,15 @@
 import fs from 'fs'
 
+// todo expose utils for these...
+import * as cose from '@transmute/cose'
+import sd from '@transmute/vc-jwt-sd'
+
 import * as cr1 from '../../src'
 
 import * as fixtures from '../../src/cr1/__fixtures__'
+
+
+import { encoder } from '../../src/cr1/text'
 
 it('has version', () => {
   expect(cr1.version).toBe('https://www.w3.org/TR/2024/CR-vc-data-model-2.0-20240201/')
@@ -117,6 +124,9 @@ describe('presentations issue and verify', () => {
 
 
   it('application/vp+ld+json+sd-jwt (with key binding)', async () => {
+    // dislosable claimset will need to be updated
+    // every time the test keys change.
+    // console.log(sd.YAML.dumps(await cose.key.convertCoseKeyToJsonWebKey(await cose.cbor.decode(publicKeyContent))))
     const vc = await cr1
       .issuer({
         alg: 'ES384',
@@ -129,7 +139,7 @@ describe('presentations issue and verify', () => {
         }
       })
       .issue({
-        claimset: fixtures.claimset_disclosable_0,
+        claimset: fixtures.claimset_disclosable_1,
       })
     const vp = await cr1
       .holder({
@@ -160,8 +170,8 @@ describe('presentations issue and verify', () => {
         disclosures: [{
           credential: vc,
           disclosure: fixtures.claimset_disclosable_0_disclosure,
-          audience: undefined,
-          nonce: undefined,
+          audience: 'aud-123',
+          nonce: 'nonce-456',
           // each credential can have a different bound public key
           // so we need a different private key or signer for each 
           // disclosure
@@ -181,12 +191,46 @@ describe('presentations issue and verify', () => {
       .verify<cr1.VerifiablePresentationWithHolderObject & cr1.VerifiablePresentationOfEnveloped>({
         // this content type always implies an sd-jwt secured json-ld object (vp) contain enveloped Fnards.
         cty: 'application/vp+ld+json+sd-jwt',
-        content: vp
+        content: vp,
+        audience: 'aud-123',
+        nonce: 'nonce-456',
       })
     expect(verified.holder).toBe('https://university.example/issuers/565049')
     expect(verified.verifiableCredential[0].id.startsWith('data:application/vc+ld+json+sd-jwt;ey')).toBe(true)
+
+    // ok now verify the nested vc as well.
+
+    const envelopedVc = verified.verifiableCredential[0].id.replace('data:application/vc+ld+json+sd-jwt;', '')
+    const verified2 = await cr1.
+      verifier({
+        publicKey: {
+          cty: privateKeyType,
+          content: publicKeyContent
+        }
+      })
+      .verify<cr1.VerifiablePresentationWithHolderObject & cr1.VerifiablePresentationOfEnveloped>({
+        // this content type always implies an sd-jwt secured json-ld object (vp) contain enveloped Fnards.
+        cty: 'application/vc+ld+json+sd-jwt',
+        content: encoder.encode(envelopedVc),
+        audience: 'aud-123',
+        nonce: 'nonce-456',
+      })
+    expect(verified2.cnf).toBeDefined()
+
+    // for extra sanity verify the key binding token again
+    const kbt = envelopedVc.split('~').pop()
+    const verified3 = await cr1.verifier({
+      publicKey: {
+        cty: `application/jwk+json`,
+        content: encoder.encode(JSON.stringify((verified2.cnf as any).jwk))
+      }
+    }).verify({
+      cty: 'application/kb+jwt',
+      content: encoder.encode(kbt)
+    })
+    expect(verified3.iss).toBe('https://university.example/issuers/565049')
+    expect(verified3.aud).toBe('aud-123')
+    expect(verified3.nonce).toBe('nonce-456')
+
   })
-
-
-
 })

@@ -10,35 +10,41 @@ import {
   SupportedCredentialFormats,
   SupportedPresentationFormats,
   VerifiableCredential,
-  VerifiablePresentation
+  VerifiablePresentation,
+  SupportedJwtSignatureFormats
 } from '../types'
 
 import { importKeyLike, importJWK } from '../key';
 
 import { decoder } from '../text';
 
-export type RequestCredentialVerifier = {
+export type RequestVerifier = {
+  // TODO resolver
   publicKey: {
     cty: SupportedKeyFormats,
     content: Uint8Array
   }
+
 }
 
 export type VerifyJwtOpts = {
   iss?: string
-  aud?: string | string[]
+  audience?: string | string[]
   nonce?: string
 }
 
 export type RequestVerify = {
-  cty: SupportedCredentialFormats | SupportedPresentationFormats,
+  cty: SupportedCredentialFormats | SupportedPresentationFormats | SupportedJwtSignatureFormats,
   content: Uint8Array
+
+  audience?: string | string[]
+  nonce?: string
 } & VerifyJwtOpts
 
 const verifyJwt = async (jwt: string, publicKey: jose.KeyLike | Uint8Array, opts: VerifyJwtOpts) => {
   const { payload } = await jose.jwtVerify(jwt, publicKey, {
     issuer: opts.iss,
-    audience: opts.aud,
+    audience: opts.audience,
   })
   return payload
 }
@@ -46,11 +52,13 @@ const verifyJwt = async (jwt: string, publicKey: jose.KeyLike | Uint8Array, opts
 
 
 // todo pass resolver here...
-export const verifier = (req: RequestCredentialVerifier) => {
+export const verifier = (req: RequestVerifier) => {
   return {
     verify: async <T = VerifiableCredential | VerifiablePresentation>({ cty, content, ...opts }: RequestVerify): Promise<T> => {
       const publicKey = await importKeyLike(req.publicKey)
-      if (cty === 'application/vc+ld+json+jwt') {
+      if (cty === 'application/kb+jwt') {
+        return verifyJwt(decoder.decode(content), publicKey, opts) as T
+      } else if (cty === 'application/vc+ld+json+jwt') {
         return verifyJwt(decoder.decode(content), publicKey, opts) as T
       } else if (cty === 'application/vp+ld+json+jwt') {
         return verifyJwt(decoder.decode(content), publicKey, opts) as T
@@ -64,7 +72,9 @@ export const verifier = (req: RequestCredentialVerifier) => {
           }
         })
         const verified = await verifier.verify({
-          token: decoder.decode(content)
+          token: decoder.decode(content),
+          audience: opts.audience as any,
+          nonce: opts.nonce
         })
         return verified.claimset as T
       } else if (cty === 'application/vp+ld+json+sd-jwt') {
@@ -78,7 +88,7 @@ export const verifier = (req: RequestCredentialVerifier) => {
         })
         const verified = await verifier.verify({
           token: decoder.decode(content),
-          audience: opts.aud as any,
+          audience: opts.audience as any,
           nonce: opts.nonce
         })
         return verified.claimset as T

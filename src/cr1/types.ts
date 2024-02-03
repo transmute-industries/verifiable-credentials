@@ -22,7 +22,7 @@ export type SupportedPresentationFormats = `${VpContentType}+jwt` | `${VpContent
 
 export type SupportedSdJwtSignatureFormats = `application/sd-jwt` | `${VcContentType}+sd-jwt` | `${VpContentType}+sd-jwt`
 
-export type SupportedJwtSignatureFormats = `application/jwt` | `${VcContentType}+jwt` | `${VpContentType}+jwt`
+export type SupportedJwtSignatureFormats = `application/jwt` | `application/kb+jwt` | `${VcContentType}+jwt` | `${VpContentType}+jwt`
 
 export type SupportedEnvelopedVerifiableCredential = SdJwtEnvelopedVerifiableCredential
 
