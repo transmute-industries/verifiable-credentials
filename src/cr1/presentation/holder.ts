@@ -1,18 +1,15 @@
 
 
-import * as cose from '@transmute/cose'
 
 import * as jose from 'jose'
 
+import { SupportedPresentationFormats, SupportedSignatureAlgorithms, RequestSigner } from '../types'
 
-
-import { SupportedPresentationFormats, SupportedKeyFormats, SupportedSignatureAlgorithms } from '../types'
-
-
-import { importJWK } from '../key'
 import * as claimset from '../claimset'
 
+import { signer } from '../signer'
 
+import { encoder } from '../text'
 
 export type RequestPresentationHolder = {
   iss: string
@@ -20,11 +17,7 @@ export type RequestPresentationHolder = {
   alg: SupportedSignatureAlgorithms
   cty: SupportedPresentationFormats
   aud?: string | string[]
-  privateKey: {
-    cty: SupportedKeyFormats,
-    content: Uint8Array
-  }
-}
+} & RequestSigner
 
 export type RequestIssueCredential = {
   claimset: string,
@@ -34,25 +27,31 @@ export const holder = (holder: RequestPresentationHolder) => {
   if (holder.cty === 'application/vp+ld+json+jwt') {
     return {
       issue: async (credential: RequestIssueCredential) => {
-        const privateKey = await importJWK(holder.privateKey)
+        let tokenSigner = holder.signer
+        if (holder.privateKey) {
+          tokenSigner = await signer({
+            header: {
+              alg: holder.alg,
+              kid: holder.kid,
+              typ: holder.cty,
+              cty: `application/vc+ld+json`
+            },
+            privateKey:
+              holder.privateKey
+          })
+        }
+        if (tokenSigner === undefined) {
+          throw new Error('No signer available.')
+        }
         let claims = claimset.parse(credential.claimset)
+        claims.iss = holder.iss; // required for verify
         if (holder.aud) {
           claims = {
             aud: holder.aud,
             ...claims
           }
         }
-        const jwt = await new jose.SignJWT(claims)
-          .setProtectedHeader({
-            alg: holder.alg,
-            kid: holder.kid,
-            typ: holder.cty,
-            cty: `application/vp+ld+json`
-          })
-          .setIssuer(holder.iss)
-          .setIssuedAt()
-          .sign(privateKey)
-        return jwt
+        return tokenSigner.sign(encoder.encode(JSON.stringify(claims)))
       }
     }
   }

@@ -1,5 +1,5 @@
 
-import { SupportedCredentialFormats, SupportedKeyFormats, SupportedSignatureAlgorithms } from '../types'
+import { SupportedCredentialFormats, SupportedSignatureAlgorithms, RequestSigner } from '../types'
 
 import * as claimset from '../claimset'
 
@@ -12,14 +12,7 @@ export type RequestCredentialIssuer = {
   alg: SupportedSignatureAlgorithms
   cty: SupportedCredentialFormats
   aud?: string | string[]
-  privateKey?: {
-    cty: SupportedKeyFormats,
-    content: Uint8Array
-  }
-  signer?: {
-    sign: (bytes: Uint8Array) => Promise<Uint8Array>
-  }
-}
+} & RequestSigner
 
 export type RequestIssueCredential = {
   claimset: string,

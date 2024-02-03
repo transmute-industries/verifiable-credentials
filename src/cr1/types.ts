@@ -72,3 +72,14 @@ export type VerifiablePresentation = {
 export type VerifiablePresentationWithHolderObject = VerifiablePresentation & {
   holder: JsonLdObjectWithId
 }
+
+
+export type RequestSigner = {
+  privateKey?: {
+    cty: SupportedKeyFormats,
+    content: Uint8Array
+  }
+  signer?: {
+    sign: (bytes: Uint8Array) => Promise<Uint8Array>
+  }
+}
