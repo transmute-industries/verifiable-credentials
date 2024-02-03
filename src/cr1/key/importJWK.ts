@@ -6,7 +6,7 @@ import * as jose from 'jose'
 
 import { SupportedKeyFormats } from '../types'
 
-const decoder = new TextDecoder();
+import { decoder } from '../text'
 
 export const importJWK = async (
   key: {
@@ -14,11 +14,11 @@ export const importJWK = async (
     content: Uint8Array
   }) => {
   if (key.cty === 'application/jwk+json') {
-    return jose.importJWK(JSON.parse(decoder.decode(key.content)))
+    return JSON.parse(decoder.decode(key.content))
   } else if (key.cty === 'application/cose-key') {
     const coseKey = cose.cbor.decode(key.content)
     const jwk = await cose.key.convertCoseKeyToJsonWebKey<jose.JWK>(coseKey)
-    return jose.importJWK(jwk)
+    return jwk
   }
   throw new Error('Unsupported key type.')
 }

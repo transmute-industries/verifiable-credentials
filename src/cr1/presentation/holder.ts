@@ -11,11 +11,11 @@ import * as claimset from '../claimset'
 import { encoder, decoder } from '../text'
 
 
-import { importJWK } from '../key'
+import { importKeyLike } from '../key'
 
 
 const jwtSigner = async (req: RequestPrivateKeySigner) => {
-  const privateKey = await importJWK(req.privateKey)
+  const privateKey = await importKeyLike(req.privateKey)
   return {
     sign: async (bytes: Uint8Array) => {
       const jws = await new jose.CompactSign(
@@ -81,46 +81,10 @@ const jwtPresentationIssuer = (holder: RequestPresentationHolder) => {
 }
 
 
-const sdJwtSigner = async (req: RequestPrivateKeySigner) => {
-  const privateKey = await importJWK(req.privateKey)
-  const sdJwsSigner = {
-    sign: async ({ protectedHeader, claimset }: any) => {
-      const bytes = encoder.encode(JSON.stringify(claimset))
-      const jws = await new jose.CompactSign(
-        bytes
-      )
-        .setProtectedHeader(protectedHeader)
-        .sign(privateKey)
-      return jws
-    }
-  }
-  const sdJwsSalter = await sd.salter()
-  const sdJwsDigester = await sd.digester()
-  const sdIssuer = await sd.issuer({
-    alg: req.protectedHeader.alg,
-    iss: req.protectedHeader.iss,
-    kid: req.protectedHeader.kid,
-    typ: req.protectedHeader.typ,
-    cty: req.protectedHeader.cty,
-    salter: sdJwsSalter,
-    digester: sdJwsDigester,
-    signer: sdJwsSigner
-  })
-  return {
-    sign: async (bytes: Uint8Array) => {
-      const sdJwt = await sdIssuer.issue({
-        // holder: publicKeyJwk,
-        claimset: decoder.decode(bytes)
-      })
-      return encoder.encode(sdJwt)
-    }
-  }
-}
-
 const sdJwtPresentationIssuer = (holder: RequestPresentationHolder) => {
   return {
     issue: async (req: RequestCredentialPresentation) => {
-      const privateKey = await importJWK(holder.privateKey as any)
+      const privateKey = await importKeyLike(holder.privateKey as any)
       const sdJwsSigner = {
         sign: async ({ protectedHeader, claimset }: any) => {
           const bytes = encoder.encode(JSON.stringify(claimset))

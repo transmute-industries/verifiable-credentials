@@ -8,7 +8,7 @@ import * as claimset from '../claimset'
 
 import { encoder, decoder } from '../text'
 
-import { importJWK } from '../key'
+import { importKeyLike } from '../key'
 
 export type RequestCredentialIssuer = {
   iss: string
@@ -23,7 +23,7 @@ export type RequestIssueCredential = {
 }
 
 const jwtSigner = async (req: RequestPrivateKeySigner) => {
-  const privateKey = await importJWK(req.privateKey)
+  const privateKey = await importKeyLike(req.privateKey)
   return {
     sign: async (bytes: Uint8Array) => {
       const jws = await new jose.CompactSign(
@@ -69,7 +69,7 @@ const jwtCredentialIssuer = (issuer: RequestCredentialIssuer) => {
 }
 
 const sdJwtSigner = async (req: RequestPrivateKeySigner) => {
-  const privateKey = await importJWK(req.privateKey)
+  const privateKey = await importKeyLike(req.privateKey)
   const sdJwsSigner = {
     sign: async ({ protectedHeader, claimset }: any) => {
       const bytes = encoder.encode(JSON.stringify(claimset))

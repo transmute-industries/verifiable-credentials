@@ -13,7 +13,7 @@ import {
   VerifiablePresentation
 } from '../types'
 
-import { importJWK } from '../key';
+import { importKeyLike, importJWK } from '../key';
 
 import { decoder } from '../text';
 
@@ -27,6 +27,7 @@ export type RequestCredentialVerifier = {
 export type VerifyJwtOpts = {
   iss?: string
   aud?: string | string[]
+  nonce?: string
 }
 
 export type RequestVerify = {
@@ -42,11 +43,13 @@ const verifyJwt = async (jwt: string, publicKey: jose.KeyLike | Uint8Array, opts
   return payload
 }
 
+
+
 // todo pass resolver here...
 export const verifier = (req: RequestCredentialVerifier) => {
   return {
     verify: async <T = VerifiableCredential | VerifiablePresentation>({ cty, content, ...opts }: RequestVerify): Promise<T> => {
-      const publicKey = await importJWK(req.publicKey)
+      const publicKey = await importKeyLike(req.publicKey)
       if (cty === 'application/vc+ld+json+jwt') {
         return verifyJwt(decoder.decode(content), publicKey, opts) as T
       } else if (cty === 'application/vp+ld+json+jwt') {
@@ -56,10 +59,7 @@ export const verifier = (req: RequestCredentialVerifier) => {
           resolver: {
             resolve: async (_token: string) => {
               // todo: use resolver here...
-              if (req.publicKey.cty === 'application/jwk+json') {
-                return JSON.parse(decoder.decode(req.publicKey.content))
-              }
-              throw new Error('Unable to resolve key')
+              return importJWK(req.publicKey)
             }
           }
         })
@@ -67,7 +67,23 @@ export const verifier = (req: RequestCredentialVerifier) => {
           token: decoder.decode(content)
         })
         return verified.claimset as T
+      } else if (cty === 'application/vp+ld+json+sd-jwt') {
+        const verifier = sd.verifier({
+          resolver: {
+            resolve: async (_token: string) => {
+              // todo: use resolver here...
+              return importJWK(req.publicKey)
+            }
+          }
+        })
+        const verified = await verifier.verify({
+          token: decoder.decode(content),
+          audience: opts.aud as any,
+          nonce: opts.nonce
+        })
+        return verified.claimset as T
       }
+
       throw new Error('Unsupported content type')
     }
   }
