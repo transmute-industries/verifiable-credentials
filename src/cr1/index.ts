@@ -5,6 +5,10 @@ export * from './types'
 import * as key from './key'
 import * as claimset from './claimset'
 
-import { issuer, verifier } from './credential'
+import { issuer } from './credential'
 
-export { key, claimset, issuer, verifier }
+import { holder } from './presentation'
+
+import { verifier } from './verifier'
+
+export { key, claimset, issuer, holder, verifier }
