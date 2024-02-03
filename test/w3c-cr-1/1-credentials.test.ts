@@ -46,7 +46,6 @@ describe('credentials issue and verify', () => {
         iss: 'https://university.example/issuers/565049'
       })
     expect(verified.issuer.id).toBe('https://university.example/issuers/565049')
-    // fs.writeFileSync('./src/cr1/__fixtures__/issuer-0-vc-jwt.json', JSON.stringify({ vc }))
   })
 
   it('application/vc+ld+json+sd-jwt', async () => {
@@ -55,8 +54,8 @@ describe('credentials issue and verify', () => {
       .issuer({
         alg: 'ES384',
         iss: 'https://university.example/issuers/565049',
-        kid: 'key-42',
-        cty: 'application/vc+ld+json+sd-jwt',
+        kid: 'key-42', // preserve kid after signer replaces private  key
+        cty: 'application/vc+ld+json+sd-jwt', // expand cty everywhere for readability
         privateKey: {
           cty: privateKeyType,
           content: privateKeyContent
