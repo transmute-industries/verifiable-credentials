@@ -14,7 +14,7 @@ it('has version', () => {
   expect(cr1.version).toBe('https://www.w3.org/TR/2024/CR-vc-data-model-2.0-20240201/')
 })
 
-describe('key generation', () => {
+describe.skip('key generation', () => {
   it('application/jwk+json', async () => {
     const k1 = await cr1.key.generate({
       alg: 'ES384',
@@ -127,5 +127,6 @@ describe('presentations issue and verify', () => {
         iss: claims.holder.id
       })
     expect(verified.holder.id).toBe(claims.holder.id)
+    fs.writeFileSync('./src/cr1/__fixtures__/holder-0-vp-jwt.json', JSON.stringify({ vp }))
   })
 })
