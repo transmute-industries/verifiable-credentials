@@ -13,6 +13,8 @@ import {
 
 import { importJWK } from '../key';
 
+import { decoder } from '../text';
+
 export type RequestCredentialVerifier = {
   publicKey: {
     cty: SupportedKeyFormats,
@@ -27,7 +29,7 @@ export type VerifyJwtOpts = {
 
 export type RequestVerify = {
   cty: SupportedCredentialFormats | SupportedPresentationFormats,
-  content: string
+  content: Uint8Array
 } & VerifyJwtOpts
 
 const verifyJwt = async (jwt: string, publicKey: jose.KeyLike | Uint8Array, opts: VerifyJwtOpts) => {
@@ -43,9 +45,9 @@ export const verifier = (req: RequestCredentialVerifier) => {
     verify: async <T = VerifiableCredential | VerifiablePresentation>({ cty, content, ...opts }: RequestVerify): Promise<T> => {
       const publicKey = await importJWK(req.publicKey)
       if (cty === 'application/vc+ld+json+jwt') {
-        return verifyJwt(content, publicKey, opts) as T
+        return verifyJwt(decoder.decode(content), publicKey, opts) as T
       } else if (cty === 'application/vp+ld+json+jwt') {
-        return verifyJwt(content, publicKey, opts) as T
+        return verifyJwt(decoder.decode(content), publicKey, opts) as T
       }
       throw new Error('Unsupported content type')
     }

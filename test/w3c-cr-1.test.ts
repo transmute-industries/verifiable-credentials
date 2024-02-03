@@ -89,7 +89,7 @@ describe('credentials issue and verify', () => {
         iss: claims.issuer.id
       })
     expect(verified.issuer.id).toBe(claims.issuer.id)
-    fs.writeFileSync('./src/cr1/__fixtures__/issuer-0-vc-jwt.json', JSON.stringify({ vc }))
+    // fs.writeFileSync('./src/cr1/__fixtures__/issuer-0-vc-jwt.json', JSON.stringify({ vc }))
   })
 })
 
@@ -127,6 +127,6 @@ describe('presentations issue and verify', () => {
         iss: claims.holder.id
       })
     expect(verified.holder.id).toBe(claims.holder.id)
-    fs.writeFileSync('./src/cr1/__fixtures__/holder-0-vp-jwt.json', JSON.stringify({ vp }))
+    // fs.writeFileSync('./src/cr1/__fixtures__/holder-0-vp-jwt.json', JSON.stringify({ vp }))
   })
 })
