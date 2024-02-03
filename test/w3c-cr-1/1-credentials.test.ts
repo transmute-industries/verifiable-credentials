@@ -45,7 +45,7 @@ describe('credentials issue and verify', () => {
     // fs.writeFileSync('./src/cr1/__fixtures__/issuer-0-vc-jwt.json', JSON.stringify({ vc }))
   })
 
-  it.only('application/vc+ld+json+sd-jwt', async () => {
+  it('application/vc+ld+json+sd-jwt', async () => {
 
     const vc = await cr1
       .issuer({
@@ -61,19 +61,19 @@ describe('credentials issue and verify', () => {
       .issue({
         claimset: fixtures.claimset_0,
       })
-    // const verified = await cr1.
-    //   verifier({
-    //     publicKey: {
-    //       cty: privateKeyType,
-    //       content: publicKeyContent
-    //     }
-    //   })
-    //   .verify<cr1.VerifiableCredentialWithIssuerObject>({
-    //     cty: 'application/vc+ld+json+sd-jwt',
-    //     content: vc,
-    //     iss: 'https://university.example/issuers/565049'
-    //   })
-    // expect(verified.issuer.id).toBe('https://university.example/issuers/565049')
+    const verified = await cr1.
+      verifier({
+        publicKey: {
+          cty: privateKeyType,
+          content: publicKeyContent
+        }
+      })
+      .verify<cr1.VerifiableCredentialWithIssuerObject>({
+        cty: 'application/vc+ld+json+sd-jwt',
+        content: vc,
+        iss: 'https://university.example/issuers/565049'
+      })
+    expect(verified.issuer.id).toBe('https://university.example/issuers/565049')
   })
 
 })
