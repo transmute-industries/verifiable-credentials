@@ -3,7 +3,7 @@
 
 import * as jose from 'jose'
 
-import { SupportedPresentationFormats, SupportedSignatureAlgorithms, RequestSigner } from '../types'
+import { SupportedPresentationFormats, SupportedJwtSignatureFormats, SupportedSignatureAlgorithms, RequestSigner } from '../types'
 
 import * as claimset from '../claimset'
 
@@ -33,7 +33,7 @@ export const holder = (holder: RequestPresentationHolder) => {
             header: {
               alg: holder.alg,
               kid: holder.kid,
-              typ: holder.cty,
+              typ: holder.cty as SupportedJwtSignatureFormats,
               cty: `application/vc+ld+json`
             },
             privateKey:

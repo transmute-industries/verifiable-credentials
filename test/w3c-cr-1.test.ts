@@ -91,6 +91,25 @@ describe('credentials issue and verify', () => {
     expect(verified.issuer.id).toBe(claims.issuer.id)
     // fs.writeFileSync('./src/cr1/__fixtures__/issuer-0-vc-jwt.json', JSON.stringify({ vc }))
   })
+
+  it.only('application/vc+ld+json+sd-jwt', async () => {
+    const claims = cr1.claimset.parse<cr1.VerifiableCredentialWithIssuerObject>(fixtures.claimset_0)
+    const vc = await cr1
+      .issuer({
+        alg: 'ES384',
+        iss: claims.issuer.id,
+        kid: 'key-42',
+        cty: 'application/vc+ld+json+sd-jwt',
+        privateKey: {
+          cty: privateKeyType,
+          content: privateKeyContent
+        }
+      })
+      .issue({
+        claimset: fixtures.claimset_0,
+      })
+  })
+
 })
 
 describe('presentations issue and verify', () => {
@@ -113,7 +132,6 @@ describe('presentations issue and verify', () => {
       .issue({
         claimset: fixtures.claimset_1,
       })
-
     const verified = await cr1.
       verifier({
         publicKey: {
