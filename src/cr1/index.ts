@@ -11,4 +11,6 @@ import { holder } from './presentation'
 
 import { verifier } from './verifier'
 
-export { key, claimset, issuer, holder, verifier }
+import * as text from './text'
+
+export { key, claimset, text, issuer, holder, verifier }

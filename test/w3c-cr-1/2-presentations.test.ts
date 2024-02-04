@@ -1,15 +1,9 @@
 import fs from 'fs'
 
-// todo expose utils for these...
-import * as cose from '@transmute/cose'
-import sd from '@transmute/vc-jwt-sd'
-
 import * as cr1 from '../../src'
 
 import * as fixtures from '../../src/cr1/__fixtures__'
 
-
-import { encoder } from '../../src/cr1/text'
 
 it('has version', () => {
   expect(cr1.version).toBe('https://www.w3.org/TR/2024/CR-vc-data-model-2.0-20240201/')
@@ -221,7 +215,7 @@ describe('presentations issue and verify', () => {
       .verify<cr1.VerifiablePresentationWithHolderObject & cr1.VerifiablePresentationOfEnveloped>({
         // this content type always implies an sd-jwt secured json-ld object (vp) contain enveloped Fnards.
         cty: 'application/vc+ld+json+sd-jwt',
-        content: encoder.encode(envelopedVc),
+        content: cr1.text.encoder.encode(envelopedVc),
         audience: 'aud-123',
         nonce: 'nonce-456',
       })
@@ -239,7 +233,7 @@ describe('presentations issue and verify', () => {
       }
     }).verify({
       cty: 'application/kb+jwt',
-      content: encoder.encode(kbt)
+      content: cr1.text.encoder.encode(kbt)
     })
     expect(verified3.aud).toBe('aud-123')
     expect(verified3.nonce).toBe('nonce-456')
