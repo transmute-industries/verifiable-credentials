@@ -38,11 +38,10 @@ const jwtSigner = async (req: RequestPrivateKeySigner) => {
 
 
 export type RequestPresentationHolder = {
-  iss: string
   kid: string
   alg: SupportedSignatureAlgorithms
   cty: SupportedPresentationFormats
-  aud?: string | string[]
+  aud?: string | string[] // questionable...
 } & RequestSigner
 
 
@@ -85,8 +84,8 @@ const jwtPresentationIssuer = (holder: RequestPresentationHolder) => {
       if (!req.claimset) {
         throw new Error('claimset is required for jwt presentations.')
       }
-      let claims = claimset.parse(decoder.decode(req.claimset))
-      claims.iss = holder.iss; // required for verify
+      let claims = claimset.parse(decoder.decode(req.claimset)) as any
+      claims.iss = claims.holder.id || claims.holder || holder.kid; // required for verify
       if (holder.aud) {
         claims = {
           aud: holder.aud,
@@ -121,7 +120,6 @@ const sdJwtPresentationIssuer = (holder: RequestPresentationHolder) => {
       const sdJwsDigester = await sd.digester()
       const sdHolder = await sd.holder({
         alg: holder.alg,
-        iss: holder.iss,
         kid: holder.kid,
         salter: sdJwsSalter,
         digester: sdJwsDigester,
@@ -130,18 +128,7 @@ const sdJwtPresentationIssuer = (holder: RequestPresentationHolder) => {
       // address undefined behavior for presentations of multiple dislosable credentials
       // with distinct disclosure choices...
       // https://w3c.github.io/vc-data-model/#example-basic-structure-of-a-presentation-0
-      const vp = req.presentation || {
-        "@context": [
-          "https://www.w3.org/ns/credentials/v2",
-        ],
-        "type": ["VerifiablePresentation"],
-        holder: holder.iss,
-        "verifiableCredential": [{
-          // "@context": "https://www.w3.org/ns/credentials/v2",
-          // "id": "data:application/vc+ld+json+sd-jwt;QzVjV...RMjU",
-          // "type": "EnvelopedVerifiableCredential"
-        }]
-      }
+      const vp = req.presentation || claimset.parse(decoder.decode(req.claimset)) as any
       vp.verifiableCredential = []
       for (const d of req.disclosures) {
         const sdJwtFnard = await sdHolder.issue({
@@ -160,7 +147,6 @@ const sdJwtPresentationIssuer = (holder: RequestPresentationHolder) => {
 
       const sdIssuer = await sd.issuer({
         alg: holder.alg,
-        iss: holder.iss,
         kid: holder.kid,
         salter: sdJwsSalter,
         digester: sdJwsDigester,

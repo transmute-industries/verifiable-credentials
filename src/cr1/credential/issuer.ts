@@ -1,7 +1,7 @@
 import * as jose from 'jose'
 import sd from '@transmute/vc-jwt-sd'
 
-import { SupportedJwtSignatureFormats, SupportedSdJwtSignatureFormats, SupportedSignatureAlgorithms, RequestSigner, RequestPrivateKeySigner } from '../types'
+import { SupportedJwtSignatureFormats, SupportedSdJwtSignatureFormats, RequestCredentialIssuer, RequestIssueCredential, RequestPrivateKeySigner } from '../types'
 
 import * as claimset from '../claimset'
 
@@ -10,17 +10,7 @@ import { encoder, decoder } from '../text'
 
 import { importKeyLike } from '../key'
 
-export type RequestCredentialIssuer = {
-  iss: string
-  kid: string
-  alg: SupportedSignatureAlgorithms
-  cty: SupportedJwtSignatureFormats | SupportedSdJwtSignatureFormats
-  aud?: string | string[]
-} & RequestSigner
 
-export type RequestIssueCredential = {
-  claimset: Uint8Array,
-}
 
 const jwtSigner = async (req: RequestPrivateKeySigner) => {
   const privateKey = await importKeyLike(req.privateKey)
@@ -55,8 +45,8 @@ const jwtCredentialIssuer = (issuer: RequestCredentialIssuer) => {
       if (tokenSigner === undefined) {
         throw new Error('No signer available.')
       }
-      let claims = claimset.parse(decoder.decode(credential.claimset))
-      claims.iss = issuer.iss; // required for verify
+      let claims = claimset.parse(decoder.decode(credential.claimset)) as any
+      claims.iss = claims.issuer.id || claims.issuer; // required for verify
       if (issuer.aud) {
         claims = {
           aud: issuer.aud,

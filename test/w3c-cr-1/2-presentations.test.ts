@@ -23,7 +23,6 @@ describe('presentations issue and verify', () => {
     const vp = await cr1
       .holder({
         alg: 'ES384',
-        iss: 'https://university.example/issuers/565049',
         kid: 'key-42',
         cty: 'application/vp+ld+json+jwt',
         privateKey: {
@@ -59,7 +58,6 @@ describe('presentations issue and verify', () => {
     const vc = await cr1
       .issuer({
         alg: 'ES384',
-        iss: 'https://university.example/issuers/565049',
         kid: 'key-42',
         cty: 'application/vc+ld+json+sd-jwt',
         privateKey: {
@@ -73,7 +71,6 @@ describe('presentations issue and verify', () => {
     const vp = await cr1
       .holder({
         alg: 'ES384',
-        iss: 'https://university.example/issuers/565049',
         kid: 'key-42',
         cty: 'application/vp+ld+json+sd-jwt',
         // this is the private key that signed the outer JSON-LD VP object.
@@ -138,7 +135,6 @@ describe('presentations issue and verify', () => {
     const vc = await cr1
       .issuer({
         alg: 'ES384',
-        iss: 'https://university.example/issuers/565049',
         kid: 'key-42',
         cty: 'application/vc+ld+json+sd-jwt',
         privateKey: {
@@ -152,7 +148,6 @@ describe('presentations issue and verify', () => {
     const vp = await cr1
       .holder({
         alg: 'ES384',
-        iss: 'https://university.example/issuers/565049',
         kid: 'key-42',
         cty: 'application/vp+ld+json+sd-jwt',
         // this is the private key that signed the outer JSON-LD VP object.
@@ -246,7 +241,6 @@ describe('presentations issue and verify', () => {
       cty: 'application/kb+jwt',
       content: encoder.encode(kbt)
     })
-    expect(verified3.iss).toBe('https://university.example/issuers/565049')
     expect(verified3.aud).toBe('aud-123')
     expect(verified3.nonce).toBe('nonce-456')
 

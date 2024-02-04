@@ -23,6 +23,12 @@
 
 ## Usage
 
+Requires node 18 or higher.
+
+```sh
+nvm use 18
+```
+
 ```sh
 npm i @transmute/verifiable-credentials@latest --save
 ```

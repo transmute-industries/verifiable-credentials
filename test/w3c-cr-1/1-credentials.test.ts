@@ -18,7 +18,6 @@ describe('credentials issue and verify', () => {
     const vc = await cr1
       .issuer({
         alg: 'ES384',
-        iss: 'https://university.example/issuers/565049',
         kid: 'key-42',
         cty: 'application/vc+ld+json+jwt',
         privateKey: {
@@ -53,7 +52,6 @@ describe('credentials issue and verify', () => {
     const vc = await cr1
       .issuer({
         alg: 'ES384',
-        iss: 'https://university.example/issuers/565049',
         kid: 'key-42', // preserve kid after signer replaces private  key
         cty: 'application/vc+ld+json+sd-jwt', // expand cty everywhere for readability
         privateKey: {

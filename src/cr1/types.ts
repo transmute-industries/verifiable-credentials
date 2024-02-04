@@ -106,6 +106,14 @@ export type RequestPrivateKeySigner = {
   }
 }
 
+
+export type RequestCredentialIssuer = {
+  kid: string
+  alg: SupportedSignatureAlgorithms
+  cty: SupportedJwtSignatureFormats | SupportedSdJwtSignatureFormats
+  aud?: string | string[]
+} & RequestSigner
+
 export type RequestIssueCredential = {
-  claimset: string,
+  claimset: Uint8Array,
 }
