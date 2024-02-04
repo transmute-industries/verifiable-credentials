@@ -7,9 +7,9 @@ import {
   SupportedPresentationFormats,
   SupportedJwtSignatureFormats,
   SupportedSignatureAlgorithms,
-  RequestSigner,
+  RequestPresentationHolder,
   RequestPrivateKeySigner,
-  VerifiablePresentation,
+  RequestCredentialPresentation,
   SdJwt
 } from '../types'
 
@@ -18,9 +18,7 @@ import * as claimset from '../claimset'
 
 import { encoder, decoder } from '../text'
 
-
 import { importKeyLike } from '../key'
-
 
 const jwtSigner = async (req: RequestPrivateKeySigner) => {
   const privateKey = await importKeyLike(req.privateKey)
@@ -37,48 +35,10 @@ const jwtSigner = async (req: RequestPrivateKeySigner) => {
 }
 
 
-export type RequestPresentationHolder = {
-  kid: string
-  alg: SupportedSignatureAlgorithms
-  cty: SupportedPresentationFormats
-  aud?: string | string[] // questionable...
-} & RequestSigner
-
-
-export type SdJwtDisclosure = {
-  credential: Uint8Array
-  disclosure: Uint8Array
-  audience?: string | string[]
-  nonce?: string
-} & RequestSigner
-
-export type SdJwtVpDisclosures = SdJwtDisclosure[]
-
-export type RequestCredentialPresentation = {
-  claimset?: Uint8Array,
-  presentation?: VerifiablePresentation
-  disclosures?: SdJwtVpDisclosures
-  audience?: string | string[]
-  nonce?: string
-}
-
 const jwtPresentationIssuer = (holder: RequestPresentationHolder) => {
   return {
     issue: async (req: RequestCredentialPresentation) => {
-      let tokenSigner = holder.signer
-      if (holder.privateKey) {
-        tokenSigner = await jwtSigner({
-          protectedHeader: {
-            alg: holder.alg,
-            kid: holder.kid,
-            typ: holder.cty as SupportedJwtSignatureFormats,
-            cty: `application/vc+ld+json`
-          },
-          privateKey:
-            holder.privateKey
-        })
-      }
-      if (tokenSigner === undefined) {
+      if (holder.signer === undefined) {
         throw new Error('No signer available.')
       }
       if (!req.claimset) {
@@ -92,7 +52,7 @@ const jwtPresentationIssuer = (holder: RequestPresentationHolder) => {
           ...claims
         }
       }
-      return tokenSigner.sign(encoder.encode(JSON.stringify(claims)))
+      return holder.signer.sign(encoder.encode(JSON.stringify(claims)))
     }
   }
 }
@@ -104,16 +64,11 @@ const sdJwtPresentationIssuer = (holder: RequestPresentationHolder) => {
       if (!req.disclosures) {
         throw new Error('disclosures are required for this presentation type')
       }
-      const privateKey = await importKeyLike(holder.privateKey as any)
+
       const sdJwsSigner = {
         sign: async ({ protectedHeader, claimset }: any) => {
           const bytes = encoder.encode(JSON.stringify(claimset))
-          const jws = await new jose.CompactSign(
-            bytes
-          )
-            .setProtectedHeader(protectedHeader)
-            .sign(privateKey)
-          return jws
+          return decoder.decode(await holder.signer.sign(bytes))
         }
       }
       const sdJwsSalter = await sd.salter()

@@ -79,15 +79,14 @@ export type VerifiablePresentationOfEnveloped = VerifiablePresentation & {
   verifiableCredential: Array<EnvelopedVerifiableCredential>
 }
 
-
 export type RequestSigner = {
   privateKey?: {
     cty: SupportedKeyFormats,
     content: Uint8Array
   }
-  signer?: {
-    sign: (bytes: Uint8Array) => Promise<Uint8Array>
-  }
+  // signer?: {
+  //   sign: (bytes: Uint8Array) => Promise<Uint8Array>
+  // }
 }
 
 export type SignatureHeader = Record<string, unknown> & {
@@ -106,14 +105,48 @@ export type RequestPrivateKeySigner = {
   }
 }
 
-
 export type RequestCredentialIssuer = {
   kid: string
   alg: SupportedSignatureAlgorithms
   cty: SupportedJwtSignatureFormats | SupportedSdJwtSignatureFormats
-  aud?: string | string[]
-} & RequestSigner
+  aud?: string | string[] // questionable
+
+  signer: {
+    sign: (bytes: Uint8Array) => Promise<Uint8Array>
+  }
+}
 
 export type RequestIssueCredential = {
   claimset: Uint8Array,
+}
+
+
+export type RequestPresentationHolder = {
+  kid: string
+  alg: SupportedSignatureAlgorithms
+  cty: SupportedPresentationFormats
+  aud?: string | string[] // questionable...
+  signer: {
+    sign: (bytes: Uint8Array) => Promise<Uint8Array>
+  }
+}
+
+export type SdJwtDisclosure = {
+  credential: Uint8Array
+  disclosure: Uint8Array
+  audience?: string | string[]
+  nonce?: string
+  signer: {
+    sign: (bytes: Uint8Array) => Promise<Uint8Array>
+  }
+}
+
+export type SdJwtVpDisclosures = SdJwtDisclosure[]
+
+export type RequestCredentialPresentation = {
+  claimset?: Uint8Array,
+  presentation?: VerifiablePresentation
+  disclosures?: SdJwtVpDisclosures
+  audience?: string | string[]
+  nonce?: string
 }

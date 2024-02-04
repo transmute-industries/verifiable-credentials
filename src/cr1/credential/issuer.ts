@@ -8,41 +8,12 @@ import * as claimset from '../claimset'
 
 import { encoder, decoder } from '../text'
 
-import { importKeyLike } from '../key'
 
-
-
-const jwtSigner = async (req: RequestPrivateKeySigner) => {
-  const privateKey = await importKeyLike(req.privateKey)
-  return {
-    sign: async (bytes: Uint8Array) => {
-      const jws = await new jose.CompactSign(
-        bytes
-      )
-        .setProtectedHeader(req.protectedHeader)
-        .sign(privateKey)
-      return encoder.encode(jws)
-    }
-  }
-}
 
 const jwtCredentialIssuer = (issuer: RequestCredentialIssuer) => {
   return {
     issue: async (credential: RequestIssueCredential) => {
-      let tokenSigner = issuer.signer
-      if (issuer.privateKey) {
-        tokenSigner = await jwtSigner({
-          protectedHeader: {
-            alg: issuer.alg,
-            kid: issuer.kid,
-            typ: issuer.cty as SupportedJwtSignatureFormats,
-            cty: `application/vc+ld+json`
-          },
-          privateKey:
-            issuer.privateKey
-        })
-      }
-      if (tokenSigner === undefined) {
+      if (issuer.signer === undefined) {
         throw new Error('No signer available.')
       }
       let claims = claimset.parse(decoder.decode(credential.claimset)) as any
@@ -53,67 +24,39 @@ const jwtCredentialIssuer = (issuer: RequestCredentialIssuer) => {
           ...claims
         }
       }
-      return tokenSigner.sign(encoder.encode(JSON.stringify(claims)))
+      return issuer.signer.sign(encoder.encode(JSON.stringify(claims)))
     }
   }
 }
 
-const sdJwtSigner = async (req: RequestPrivateKeySigner) => {
-  const privateKey = await importKeyLike(req.privateKey)
-  const sdJwsSigner = {
-    sign: async ({ protectedHeader, claimset }: any) => {
-      const bytes = encoder.encode(JSON.stringify(claimset))
-      const jws = await new jose.CompactSign(
-        bytes
-      )
-        .setProtectedHeader(protectedHeader)
-        .sign(privateKey)
-      return jws
-    }
-  }
-  const sdJwsSalter = await sd.salter()
-  const sdJwsDigester = await sd.digester()
-  const sdIssuer = await sd.issuer({
-    alg: req.protectedHeader.alg,
-    iss: req.protectedHeader.iss,
-    kid: req.protectedHeader.kid,
-    typ: req.protectedHeader.typ,
-    cty: req.protectedHeader.cty,
-    salter: sdJwsSalter,
-    digester: sdJwsDigester,
-    signer: sdJwsSigner
-  })
-  return {
-    sign: async (bytes: Uint8Array) => {
-      const sdJwt = await sdIssuer.issue({
-        // holder: publicKeyJwk,
-        claimset: decoder.decode(bytes)
-      })
-      return encoder.encode(sdJwt)
-    }
-  }
-}
 
 const sdJwtCredentialIssuer = (issuer: RequestCredentialIssuer) => {
   return {
     issue: async (credential: RequestIssueCredential) => {
-      let tokenSigner = issuer.signer
-      if (issuer.privateKey) {
-        tokenSigner = await sdJwtSigner({
-          protectedHeader: {
-            alg: issuer.alg,
-            kid: issuer.kid,
-            typ: issuer.cty as SupportedSdJwtSignatureFormats,
-            cty: `application/vc+ld+json`
-          },
-          privateKey:
-            issuer.privateKey
-        })
-      }
-      if (tokenSigner === undefined) {
+      if (issuer.signer === undefined) {
         throw new Error('No signer available.')
       }
-      return tokenSigner.sign(credential.claimset)
+      const sdJwsSalter = await sd.salter()
+      const sdJwsDigester = await sd.digester()
+      const sdIssuer = await sd.issuer({
+        alg: issuer.alg,
+        kid: issuer.kid,
+        typ: 'application/vc+ld+json+sd-jwt',
+        cty: 'application/vc+ld+json',
+        salter: sdJwsSalter,
+        digester: sdJwsDigester,
+        signer: {
+          sign: async ({ claimset }) => {
+            const jws = await issuer.signer.sign(encoder.encode(JSON.stringify(claimset)))
+            return decoder.decode(jws)
+          }
+        }
+      })
+      const sdJwt = await sdIssuer.issue({
+        // holder: publicKeyJwk,
+        claimset: decoder.decode(credential.claimset)
+      })
+      return encoder.encode(sdJwt)
     }
   }
 }

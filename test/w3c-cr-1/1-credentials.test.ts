@@ -1,10 +1,8 @@
 import fs from 'fs'
-
+import * as jose from 'jose'
 import * as cr1 from '../../src'
 
 import * as fixtures from '../../src/cr1/__fixtures__'
-
-
 
 it('has version', () => {
   expect(cr1.version).toBe('https://www.w3.org/TR/2024/CR-vc-data-model-2.0-20240201/')
@@ -20,9 +18,18 @@ describe('credentials issue and verify', () => {
         alg: 'ES384',
         kid: 'key-42',
         cty: 'application/vc+ld+json+jwt',
-        privateKey: {
-          cty: privateKeyType,
-          content: privateKeyContent
+        signer: {
+          sign: async (bytes: Uint8Array) => {
+            const jws = await new jose.CompactSign(
+              bytes
+            )
+              .setProtectedHeader({ alg: 'ES384' })
+              .sign(await cr1.key.importKeyLike({
+                cty: privateKeyType,
+                content: privateKeyContent
+              }))
+            return cr1.text.encoder.encode(jws)
+          }
         }
       })
       .issue({
@@ -51,12 +58,23 @@ describe('credentials issue and verify', () => {
 
     const vc = await cr1
       .issuer({
+        // 🔥 implication is that both alg and kid do not belong at this layer...
         alg: 'ES384',
         kid: 'key-42', // preserve kid after signer replaces private  key
         cty: 'application/vc+ld+json+sd-jwt', // expand cty everywhere for readability
-        privateKey: {
-          cty: privateKeyType,
-          content: privateKeyContent
+        signer: {
+          sign: async (bytes: Uint8Array) => {
+            const jws = await new jose.CompactSign(
+              bytes
+            )
+              // 🔥
+              .setProtectedHeader({ kid: 'key-42', alg: 'ES384' })
+              .sign(await cr1.key.importKeyLike({
+                cty: privateKeyType,
+                content: privateKeyContent
+              }))
+            return cr1.text.encoder.encode(jws)
+          }
         }
       })
       .issue({
