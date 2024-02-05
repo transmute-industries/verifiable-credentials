@@ -18,14 +18,13 @@ describe('presentations issue and verify', () => {
     const vp = await cr1
       .holder({
         alg: 'ES384',
-        kid: 'key-42',
         cty: 'application/vp+ld+json+jwt',
         signer: {
           sign: async (bytes: Uint8Array) => {
             const jws = await new jose.CompactSign(
               bytes
             )
-              .setProtectedHeader({ alg: 'ES384' })
+              .setProtectedHeader({ kid: 'key-42', alg: 'ES384' })
               .sign(await cr1.key.importKeyLike({
                 cty: privateKeyType,
                 content: privateKeyContent
@@ -51,8 +50,7 @@ describe('presentations issue and verify', () => {
       })
       .verify<cr1.VerifiablePresentationWithHolderObject & cr1.VerifiablePresentationOfEnveloped>({
         cty: 'application/vp+ld+json+jwt',
-        content: vp,
-        iss: 'https://university.example/issuers/565049'
+        content: vp
       })
     expect(verified.holder.id).toBe('https://university.example/issuers/565049')
     expect(verified.verifiableCredential[0].id.startsWith('data:application/vc+ld+json+sd-jwt;')).toBe(true)
@@ -62,7 +60,6 @@ describe('presentations issue and verify', () => {
     const vc = await cr1
       .issuer({
         alg: 'ES384',
-        kid: 'key-42',
         cty: 'application/vc+ld+json+sd-jwt',
         signer: {
           sign: async (bytes: Uint8Array) => {
@@ -84,7 +81,6 @@ describe('presentations issue and verify', () => {
     const vp = await cr1
       .holder({
         alg: 'ES384',
-        kid: 'key-42',
         cty: 'application/vp+ld+json+sd-jwt',
         // this is the private key that signed the outer JSON-LD VP object.
         signer: {
@@ -166,7 +162,6 @@ describe('presentations issue and verify', () => {
     const vc = await cr1
       .issuer({
         alg: 'ES384',
-        kid: 'key-42',
         cty: 'application/vc+ld+json+sd-jwt',
         signer: {
           sign: async (bytes: Uint8Array) => {
@@ -188,7 +183,6 @@ describe('presentations issue and verify', () => {
     const vp = await cr1
       .holder({
         alg: 'ES384',
-        kid: 'key-42',
         cty: 'application/vp+ld+json+sd-jwt',
         // this is the private key that signed the outer JSON-LD VP object.
         signer: {

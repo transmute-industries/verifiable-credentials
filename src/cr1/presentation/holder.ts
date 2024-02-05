@@ -11,9 +11,7 @@ import {
 
 import * as claimset from '../claimset'
 
-
 import { encoder, decoder } from '../text'
-
 
 const jwtPresentationIssuer = (holder: RequestPresentationHolder) => {
   return {
@@ -37,7 +35,6 @@ const jwtPresentationIssuer = (holder: RequestPresentationHolder) => {
   }
 }
 
-
 const sdJwtPresentationIssuer = (holder: RequestPresentationHolder) => {
   return {
     issue: async (req: RequestCredentialPresentation) => {
@@ -46,7 +43,7 @@ const sdJwtPresentationIssuer = (holder: RequestPresentationHolder) => {
       }
 
       const sdJwsSigner = {
-        sign: async ({ protectedHeader, claimset }: any) => {
+        sign: async ({ claimset }: { claimset: Record<string, unknown> }) => {
           const bytes = encoder.encode(JSON.stringify(claimset))
           return decoder.decode(await holder.signer.sign(bytes))
         }
