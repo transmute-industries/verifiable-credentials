@@ -1,5 +1,6 @@
 import fs from 'fs'
 
+import * as jose from 'jose'
 import * as cr1 from '../../src'
 
 import * as fixtures from '../../src/cr1/__fixtures__'
@@ -19,9 +20,18 @@ describe('presentations issue and verify', () => {
         alg: 'ES384',
         kid: 'key-42',
         cty: 'application/vp+ld+json+jwt',
-        privateKey: {
-          cty: privateKeyType,
-          content: privateKeyContent
+        signer: {
+          sign: async (bytes: Uint8Array) => {
+            const jws = await new jose.CompactSign(
+              bytes
+            )
+              .setProtectedHeader({ alg: 'ES384' })
+              .sign(await cr1.key.importKeyLike({
+                cty: privateKeyType,
+                content: privateKeyContent
+              }))
+            return cr1.text.encoder.encode(jws)
+          }
         }
       })
       .issue({
@@ -54,9 +64,18 @@ describe('presentations issue and verify', () => {
         alg: 'ES384',
         kid: 'key-42',
         cty: 'application/vc+ld+json+sd-jwt',
-        privateKey: {
-          cty: privateKeyType,
-          content: privateKeyContent
+        signer: {
+          sign: async (bytes: Uint8Array) => {
+            const jws = await new jose.CompactSign(
+              bytes
+            )
+              .setProtectedHeader({ kid: 'key-42', alg: 'ES384' })
+              .sign(await cr1.key.importKeyLike({
+                cty: privateKeyType,
+                content: privateKeyContent
+              }))
+            return cr1.text.encoder.encode(jws)
+          }
         }
       })
       .issue({
@@ -68,9 +87,18 @@ describe('presentations issue and verify', () => {
         kid: 'key-42',
         cty: 'application/vp+ld+json+sd-jwt',
         // this is the private key that signed the outer JSON-LD VP object.
-        privateKey: {
-          cty: privateKeyType,
-          content: privateKeyContent
+        signer: {
+          sign: async (bytes: Uint8Array) => {
+            const jws = await new jose.CompactSign(
+              bytes
+            )
+              .setProtectedHeader({ kid: 'key-42', alg: 'ES384' })
+              .sign(await cr1.key.importKeyLike({
+                cty: privateKeyType,
+                content: privateKeyContent
+              }))
+            return cr1.text.encoder.encode(jws)
+          }
         }
       })
       .issue({
@@ -95,9 +123,18 @@ describe('presentations issue and verify', () => {
           // each credential can have a different bound public key
           // so we need a different private key or signer for each 
           // disclosure
-          privateKey: {
-            cty: privateKeyType,
-            content: privateKeyContent
+          signer: {
+            sign: async (bytes: Uint8Array) => {
+              const jws = await new jose.CompactSign(
+                bytes
+              )
+                .setProtectedHeader({ kid: 'key-42', alg: 'ES384' })
+                .sign(await cr1.key.importKeyLike({
+                  cty: privateKeyType,
+                  content: privateKeyContent
+                }))
+              return cr1.text.encoder.encode(jws)
+            }
           }
         }],
       })
@@ -131,9 +168,18 @@ describe('presentations issue and verify', () => {
         alg: 'ES384',
         kid: 'key-42',
         cty: 'application/vc+ld+json+sd-jwt',
-        privateKey: {
-          cty: privateKeyType,
-          content: privateKeyContent
+        signer: {
+          sign: async (bytes: Uint8Array) => {
+            const jws = await new jose.CompactSign(
+              bytes
+            )
+              .setProtectedHeader({ kid: 'key-42', alg: 'ES384' })
+              .sign(await cr1.key.importKeyLike({
+                cty: privateKeyType,
+                content: privateKeyContent
+              }))
+            return cr1.text.encoder.encode(jws)
+          }
         }
       })
       .issue({
@@ -145,9 +191,18 @@ describe('presentations issue and verify', () => {
         kid: 'key-42',
         cty: 'application/vp+ld+json+sd-jwt',
         // this is the private key that signed the outer JSON-LD VP object.
-        privateKey: {
-          cty: privateKeyType,
-          content: privateKeyContent
+        signer: {
+          sign: async (bytes: Uint8Array) => {
+            const jws = await new jose.CompactSign(
+              bytes
+            )
+              .setProtectedHeader({ kid: 'key-42', alg: 'ES384' })
+              .sign(await cr1.key.importKeyLike({
+                cty: privateKeyType,
+                content: privateKeyContent
+              }))
+            return cr1.text.encoder.encode(jws)
+          }
         }
       })
       .issue({
@@ -172,9 +227,18 @@ describe('presentations issue and verify', () => {
           // each credential can have a different bound public key
           // so we need a different private key or signer for each 
           // disclosure
-          privateKey: {
-            cty: privateKeyType,
-            content: privateKeyContent
+          signer: {
+            sign: async (bytes: Uint8Array) => {
+              const jws = await new jose.CompactSign(
+                bytes
+              )
+                .setProtectedHeader({ kid: 'key-42', alg: 'ES384' })
+                .sign(await cr1.key.importKeyLike({
+                  cty: privateKeyType,
+                  content: privateKeyContent
+                }))
+              return cr1.text.encoder.encode(jws)
+            }
           }
         }],
       })
