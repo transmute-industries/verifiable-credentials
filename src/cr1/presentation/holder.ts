@@ -3,15 +3,30 @@
 
 
 import sd from '@transmute/vc-jwt-sd'
+
+import { base64url } from 'jose'
 import {
   RequestPresentationHolder,
   RequestCredentialPresentation,
   SdJwt
 } from '../types'
 
-import * as claimset from '../claimset'
 
 import { encoder, decoder } from '../text'
+
+const presentationToClaims = (req: RequestCredentialPresentation) => {
+  const claims = req.presentation
+  claims.verifiableCredential = []
+  for (const d of req.disclosures) {
+    const text = d.cty.endsWith('+cose') ? `base64url,${base64url.encode(d.credential)}` : decoder.decode(d.credential)
+    claims.verifiableCredential.push({
+      "@context": "https://www.w3.org/ns/credentials/v2",
+      "id": `data:${d.cty};${text}`,
+      "type": "EnvelopedVerifiableCredential"
+    })
+  }
+  return claims
+}
 
 const jwtPresentationIssuer = (holder: RequestPresentationHolder) => {
   return {
@@ -19,11 +34,7 @@ const jwtPresentationIssuer = (holder: RequestPresentationHolder) => {
       if (req.signer === undefined) {
         throw new Error('No signer available.')
       }
-      if (!req.claimset) {
-        throw new Error('claimset is required for jwt presentations.')
-      }
-      const claims = claimset.parse(decoder.decode(req.claimset)) as any
-      claims.iss = claims.holder.id || claims.holder
+      const claims = presentationToClaims(req)
       return req.signer.sign(encoder.encode(JSON.stringify(claims)))
     }
   }
@@ -36,11 +47,7 @@ const coseSign1PresentationIssuer = (holder: RequestPresentationHolder) => {
       if (req.signer === undefined) {
         throw new Error('No signer available.')
       }
-      if (!req.claimset) {
-        throw new Error('claimset is required for cose-sign1 presentations.')
-      }
-      const claims = claimset.parse(decoder.decode(req.claimset)) as any
-      claims.iss = claims.holder.id || claims.holder
+      const claims = presentationToClaims(req)
       return req.signer.sign(encoder.encode(JSON.stringify(claims)))
     }
   }
@@ -72,7 +79,7 @@ const sdJwtPresentationIssuer = (holder: RequestPresentationHolder) => {
       // address undefined behavior for presentations of multiple dislosable credentials
       // with distinct disclosure choices...
       // https://w3c.github.io/vc-data-model/#example-basic-structure-of-a-presentation-0
-      const vp = req.presentation || claimset.parse(decoder.decode(req.claimset)) as any
+      const vp = req.presentation
       vp.verifiableCredential = []
       for (const d of req.disclosures) {
         const sdJwtFnard = await sdHolder.issue({
@@ -115,10 +122,6 @@ const sdJwtPresentationIssuer = (holder: RequestPresentationHolder) => {
 const unsecuredPresentationOfSecuredCredentials = (holder: RequestPresentationHolder) => {
   return {
     issue: async (req: RequestCredentialPresentation) => {
-      // TODO.
-      if (req.claimset && req.presentation) {
-        throw new Error('claimset is forbidden for this presentation type.')
-      }
       if (req.disclosures == undefined) {
         throw new Error('disclosures is REQUIRED for this presentation type.')
       }
@@ -130,10 +133,10 @@ const unsecuredPresentationOfSecuredCredentials = (holder: RequestPresentationHo
         digester: sdJwsDigester,
         // note that no signer is here, since no holder binding is present.
       })
-      const vp = req.presentation || claimset.parse(decoder.decode(req.claimset)) as any
+      const vp = req.presentation
       vp.verifiableCredential = []
       for (const d of req.disclosures) {
-        let enveloped = undefined
+        let enveloped: any = undefined
         if (d.disclosure) {
           const sdJwtFnard = await sdHolder.issue({
             token: decoder.decode(d.credential), // todo for each...

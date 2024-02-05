@@ -17,7 +17,7 @@ export type JwtEnvelopedVerifiableCredential = `data:${VcContentType}+jwt;${Jwt}
 export type SdJwtEnvelopedVerifiableCredential = `data:${VcContentType}+sd-jwt;${SdJwt}`
 
 
-export type SupportedCredentialFormats = `${VcContentType}+jwt` | `${VcContentType}+sd-jwt`
+export type SupportedCredentialFormats = `${VcContentType}+jwt` | `${VcContentType}+sd-jwt` | `${VcContentType}+cose`
 export type SupportedPresentationFormats = VpContentType | `${VpContentType}+jwt` | `${VpContentType}+sd-jwt` | `${VpContentType}+cose`
 
 export type SupportedSdJwtSignatureFormats = `application/sd-jwt` | `${VcContentType}+sd-jwt` | `${VpContentType}+sd-jwt`
@@ -55,7 +55,7 @@ export type VerifiableCredential = {
 export type EnvelopedVerifiableCredential = {
   // runtime error expected.
   '@context': unknown
-  id: SupportedEnvelopedVerifiableCredential
+  id: SupportedEnvelopedVerifiableCredential | string
   type: 'EnvelopedVerifiableCredential'
 }
 
@@ -139,10 +139,8 @@ export type SdJwtDisclosure = {
 export type SdJwtVpDisclosures = SdJwtDisclosure[]
 
 export type RequestCredentialPresentation = {
-  claimset?: Uint8Array, // can we make this part of the disclosures?
-  presentation?: VerifiablePresentation
-  disclosures?: SdJwtVpDisclosures
-
+  presentation: VerifiablePresentation
+  disclosures: SdJwtVpDisclosures
   // these MUST be present for any "secured presentations",
   // these MUST NOT be present for unsecured presentations
   audience?: string | string[]
