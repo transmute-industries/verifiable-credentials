@@ -13,20 +13,19 @@ export type VpContentType = `application/vp+ld+json`
 export type Jwt = `${string}.${string}.${string}`
 export type SdJwt = `${Jwt}${string}~${string}`
 
-export type JwtEnvelopedVerifiableCredential = `data:${VcContentType}+jwt;${Jwt}`
-export type SdJwtEnvelopedVerifiableCredential = `data:${VcContentType}+sd-jwt;${SdJwt}`
-
 
 export type SupportedCredentialFormats = `${VcContentType}+jwt` | `${VcContentType}+sd-jwt` | `${VcContentType}+cose`
 export type SupportedPresentationFormats = VpContentType | `${VpContentType}+jwt` | `${VpContentType}+sd-jwt` | `${VpContentType}+cose`
 
 export type SupportedSdJwtSignatureFormats = `application/sd-jwt` | `${VcContentType}+sd-jwt` | `${VpContentType}+sd-jwt`
-
 export type SupportedJwtSignatureFormats = `application/jwt` | `application/kb+jwt` | `${VcContentType}+jwt` | `${VpContentType}+jwt`
 
 export type SupportedCoseSign1Formats = `${VcContentType}+cose`
 
-export type SupportedEnvelopedVerifiableCredential = SdJwtEnvelopedVerifiableCredential
+export type JwtEnvelopedVerifiableCredential = `data:${VcContentType}+jwt;${Jwt}`
+export type SdJwtEnvelopedVerifiableCredential = `data:${VcContentType}+sd-jwt;${SdJwt}`
+
+export type SupportedEnvelopedVerifiableCredential = SdJwtEnvelopedVerifiableCredential | JwtEnvelopedVerifiableCredential
 
 export type JsonLdObject = Record<string, unknown>
 
@@ -154,7 +153,6 @@ export type RequestCredentialPresentation = {
   }
 }
 
-
 export type SecuredContentType = {
   type: SupportedCredentialFormats | SupportedPresentationFormats | SupportedJwtSignatureFormats | SupportedSdJwtSignatureFormats | SupportedCoseSign1Formats
   content: Uint8Array
@@ -168,10 +166,31 @@ export type RequestVerifier = {
   resolver: VerifierResolver
 }
 
+
+export type ValidatorContentType = {
+  type: any
+  content: Uint8Array
+}
+
+
+export type ValidatorResolver = {
+  resolve: (req: ValidatorContentType) => Promise<any>
+}
+
+export type RequestValidator = {
+  resolver: ValidatorResolver
+}
+
+
 export type RequestVerify = {
-  type: SupportedCredentialFormats | SupportedPresentationFormats | SupportedJwtSignatureFormats | SupportedCoseSign1Formats,
+  type: SupportedCredentialFormats | SupportedPresentationFormats | SupportedJwtSignatureFormats | SupportedSdJwtSignatureFormats | SupportedCoseSign1Formats,
   content: Uint8Array
 
   audience?: string // intentionally not an array, to avoid the verifier being overly open to arbitrary values
   nonce?: string
-} 
+}
+
+export type CredentialSchema = {
+  id: string
+  type: 'JsonSchema'
+}

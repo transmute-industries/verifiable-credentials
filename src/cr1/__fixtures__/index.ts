@@ -17,3 +17,5 @@ export const claimset_disclosable_0_disclosure = new Uint8Array(fs.readFileSync(
 export const claimset_disclosable_1 = new Uint8Array(fs.readFileSync('./src/cr1/__fixtures__/claimset-disclosable-1.yml'))
 
 
+// a credential with a schema
+export const claimset_2 = new Uint8Array(fs.readFileSync('./src/cr1/__fixtures__/claimset-2.yml'))

@@ -10,5 +10,6 @@ import * as text from './text'
 import { issuer } from './credential'
 import { holder } from './presentation'
 import { verifier } from './verifier'
+import { validator } from './validator'
 
-export { key, claimset, status, text, issuer, holder, verifier }
+export { key, claimset, status, text, issuer, holder, verifier, validator }
