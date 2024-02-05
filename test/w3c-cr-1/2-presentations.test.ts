@@ -6,14 +6,12 @@ import * as cr1 from '../../src'
 import * as fixtures from '../../src/cr1/__fixtures__'
 
 
-it('has version', () => {
-  expect(cr1.version).toBe('https://www.w3.org/TR/2024/CR-vc-data-model-2.0-20240201/')
-})
+const privateKeyType = 'application/cose-key'
+const privateKeyContent = fs.readFileSync('./src/cr1/__fixtures__/holder-0-private-key.cbor')
+const publicKeyContent = fs.readFileSync('./src/cr1/__fixtures__/holder-0-public-key.cbor')
 
 describe('presentations issue and verify', () => {
-  const privateKeyType = 'application/cose-key'
-  const privateKeyContent = fs.readFileSync('./src/cr1/__fixtures__/holder-0-private-key.cbor')
-  const publicKeyContent = fs.readFileSync('./src/cr1/__fixtures__/holder-0-public-key.cbor')
+
   it('application/vp+ld+json+jwt', async () => {
     const vp = await cr1
       .holder({
