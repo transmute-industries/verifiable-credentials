@@ -174,15 +174,10 @@ export type RequestVerifier = {
   resolver: VerifierResolver
 }
 
-export type VerifyJwtOpts = {
-  audience?: string | string[]
-  nonce?: string
-}
-
 export type RequestVerify = {
   cty: SupportedCredentialFormats | SupportedPresentationFormats | SupportedJwtSignatureFormats | SupportedCoseSign1Formats,
   content: Uint8Array
 
-  audience?: string | string[]
+  audience?: string // intentionally not an array, to avoid the verifier being overly open to arbitrary values
   nonce?: string
-} & VerifyJwtOpts
+} 

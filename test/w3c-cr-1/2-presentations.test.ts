@@ -403,7 +403,9 @@ describe('SD-JWT based W3C Verifiable Presentations', () => {
       resolver: jwk
     }).verify({
       cty: 'application/kb+jwt',
-      content: transmute.text.encoder.encode(kbt)
+      content: transmute.text.encoder.encode(kbt),
+      audience: 'aud-123',
+      nonce: 'nonce-456',
     })
     expect(verified3.aud).toBe('aud-123')
     expect(verified3.nonce).toBe('nonce-456')

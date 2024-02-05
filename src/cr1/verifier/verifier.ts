@@ -10,25 +10,32 @@ import sd from '@transmute/vc-jwt-sd'
 import {
   VerifiableCredential,
   VerifiablePresentation,
-  VerifyJwtOpts,
   RequestVerifier,
   RequestVerify,
-  SupportedKeyFormats
 } from '../types'
 
 import { importKeyLike, importJWK } from '../key';
 
 import { decoder, encoder } from '../text';
 
+const acceptableAudience = (expectedAud: string, receivedAud: string | string[]): boolean => {
+  return Array.isArray(receivedAud) ? receivedAud.includes(expectedAud) : receivedAud === expectedAud
+}
 
-const verifyJwt = async (req: RequestVerifier, req2: RequestVerify) => {
-  const key = await req.resolver.resolve(req2)
+const verifyJwt = async ({ resolver }: RequestVerifier, { cty, content, audience, nonce }: RequestVerify) => {
+  const key = await resolver.resolve({ cty, content })
   const publicKey = await importKeyLike(key)
-  const jwt = decoder.decode(req2.content)
+  const jwt = decoder.decode(content)
   const { payload } = await jose.jwtVerify(jwt, publicKey, {
     issuer: undefined,
-    audience: req2.audience,
+    audience: audience,
   })
+  if (payload.nonce && payload.nonce !== nonce) {
+    throw new Error('Verifier did not supply nonce: ' + payload.nonce)
+  }
+  if (payload.aud && !acceptableAudience(`${audience}`, payload.aud)) {
+    throw new Error('Verifier  did not supply audience: ' + payload.aud)
+  }
   return payload
 }
 
@@ -48,7 +55,14 @@ const verifyCoseSign1
     const verified = await verifier.verify({
       coseSign1: content
     })
-    return JSON.parse(decoder.decode(verified))
+    const payload = JSON.parse(decoder.decode(verified))
+    if (payload.nonce && payload.nonce !== nonce) {
+      throw new Error('Verifier did not supply nonce: ' + payload.nonce)
+    }
+    if (payload.aud && !acceptableAudience(`${audience}`, payload.aud)) {
+      throw new Error('Verifier  did not supply audience: ' + payload.aud)
+    }
+    return payload
   }
 
 export const verifyUnsecuredPresentation = async ({ resolver }: RequestVerifier, { content, audience, nonce }: RequestVerify) => {
@@ -80,7 +94,7 @@ const verifySdJwtCredential = async ({ resolver }: RequestVerifier, { content, a
   })
   const verified = await verifier.verify({
     token: decoder.decode(content),
-    audience: audience as any,
+    audience: audience,
     nonce: nonce
   })
   return verified.claimset
@@ -100,7 +114,7 @@ const verifySdJwtPresentation = async ({ resolver }: RequestVerifier, { content,
   })
   const verified = await verifier.verify({
     token: decoder.decode(content),
-    audience: audience as any,
+    audience: audience,
     nonce: nonce
   })
   return verified.claimset
@@ -130,7 +144,7 @@ export const verifier = ({ resolver }: RequestVerifier) => {
           return verifyUnsecuredPresentation({ resolver }, { cty, content, audience, nonce }) as T
         }
         default: {
-          throw new Error('Unsupported content type')
+          throw new Error('Verifier does not support content type: ' + cty)
         }
       }
 
