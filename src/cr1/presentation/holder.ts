@@ -29,6 +29,23 @@ const jwtPresentationIssuer = (holder: RequestPresentationHolder) => {
   }
 }
 
+
+const coseSign1PresentationIssuer = (holder: RequestPresentationHolder) => {
+  return {
+    issue: async (req: RequestCredentialPresentation) => {
+      if (holder.signer === undefined) {
+        throw new Error('No signer available.')
+      }
+      if (!req.claimset) {
+        throw new Error('claimset is required for cose-sign1 presentations.')
+      }
+      const claims = claimset.parse(decoder.decode(req.claimset)) as any
+      claims.iss = claims.holder.id || claims.holder
+      return holder.signer.sign(encoder.encode(JSON.stringify(claims)))
+    }
+  }
+}
+
 const sdJwtPresentationIssuer = (holder: RequestPresentationHolder) => {
   return {
     issue: async (req: RequestCredentialPresentation) => {
@@ -98,6 +115,8 @@ export const holder = (holder: RequestPresentationHolder) => {
     return jwtPresentationIssuer(holder)
   } else if (holder.cty === 'application/vp+ld+json+sd-jwt') {
     return sdJwtPresentationIssuer(holder)
+  } else if (holder.cty === 'application/vp+ld+json+cose') {
+    return coseSign1PresentationIssuer(holder)
   }
   throw new Error('presentation type is not supported.')
 }

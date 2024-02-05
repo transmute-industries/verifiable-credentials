@@ -2,13 +2,35 @@ import fs from 'fs'
 
 import * as jose from 'jose'
 import * as transmute from '../../src'
-
+import * as cose from '@transmute/cose'
 import * as fixtures from '../../src/cr1/__fixtures__'
 
 
 const privateKeyType = 'application/cose-key'
 const privateKeyContent = fs.readFileSync('./src/cr1/__fixtures__/holder-0-private-key.cbor')
 const publicKeyContent = fs.readFileSync('./src/cr1/__fixtures__/holder-0-public-key.cbor')
+
+
+
+
+const coseSign1 = {
+  sign: async (bytes: Uint8Array) => {
+    const signer = cose.attached.signer({
+      remote: cose.crypto.signer({
+        secretKeyJwk: await transmute.key.importJWK({
+          cty: privateKeyType,
+          content: privateKeyContent
+        })
+      })
+    })
+    const signature = await signer.sign({
+      protectedHeader: new Map([[1, -35]]),
+      unprotectedHeader: new Map(),
+      payload: bytes
+    })
+    return new Uint8Array(signature)
+  }
+}
 
 const jws = {
   sign: async (bytes: Uint8Array) => {
@@ -37,7 +59,32 @@ const jwk: transmute.VerifierResolver = {
   }
 }
 
-describe('JWT based Presentations', () => {
+
+describe('COSE Sign1 based W3C Verifiable Presentations', () => {
+  it('application/vp+ld+json+cose', async () => {
+    const type = 'application/vp+ld+json+cose'
+    const vc = await transmute
+      .holder({
+        alg: 'ES384',
+        cty: type,
+        signer: coseSign1
+      })
+      .issue({
+        claimset: fixtures.claimset_1,
+      })
+    const verified = await transmute.
+      verifier({
+        resolver: jwk
+      })
+      .verify<transmute.VerifiablePresentationWithHolderObject>({
+        cty: type,
+        content: vc,
+      })
+    expect(verified.holder.id).toBe('https://university.example/issuers/565049')
+  })
+})
+
+describe('JWT based W3C Verifiable Presentations', () => {
 
   it('application/vp+ld+json+jwt', async () => {
     const type = 'application/vp+ld+json+jwt'
@@ -64,7 +111,7 @@ describe('JWT based Presentations', () => {
   })
 })
 
-describe('SD-JWT based Presentations', () => {
+describe('SD-JWT based W3C Verifiable Presentations', () => {
   it('application/vp+ld+json+sd-jwt (without key binding)', async () => {
     // this content type always implies an sd-jwt secured json-ld object (vp) contain enveloped Fnards.
     const type = 'application/vp+ld+json+sd-jwt'

@@ -7,6 +7,20 @@ import * as claimset from '../claimset'
 
 import { encoder, decoder } from '../text'
 
+const coseSign1CredentialIssuer = (issuer: RequestCredentialIssuer) => {
+  return {
+    issue: async (credential: RequestIssueCredential) => {
+      if (issuer.signer === undefined) {
+        throw new Error('No signer available.')
+      }
+      const claims = claimset.parse(decoder.decode(credential.claimset)) as any
+      claims.iss = claims.issuer.id || claims.issuer; // required for verify
+      return issuer.signer.sign(encoder.encode(JSON.stringify(claims)))
+    }
+  }
+}
+
+
 const jwtCredentialIssuer = (issuer: RequestCredentialIssuer) => {
   return {
     issue: async (credential: RequestIssueCredential) => {
@@ -55,6 +69,8 @@ export const issuer = (issuer: RequestCredentialIssuer) => {
     return jwtCredentialIssuer(issuer)
   } else if (issuer.cty === 'application/vc+ld+json+sd-jwt') {
     return sdJwtCredentialIssuer(issuer)
+  } else if (issuer.cty === 'application/vc+ld+json+cose') {
+    return coseSign1CredentialIssuer(issuer)
   }
 
   throw new Error('credential type is not supported.')

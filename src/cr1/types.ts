@@ -18,11 +18,13 @@ export type SdJwtEnvelopedVerifiableCredential = `data:${VcContentType}+sd-jwt;$
 
 
 export type SupportedCredentialFormats = `${VcContentType}+jwt` | `${VcContentType}+sd-jwt`
-export type SupportedPresentationFormats = `${VpContentType}+jwt` | `${VpContentType}+sd-jwt`
+export type SupportedPresentationFormats = `${VpContentType}+jwt` | `${VpContentType}+sd-jwt` | `${VpContentType}+cose`
 
 export type SupportedSdJwtSignatureFormats = `application/sd-jwt` | `${VcContentType}+sd-jwt` | `${VpContentType}+sd-jwt`
 
 export type SupportedJwtSignatureFormats = `application/jwt` | `application/kb+jwt` | `${VcContentType}+jwt` | `${VpContentType}+jwt`
+
+export type SupportedCoseSign1Formats = `${VcContentType}+cose`
 
 export type SupportedEnvelopedVerifiableCredential = SdJwtEnvelopedVerifiableCredential
 
@@ -107,7 +109,7 @@ export type RequestPrivateKeySigner = {
 
 export type RequestCredentialIssuer = {
   alg: SupportedSignatureAlgorithms
-  cty: SupportedJwtSignatureFormats | SupportedSdJwtSignatureFormats
+  cty: SupportedJwtSignatureFormats | SupportedSdJwtSignatureFormats | SupportedCoseSign1Formats
   signer: {
     sign: (bytes: Uint8Array) => Promise<Uint8Array>
   }
@@ -158,7 +160,7 @@ export type PublicKeyWithContentType = {
 // application/vc+ld+json+jwt is a "credential" in this sense
 
 export type CredentialWithContentType = {
-  cty: SupportedCredentialFormats | SupportedPresentationFormats | SupportedJwtSignatureFormats | SupportedSdJwtSignatureFormats,
+  cty: SupportedCredentialFormats | SupportedPresentationFormats | SupportedJwtSignatureFormats | SupportedSdJwtSignatureFormats | SupportedCoseSign1Formats
   content: Uint8Array
 }
 
@@ -171,13 +173,12 @@ export type RequestVerifier = {
 }
 
 export type VerifyJwtOpts = {
-  iss?: string
   audience?: string | string[]
   nonce?: string
 }
 
 export type RequestVerify = {
-  cty: SupportedCredentialFormats | SupportedPresentationFormats | SupportedJwtSignatureFormats,
+  cty: SupportedCredentialFormats | SupportedPresentationFormats | SupportedJwtSignatureFormats | SupportedCoseSign1Formats,
   content: Uint8Array
 
   audience?: string | string[]

@@ -3,6 +3,8 @@
 
 import * as jose from 'jose'
 
+import * as cose from '@transmute/cose'
+
 import sd from '@transmute/vc-jwt-sd'
 
 import {
@@ -10,7 +12,8 @@ import {
   VerifiablePresentation,
   VerifyJwtOpts,
   RequestVerifier,
-  RequestVerify
+  RequestVerify,
+  SupportedKeyFormats
 } from '../types'
 
 import { importKeyLike, importJWK } from '../key';
@@ -20,11 +23,27 @@ import { decoder } from '../text';
 
 const verifyJwt = async (jwt: string, publicKey: jose.KeyLike | Uint8Array, opts: VerifyJwtOpts) => {
   const { payload } = await jose.jwtVerify(jwt, publicKey, {
-    issuer: opts.iss,
+    issuer: undefined,
     audience: opts.audience,
   })
   return payload
 }
+
+const verifyCoseSign1
+  = async (coseSign1: ArrayBuffer, key: { cty: SupportedKeyFormats, content: Uint8Array }) => {
+    const verifier = cose.attached.verifier({
+      resolver: {
+        resolve: async () => {
+          return importJWK(key)
+        }
+      }
+    })
+    const verified = await verifier.verify({
+      coseSign1
+    })
+    return JSON.parse(decoder.decode(verified))
+  }
+
 
 export const verifier = (req: RequestVerifier) => {
   return {
@@ -73,6 +92,10 @@ export const verifier = (req: RequestVerifier) => {
           nonce: opts.nonce
         })
         return verified.claimset as T
+      } else if (cty === 'application/vc+ld+json+cose') {
+        return verifyCoseSign1(content, key) as T
+      } else if (cty === 'application/vp+ld+json+cose') {
+        return verifyCoseSign1(content, key) as T
       }
 
       throw new Error('Unsupported content type')

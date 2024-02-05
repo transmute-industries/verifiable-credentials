@@ -1,5 +1,6 @@
 import fs from 'fs'
 import * as jose from 'jose'
+import * as cose from '@transmute/cose'
 import * as transmute from '../../src'
 
 import * as fixtures from '../../src/cr1/__fixtures__'
@@ -23,6 +24,25 @@ const jws = {
   }
 }
 
+const coseSign1 = {
+  sign: async (bytes: Uint8Array) => {
+    const signer = cose.attached.signer({
+      remote: cose.crypto.signer({
+        secretKeyJwk: await transmute.key.importJWK({
+          cty: privateKeyType,
+          content: privateKeyContent
+        })
+      })
+    })
+    const signature = await signer.sign({
+      protectedHeader: new Map([[1, -35]]),
+      unprotectedHeader: new Map(),
+      payload: bytes
+    })
+    return new Uint8Array(signature)
+  }
+}
+
 const jwk: transmute.VerifierResolver = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   resolve: async ({ cty, content }) => {
@@ -34,6 +54,30 @@ const jwk: transmute.VerifierResolver = {
     }
   }
 }
+
+describe('COSE Sign1 based W3C Verifiable Credentials', () => {
+  it('application/vc+ld+json+cose', async () => {
+    const type = 'application/vc+ld+json+cose'
+    const vc = await transmute
+      .issuer({
+        alg: 'ES384',
+        cty: type,
+        signer: coseSign1
+      })
+      .issue({
+        claimset: fixtures.claimset_0,
+      })
+    const verified = await transmute.
+      verifier({
+        resolver: jwk
+      })
+      .verify<transmute.VerifiableCredentialWithIssuerObject>({
+        cty: type,
+        content: vc,
+      })
+    expect(verified.issuer.id).toBe('https://university.example/issuers/565049')
+  })
+})
 
 describe('JWT based W3C Verifiable Credentials', () => {
   it('application/vc+ld+json+jwt', async () => {
