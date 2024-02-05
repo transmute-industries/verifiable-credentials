@@ -8,7 +8,7 @@ const encoder = new TextEncoder();
 
 export type RequestGenerateCredentialKey = {
   alg: SupportedSignatureAlgorithms
-  cty: SupportedKeyFormats
+  type: SupportedKeyFormats
 
   iss?: string
   sub?: string
@@ -18,16 +18,16 @@ export type RequestGenerateCredentialKey = {
 }
 
 export const generate = async (req: RequestGenerateCredentialKey): Promise<Uint8Array> => {
-  if (req.cty === 'application/jwk+json') {
+  if (req.type === 'application/jwk+json') {
     const obj = await cose.key.generate(req.alg, 'application/jwk+json')
     const text = JSON.stringify(obj, null, 2)
     return encoder.encode(text)
   }
-  if (req.cty === 'application/cose-key') {
+  if (req.type === 'application/cose-key') {
     const result = await cose.key.generate(req.alg, 'application/cose-key')
     return new Uint8Array(cose.cbor.encode(result))
   }
-  if (req.cty === 'application/pkcs8') {
+  if (req.type === 'application/pkcs8') {
     const result = await cose.certificate.root({
       alg: req.alg,
       iss: req.iss || 'vendor.example',

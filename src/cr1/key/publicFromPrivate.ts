@@ -10,14 +10,14 @@ import { encoder, decoder } from '../text'
 
 export const publicFromPrivate = async (
   key: {
-    cty: SupportedKeyFormats,
+    type: SupportedKeyFormats,
     content: Uint8Array
   }) => {
-  if (key.cty === 'application/jwk+json') {
+  if (key.type === 'application/jwk+json') {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { d, ...publicKeyJwk } = JSON.parse(decoder.decode(key.content))
     return encoder.encode(JSON.stringify(publicKeyJwk))
-  } else if (key.cty === 'application/cose-key') {
+  } else if (key.type === 'application/cose-key') {
     const coseKey = cose.cbor.decode(key.content)
     const jwk = await cose.key.convertCoseKeyToJsonWebKey<jose.JWK>(coseKey)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

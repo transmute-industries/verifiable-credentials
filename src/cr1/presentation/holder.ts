@@ -18,10 +18,10 @@ const presentationToClaims = (req: RequestCredentialPresentation) => {
   const claims = req.presentation
   claims.verifiableCredential = []
   for (const d of req.disclosures) {
-    const text = d.cty.endsWith('+cose') ? `base64url,${base64url.encode(d.credential)}` : decoder.decode(d.credential)
+    const text = d.type.endsWith('+cose') ? `base64url,${base64url.encode(d.credential)}` : decoder.decode(d.credential)
     claims.verifiableCredential.push({
       "@context": "https://www.w3.org/ns/credentials/v2",
-      "id": `data:${d.cty};${text}`,
+      "id": `data:${d.type};${text}`,
       "type": "EnvelopedVerifiableCredential"
     })
   }
@@ -145,10 +145,10 @@ const unsecuredPresentationOfSecuredCredentials = (holder: RequestPresentationHo
             // since there can be no key binding
           }) as SdJwt
 
-          enveloped = `data:${d.cty};${sdJwtFnard}` // great job everyone.
+          enveloped = `data:${d.type};${sdJwtFnard}` // great job everyone.
         } else {
           const token = decoder.decode(d.credential)
-          enveloped = `data:${d.cty};${token}`
+          enveloped = `data:${d.type};${token}`
         }
         if (enveloped === undefined) {
           throw new Error('Unable to envelop credential for presentation')
@@ -165,13 +165,13 @@ const unsecuredPresentationOfSecuredCredentials = (holder: RequestPresentationHo
 }
 
 export const holder = (holder: RequestPresentationHolder) => {
-  if (holder.cty === 'application/vp+ld+json+jwt') {
+  if (holder.type === 'application/vp+ld+json+jwt') {
     return jwtPresentationIssuer(holder)
-  } else if (holder.cty === 'application/vp+ld+json+sd-jwt') {
+  } else if (holder.type === 'application/vp+ld+json+sd-jwt') {
     return sdJwtPresentationIssuer(holder)
-  } else if (holder.cty === 'application/vp+ld+json+cose') {
+  } else if (holder.type === 'application/vp+ld+json+cose') {
     return coseSign1PresentationIssuer(holder)
-  } else if (holder.cty === 'application/vp+ld+json') {
+  } else if (holder.type === 'application/vp+ld+json') {
     return unsecuredPresentationOfSecuredCredentials(holder)
   }
   throw new Error('presentation type is not supported.')

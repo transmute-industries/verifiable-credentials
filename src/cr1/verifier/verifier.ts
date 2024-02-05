@@ -22,8 +22,8 @@ const acceptableAudience = (expectedAud: string, receivedAud: string | string[])
   return Array.isArray(receivedAud) ? receivedAud.includes(expectedAud) : receivedAud === expectedAud
 }
 
-const verifyJwt = async ({ resolver }: RequestVerifier, { cty, content, audience, nonce }: RequestVerify) => {
-  const key = await resolver.resolve({ cty, content })
+const verifyJwt = async ({ resolver }: RequestVerifier, { type, content, audience, nonce }: RequestVerify) => {
+  const key = await resolver.resolve({ type, content })
   const publicKey = await importKeyLike(key)
   const jwt = decoder.decode(content)
   const { payload } = await jose.jwtVerify(jwt, publicKey, {
@@ -45,7 +45,7 @@ const verifyCoseSign1
       resolver: {
         resolve: async () => {
           const key = await resolver.resolve({
-            cty: 'application/vc+ld+json+sd-jwt',
+            type: 'application/vc+ld+json+sd-jwt',
             content
           })
           return importJWK(key)
@@ -72,10 +72,10 @@ export const verifyUnsecuredPresentation = async ({ resolver }: RequestVerifier,
       throw new Error('Unsupported verifiable credential type')
     }
     const [start] = vc.id.split(';')
-    const cty = start.replace('data:', '')
+    const type = start.replace('data:', '')
     const content = encoder.encode(vc.id.split(';').pop())
     const { verify } = verifier({ resolver })
-    await verify({ cty, content, audience, nonce })
+    await verify({ type, content, audience, nonce })
   }
   return dataModel
 }
@@ -85,7 +85,7 @@ const verifySdJwtCredential = async ({ resolver }: RequestVerifier, { content, a
     resolver: {
       resolve: async () => {
         const key = await resolver.resolve({
-          cty: 'application/vc+ld+json+sd-jwt',
+          type: 'application/vc+ld+json+sd-jwt',
           content
         })
         return importJWK(key)
@@ -105,7 +105,7 @@ const verifySdJwtPresentation = async ({ resolver }: RequestVerifier, { content,
     resolver: {
       resolve: async () => {
         const key = await resolver.resolve({
-          cty: 'application/vp+ld+json+sd-jwt',
+          type: 'application/vp+ld+json+sd-jwt',
           content // same a token
         })
         return importJWK(key)
@@ -123,28 +123,28 @@ const verifySdJwtPresentation = async ({ resolver }: RequestVerifier, { content,
 
 export const verifier = ({ resolver }: RequestVerifier) => {
   return {
-    verify: async <T = VerifiableCredential | VerifiablePresentation>({ cty, content, audience, nonce }: RequestVerify): Promise<T> => {
-      switch (cty) {
+    verify: async <T = VerifiableCredential | VerifiablePresentation>({ type, content, audience, nonce }: RequestVerify): Promise<T> => {
+      switch (type) {
         case 'application/vc+ld+json+cose':
         case 'application/vp+ld+json+cose': {
-          return verifyCoseSign1({ resolver }, { cty, content, audience, nonce }) as T
+          return verifyCoseSign1({ resolver }, { type, content, audience, nonce }) as T
         }
         case 'application/vc+ld+json+jwt':
         case 'application/vp+ld+json+jwt':
         case 'application/kb+jwt': {
-          return verifyJwt({ resolver }, { cty, content, audience, nonce }) as T
+          return verifyJwt({ resolver }, { type, content, audience, nonce }) as T
         }
         case 'application/vc+ld+json+sd-jwt': {
-          return verifySdJwtCredential({ resolver }, { cty, content, audience, nonce }) as T
+          return verifySdJwtCredential({ resolver }, { type, content, audience, nonce }) as T
         }
         case 'application/vp+ld+json+sd-jwt': {
-          return verifySdJwtPresentation({ resolver }, { cty, content, audience, nonce }) as T
+          return verifySdJwtPresentation({ resolver }, { type, content, audience, nonce }) as T
         }
         case 'application/vp+ld+json': {
-          return verifyUnsecuredPresentation({ resolver }, { cty, content, audience, nonce }) as T
+          return verifyUnsecuredPresentation({ resolver }, { type, content, audience, nonce }) as T
         }
         default: {
-          throw new Error('Verifier does not support content type: ' + cty)
+          throw new Error('Verifier does not support content type: ' + type)
         }
       }
 

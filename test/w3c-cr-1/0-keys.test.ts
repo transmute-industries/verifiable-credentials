@@ -15,10 +15,10 @@ it('has version', () => {
 it('publicFromPrivate', async () => {
   const privateKey = await cr1.key.generate({
     alg: 'ES384',
-    cty: 'application/jwk+json'
+    type: 'application/jwk+json'
   })
   const publicKey = await cr1.key.publicFromPrivate({
-    cty: 'application/jwk+json',
+    type: 'application/jwk+json',
     content: privateKey
   })
   const parsed0 = JSON.parse(decoder.decode(privateKey))
@@ -31,7 +31,7 @@ describe.skip('key generation', () => {
   it('application/jwk+json', async () => {
     const k1 = await cr1.key.generate({
       alg: 'ES384',
-      cty: 'application/jwk+json'
+      type: 'application/jwk+json'
     })
     const importedKey = await jose.importJWK(JSON.parse(decoder.decode(k1)))
     expect(importedKey).toBeDefined()
@@ -45,7 +45,7 @@ describe.skip('key generation', () => {
   it('application/cose-key', async () => {
     const k1 = await cr1.key.generate({
       alg: 'ES384',
-      cty: 'application/cose-key'
+      type: 'application/cose-key'
     })
     const coseKey = cose.cbor.decode(k1)
     const jwk = await cose.key.convertCoseKeyToJsonWebKey<jose.JWK>(coseKey)
@@ -58,7 +58,7 @@ describe.skip('key generation', () => {
   it('application/pkcs8', async () => {
     const k1 = await cr1.key.generate({
       alg: 'ES384',
-      cty: 'application/pkcs8',
+      type: 'application/pkcs8',
       iss: 'vendor.example',
       sub: 'vendor.example',
       nbf: moment().toISOString(), // now

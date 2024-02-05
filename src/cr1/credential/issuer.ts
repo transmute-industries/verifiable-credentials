@@ -65,11 +65,11 @@ const sdJwtCredentialIssuer = (issuer: RequestCredentialIssuer) => {
 }
 
 export const issuer = (issuer: RequestCredentialIssuer) => {
-  if (issuer.cty === 'application/vc+ld+json+jwt') {
+  if (issuer.type === 'application/vc+ld+json+jwt') {
     return jwtCredentialIssuer(issuer)
-  } else if (issuer.cty === 'application/vc+ld+json+sd-jwt') {
+  } else if (issuer.type === 'application/vc+ld+json+sd-jwt') {
     return sdJwtCredentialIssuer(issuer)
-  } else if (issuer.cty === 'application/vc+ld+json+cose') {
+  } else if (issuer.type === 'application/vc+ld+json+cose') {
     return coseSign1CredentialIssuer(issuer)
   }
 

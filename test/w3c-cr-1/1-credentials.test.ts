@@ -12,7 +12,7 @@ const publicKeyContent = fs.readFileSync('./src/cr1/__fixtures__/issuer-0-public
 const jws = {
   sign: async (bytes: Uint8Array) => {
     const privateKey = await transmute.key.importKeyLike({
-      cty: privateKeyType,
+      type: privateKeyType,
       content: privateKeyContent
     })
     const jws = await new jose.CompactSign(
@@ -29,7 +29,7 @@ const coseSign1 = {
     const signer = cose.attached.signer({
       remote: cose.crypto.signer({
         secretKeyJwk: await transmute.key.importJWK({
-          cty: privateKeyType,
+          type: privateKeyType,
           content: privateKeyContent
         })
       })
@@ -45,11 +45,11 @@ const coseSign1 = {
 
 const jwk: transmute.VerifierResolver = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  resolve: async ({ cty, content }) => {
+  resolve: async ({ type, content }) => {
     // ignore hints about message
     // return the same public key for tests
     return {
-      cty: privateKeyType,
+      type: privateKeyType,
       content: publicKeyContent
     }
   }
@@ -61,7 +61,7 @@ describe('COSE Sign1 based W3C Verifiable Credentials', () => {
     const vc = await transmute
       .issuer({
         alg: 'ES384',
-        cty: type,
+        type: type,
         signer: coseSign1
       })
       .issue({
@@ -72,7 +72,7 @@ describe('COSE Sign1 based W3C Verifiable Credentials', () => {
         resolver: jwk
       })
       .verify<transmute.VerifiableCredentialWithIssuerObject>({
-        cty: type,
+        type: type,
         content: vc,
       })
     expect(verified.issuer.id).toBe('https://university.example/issuers/565049')
@@ -85,7 +85,7 @@ describe('JWT based W3C Verifiable Credentials', () => {
     const vc = await transmute
       .issuer({
         alg: 'ES384',
-        cty: type,
+        type: type,
         signer: jws
       })
       .issue({
@@ -96,7 +96,7 @@ describe('JWT based W3C Verifiable Credentials', () => {
         resolver: jwk
       })
       .verify<transmute.VerifiableCredentialWithIssuerObject>({
-        cty: type,
+        type: type,
         content: vc,
       })
     expect(verified.issuer.id).toBe('https://university.example/issuers/565049')
@@ -110,7 +110,7 @@ describe('SD-JWT based W3C Verifiable Credentials', () => {
       .issuer({
         // 🔥 implication is that both alg and kid do not belong at this layer...
         alg: 'ES384',
-        cty: type, // expand cty everywhere for readability
+        type: type, // expand cty everywhere for readability
         signer: jws
       })
       .issue({
@@ -121,7 +121,7 @@ describe('SD-JWT based W3C Verifiable Credentials', () => {
         resolver: jwk
       })
       .verify<transmute.VerifiableCredentialWithIssuerObject>({
-        cty: type,
+        type: type,
         content: vc
       })
     expect(verified.issuer.id).toBe('https://university.example/issuers/565049')

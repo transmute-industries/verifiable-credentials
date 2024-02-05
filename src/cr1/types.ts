@@ -81,11 +81,18 @@ export type VerifiablePresentationOfEnveloped = VerifiablePresentation & {
   verifiableCredential: Array<EnvelopedVerifiableCredential>
 }
 
+export type PrivateKeyWithContentType = {
+  type: SupportedKeyFormats,
+  content: Uint8Array
+}
+
+export type PublicKeyWithContentType = {
+  type: SupportedKeyFormats,
+  content: Uint8Array
+}
+
 export type RequestSigner = {
-  privateKey?: {
-    cty: SupportedKeyFormats,
-    content: Uint8Array
-  }
+  privateKey?: PrivateKeyWithContentType
 }
 
 export type SignatureHeader = Record<string, unknown> & {
@@ -98,15 +105,12 @@ export type SignatureHeader = Record<string, unknown> & {
 
 export type RequestPrivateKeySigner = {
   protectedHeader: SignatureHeader,
-  privateKey: {
-    cty: SupportedKeyFormats,
-    content: Uint8Array
-  }
+  privateKey: PrivateKeyWithContentType
 }
 
 export type RequestCredentialIssuer = {
   alg: SupportedSignatureAlgorithms
-  cty: SupportedJwtSignatureFormats | SupportedSdJwtSignatureFormats | SupportedCoseSign1Formats
+  type: SupportedJwtSignatureFormats | SupportedSdJwtSignatureFormats | SupportedCoseSign1Formats
   signer: {
     sign: (bytes: Uint8Array) => Promise<Uint8Array>
   }
@@ -119,12 +123,12 @@ export type RequestIssueCredential = {
 
 export type RequestPresentationHolder = {
   alg?: SupportedSignatureAlgorithms
-  cty: SupportedPresentationFormats
+  type: SupportedPresentationFormats
 
 }
 
 export type SdJwtDisclosure = {
-  cty: SupportedCredentialFormats
+  type: SupportedCredentialFormats
   credential: Uint8Array
   disclosure?: Uint8Array // only required in SD-JWT
 
@@ -151,23 +155,13 @@ export type RequestCredentialPresentation = {
 }
 
 
-export type PublicKeyWithContentType = {
-  cty: SupportedKeyFormats,
-  content: Uint8Array
-}
-
-// here the word  "credential" means 
-// "anything that is signed and as an associated media type that indicates it is signed"
-// application/vc+ld+json is not a "credential" in this sense but...
-// application/vc+ld+json+jwt is a "credential" in this sense
-
-export type CredentialWithContentType = {
-  cty: SupportedCredentialFormats | SupportedPresentationFormats | SupportedJwtSignatureFormats | SupportedSdJwtSignatureFormats | SupportedCoseSign1Formats
+export type SecuredContentType = {
+  type: SupportedCredentialFormats | SupportedPresentationFormats | SupportedJwtSignatureFormats | SupportedSdJwtSignatureFormats | SupportedCoseSign1Formats
   content: Uint8Array
 }
 
 export type VerifierResolver = {
-  resolve: (req: CredentialWithContentType) => Promise<PublicKeyWithContentType>
+  resolve: (req: SecuredContentType) => Promise<PublicKeyWithContentType>
 }
 
 export type RequestVerifier = {
@@ -175,7 +169,7 @@ export type RequestVerifier = {
 }
 
 export type RequestVerify = {
-  cty: SupportedCredentialFormats | SupportedPresentationFormats | SupportedJwtSignatureFormats | SupportedCoseSign1Formats,
+  type: SupportedCredentialFormats | SupportedPresentationFormats | SupportedJwtSignatureFormats | SupportedCoseSign1Formats,
   content: Uint8Array
 
   audience?: string // intentionally not an array, to avoid the verifier being overly open to arbitrary values

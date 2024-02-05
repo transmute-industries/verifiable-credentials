@@ -10,13 +10,13 @@ import { importJWK } from './importJWK'
 
 export const importKeyLike = async (
   key: {
-    cty: SupportedKeyFormats,
+    type: SupportedKeyFormats,
     content: Uint8Array
   }) => {
-  if (key.cty === 'application/jwk+json') {
+  if (key.type === 'application/jwk+json') {
     const jwk = await importJWK(key)
     return jose.importJWK(jwk)
-  } else if (key.cty === 'application/cose-key') {
+  } else if (key.type === 'application/cose-key') {
     const jwk = await importJWK(key)
     return jose.importJWK(jwk)
   }

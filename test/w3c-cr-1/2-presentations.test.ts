@@ -10,15 +10,12 @@ const privateKeyType = 'application/cose-key'
 const privateKeyContent = fs.readFileSync('./src/cr1/__fixtures__/holder-0-private-key.cbor')
 const publicKeyContent = fs.readFileSync('./src/cr1/__fixtures__/holder-0-public-key.cbor')
 
-
-
-
 const coseSign1 = {
   sign: async (bytes: Uint8Array) => {
     const signer = cose.attached.signer({
       remote: cose.crypto.signer({
         secretKeyJwk: await transmute.key.importJWK({
-          cty: privateKeyType,
+          type: privateKeyType,
           content: privateKeyContent
         })
       })
@@ -35,7 +32,7 @@ const coseSign1 = {
 const jws = {
   sign: async (bytes: Uint8Array) => {
     const privateKey = await transmute.key.importKeyLike({
-      cty: privateKeyType,
+      type: privateKeyType,
       content: privateKeyContent
     })
     const jws = await new jose.CompactSign(
@@ -49,11 +46,11 @@ const jws = {
 
 const jwk: transmute.VerifierResolver = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  resolve: async ({ cty, content }) => {
+  resolve: async ({ type, content }) => {
     // ignore hints about message
     // return the same public key for tests
     return {
-      cty: privateKeyType,
+      type: privateKeyType,
       content: publicKeyContent
     }
   }
@@ -66,7 +63,7 @@ describe('Unsecured W3C Verifiable Presentations', () => {
 
     const vp = await transmute
       .holder({
-        cty: type,
+        type: type,
       })
       .issue({
         audience: undefined,
@@ -85,11 +82,11 @@ describe('Unsecured W3C Verifiable Presentations', () => {
           // }]
         },
         disclosures: [{
-          cty: `application/vc+ld+json+sd-jwt`,
+          type: `application/vc+ld+json+sd-jwt`,
           credential: await transmute
             .issuer({
               alg: 'ES384',
-              cty: 'application/vc+ld+json+sd-jwt',
+              type: 'application/vc+ld+json+sd-jwt',
               signer: jws
             })
             .issue({
@@ -100,11 +97,11 @@ describe('Unsecured W3C Verifiable Presentations', () => {
           disclosure: fixtures.claimset_0,
         },
         {
-          cty: `application/vc+ld+json+jwt`,
+          type: `application/vc+ld+json+jwt`,
           credential: await transmute
             .issuer({
               alg: 'ES384',
-              cty: 'application/vc+ld+json+jwt',
+              type: 'application/vc+ld+json+jwt',
               signer: jws
             })
             .issue({
@@ -117,14 +114,14 @@ describe('Unsecured W3C Verifiable Presentations', () => {
         resolver: {
           resolve: async () => {
             return {
-              cty: privateKeyType,
+              type: privateKeyType,
               content: publicKeyContent
             }
           }
         }
       })
       .verify<transmute.VerifiablePresentationWithHolderObject & transmute.VerifiablePresentationOfEnveloped>({
-        cty: type,
+        type: type,
         content: vp
       })
     expect(verified.holder).toBe('https://university.example/issuers/565049')
@@ -140,7 +137,7 @@ describe('COSE Sign1 based W3C Verifiable Presentations', () => {
     const vc = await transmute
       .holder({
         alg: 'ES384',
-        cty: type,
+        type: type,
       })
       .issue({
         signer: coseSign1,
@@ -159,12 +156,12 @@ describe('COSE Sign1 based W3C Verifiable Presentations', () => {
         },
         disclosures: [
           {
-            cty: `application/vc+ld+json+cose`,
+            type: `application/vc+ld+json+cose`,
             credential: await transmute
               .issuer({
                 // 🔥 remove alg from this layer
                 alg: 'ES384',
-                cty: `application/vc+ld+json+cose`, // expand cty everywhere for readability
+                type: `application/vc+ld+json+cose`, // expand cty everywhere for readability
                 signer: coseSign1
               })
               .issue({
@@ -179,7 +176,7 @@ describe('COSE Sign1 based W3C Verifiable Presentations', () => {
         resolver: jwk
       })
       .verify<transmute.VerifiablePresentationWithHolderObject & transmute.VerifiablePresentationOfEnveloped>({
-        cty: type,
+        type: type,
         content: vc,
       })
 
@@ -196,7 +193,7 @@ describe('JWT based W3C Verifiable Presentations', () => {
     const vp = await transmute
       .holder({
         alg: 'ES384',
-        cty: type,
+        type: type,
       })
       .issue({
         signer: jws,
@@ -216,11 +213,11 @@ describe('JWT based W3C Verifiable Presentations', () => {
         },
         disclosures: [
           {
-            cty: `application/vc+ld+json+jwt`,
+            type: `application/vc+ld+json+jwt`,
             credential: await transmute
               .issuer({
                 alg: 'ES384',  // 🔥 remove me from this layer.
-                cty: `application/vc+ld+json+jwt`, // expand cty everywhere for readability
+                type: `application/vc+ld+json+jwt`, // expand cty everywhere for readability
                 signer: jws
               })
               .issue({
@@ -234,7 +231,7 @@ describe('JWT based W3C Verifiable Presentations', () => {
         resolver: jwk
       })
       .verify<transmute.VerifiablePresentationWithHolderObject & transmute.VerifiablePresentationOfEnveloped>({
-        cty: type,
+        type: type,
         content: vp
       })
     expect(verified.holder).toBe('https://university.example/issuers/565049')
@@ -250,7 +247,7 @@ describe('SD-JWT based W3C Verifiable Presentations', () => {
     const vp = await transmute
       .holder({
         alg: 'ES384', // renmove me when possible
-        cty: type,
+        type: type,
       })
       .issue({
         audience: undefined,
@@ -271,13 +268,13 @@ describe('SD-JWT based W3C Verifiable Presentations', () => {
           // }]
         },
         disclosures: [{
-          cty: `application/vc+ld+json+sd-jwt`,
+          type: `application/vc+ld+json+sd-jwt`,
           audience: undefined,
           nonce: undefined,
           credential: await transmute
             .issuer({
               alg: 'ES384',
-              cty: 'application/vc+ld+json+sd-jwt',
+              type: 'application/vc+ld+json+sd-jwt',
               signer: jws
             })
             .issue({
@@ -294,14 +291,14 @@ describe('SD-JWT based W3C Verifiable Presentations', () => {
         resolver: {
           resolve: async () => {
             return {
-              cty: privateKeyType,
+              type: privateKeyType,
               content: publicKeyContent
             }
           }
         }
       })
       .verify<transmute.VerifiablePresentationWithHolderObject & transmute.VerifiablePresentationOfEnveloped>({
-        cty: type,
+        type: type,
         content: vp
       })
     expect(verified.holder.id).toBe('https://university.example/issuers/565049')
@@ -316,7 +313,7 @@ describe('SD-JWT based W3C Verifiable Presentations', () => {
     const vp = await transmute
       .holder({
         alg: 'ES384',
-        cty: type,
+        type: type,
         // this is the private key that signed the outer JSON-LD VP object.
 
       })
@@ -340,12 +337,12 @@ describe('SD-JWT based W3C Verifiable Presentations', () => {
           // }]
         },
         disclosures: [{
-          cty: `application/vc+ld+json+sd-jwt`,
+          type: `application/vc+ld+json+sd-jwt`,
           // internal params
           credential: await transmute
             .issuer({
               alg: 'ES384',
-              cty: 'application/vc+ld+json+sd-jwt',
+              type: 'application/vc+ld+json+sd-jwt',
               signer: jws
             })
             .issue({
@@ -367,7 +364,7 @@ describe('SD-JWT based W3C Verifiable Presentations', () => {
         resolver: {
           resolve: async () => {
             return {
-              cty: privateKeyType,
+              type: privateKeyType,
               content: publicKeyContent
             }
           }
@@ -375,7 +372,7 @@ describe('SD-JWT based W3C Verifiable Presentations', () => {
       })
       .verify<transmute.VerifiablePresentationWithHolderObject & transmute.VerifiablePresentationOfEnveloped>({
         // this content type always implies an sd-jwt secured json-ld object (vp) contain enveloped Fnards.
-        cty: type,
+        type: type,
         content: vp,
         audience: 'aud-123',
         nonce: 'nonce-456',
@@ -391,7 +388,7 @@ describe('SD-JWT based W3C Verifiable Presentations', () => {
       })
       .verify<transmute.VerifiablePresentationWithHolderObject & transmute.VerifiablePresentationOfEnveloped>({
         // this content type always implies an sd-jwt secured json-ld object (vp) contain enveloped Fnards.
-        cty: 'application/vc+ld+json+sd-jwt',
+        type: 'application/vc+ld+json+sd-jwt',
         content: transmute.text.encoder.encode(envelopedVc),
         audience: 'aud-123',
         nonce: 'nonce-456',
@@ -402,7 +399,7 @@ describe('SD-JWT based W3C Verifiable Presentations', () => {
     const verified3 = await transmute.verifier({
       resolver: jwk
     }).verify({
-      cty: 'application/kb+jwt',
+      type: 'application/kb+jwt',
       content: transmute.text.encoder.encode(kbt),
       audience: 'aud-123',
       nonce: 'nonce-456',
