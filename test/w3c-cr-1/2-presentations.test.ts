@@ -10,7 +10,6 @@ const privateKeyType = 'application/cose-key'
 const privateKeyContent = fs.readFileSync('./src/cr1/__fixtures__/holder-0-private-key.cbor')
 const publicKeyContent = fs.readFileSync('./src/cr1/__fixtures__/holder-0-public-key.cbor')
 
-
 const jws = {
   sign: async (bytes: Uint8Array) => {
     const privateKey = await transmute.key.importKeyLike({
@@ -38,13 +37,14 @@ const jwk: transmute.VerifierResolver = {
   }
 }
 
-describe('presentations issue and verify', () => {
+describe('JWT based Presentations', () => {
 
   it('application/vp+ld+json+jwt', async () => {
+    const type = 'application/vp+ld+json+jwt'
     const vp = await transmute
       .holder({
         alg: 'ES384',
-        cty: 'application/vp+ld+json+jwt',
+        cty: type,
         signer: jws
       })
       .issue({
@@ -53,37 +53,25 @@ describe('presentations issue and verify', () => {
       })
     const verified = await transmute.
       verifier({
-        resolver: {
-          resolve: async () => {
-            return {
-              cty: privateKeyType,
-              content: publicKeyContent
-            }
-          }
-        }
+        resolver: jwk
       })
       .verify<transmute.VerifiablePresentationWithHolderObject & transmute.VerifiablePresentationOfEnveloped>({
-        cty: 'application/vp+ld+json+jwt',
+        cty: type,
         content: vp
       })
     expect(verified.holder.id).toBe('https://university.example/issuers/565049')
     expect(verified.verifiableCredential[0].id.startsWith('data:application/vc+ld+json+sd-jwt;')).toBe(true)
   })
+})
 
+describe('SD-JWT based Presentations', () => {
   it('application/vp+ld+json+sd-jwt (without key binding)', async () => {
-    const vc = await transmute
-      .issuer({
-        alg: 'ES384',
-        cty: 'application/vc+ld+json+sd-jwt',
-        signer: jws
-      })
-      .issue({
-        claimset: fixtures.claimset_disclosable_0,
-      })
+    // this content type always implies an sd-jwt secured json-ld object (vp) contain enveloped Fnards.
+    const type = 'application/vp+ld+json+sd-jwt'
     const vp = await transmute
       .holder({
         alg: 'ES384',
-        cty: 'application/vp+ld+json+sd-jwt',
+        cty: type,
         // this is the private key that signed the outer JSON-LD VP object.
         signer: jws
       })
@@ -102,7 +90,15 @@ describe('presentations issue and verify', () => {
           // }]
         },
         disclosures: [{
-          credential: vc,
+          credential: await transmute
+            .issuer({
+              alg: 'ES384',
+              cty: 'application/vc+ld+json+sd-jwt',
+              signer: jws
+            })
+            .issue({
+              claimset: fixtures.claimset_disclosable_0,
+            }),
           disclosure: fixtures.claimset_disclosable_0_disclosure,
           audience: undefined,
           nonce: undefined,
@@ -124,8 +120,7 @@ describe('presentations issue and verify', () => {
         }
       })
       .verify<transmute.VerifiablePresentationWithHolderObject & transmute.VerifiablePresentationOfEnveloped>({
-        // this content type always implies an sd-jwt secured json-ld object (vp) contain enveloped Fnards.
-        cty: 'application/vp+ld+json+sd-jwt',
+        cty: type,
         content: vp
       })
     expect(verified.holder).toBe('https://university.example/issuers/565049')
@@ -137,11 +132,11 @@ describe('presentations issue and verify', () => {
     // dislosable claimset will need to be updated
     // every time the test keys change.
     // console.log(sd.YAML.dumps(await cose.key.convertCoseKeyToJsonWebKey(await cose.cbor.decode(publicKeyContent))))
-
+    const type = 'application/vp+ld+json+sd-jwt'
     const vp = await transmute
       .holder({
         alg: 'ES384',
-        cty: 'application/vp+ld+json+sd-jwt',
+        cty: type,
         // this is the private key that signed the outer JSON-LD VP object.
         signer: jws
       })
@@ -191,7 +186,7 @@ describe('presentations issue and verify', () => {
       })
       .verify<transmute.VerifiablePresentationWithHolderObject & transmute.VerifiablePresentationOfEnveloped>({
         // this content type always implies an sd-jwt secured json-ld object (vp) contain enveloped Fnards.
-        cty: 'application/vp+ld+json+sd-jwt',
+        cty: type,
         content: vp,
         audience: 'aud-123',
         nonce: 'nonce-456',
