@@ -1,14 +1,11 @@
-import * as jose from 'jose'
+
 import sd from '@transmute/vc-jwt-sd'
 
-import { SupportedJwtSignatureFormats, SupportedSdJwtSignatureFormats, RequestCredentialIssuer, RequestIssueCredential, RequestPrivateKeySigner } from '../types'
+import { RequestCredentialIssuer, RequestIssueCredential } from '../types'
 
 import * as claimset from '../claimset'
 
-
 import { encoder, decoder } from '../text'
-
-
 
 const jwtCredentialIssuer = (issuer: RequestCredentialIssuer) => {
   return {
@@ -29,7 +26,6 @@ const jwtCredentialIssuer = (issuer: RequestCredentialIssuer) => {
   }
 }
 
-
 const sdJwtCredentialIssuer = (issuer: RequestCredentialIssuer) => {
   return {
     issue: async (credential: RequestIssueCredential) => {
@@ -40,7 +36,6 @@ const sdJwtCredentialIssuer = (issuer: RequestCredentialIssuer) => {
       const sdJwsDigester = await sd.digester()
       const sdIssuer = await sd.issuer({
         alg: issuer.alg,
-        kid: issuer.kid,
         typ: 'application/vc+ld+json+sd-jwt',
         cty: 'application/vc+ld+json',
         salter: sdJwsSalter,

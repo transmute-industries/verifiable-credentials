@@ -1,14 +1,10 @@
 
 
 
-import * as jose from 'jose'
+
 import sd from '@transmute/vc-jwt-sd'
 import {
-  SupportedPresentationFormats,
-  SupportedJwtSignatureFormats,
-  SupportedSignatureAlgorithms,
   RequestPresentationHolder,
-  RequestPrivateKeySigner,
   RequestCredentialPresentation,
   SdJwt
 } from '../types'
@@ -17,22 +13,6 @@ import * as claimset from '../claimset'
 
 
 import { encoder, decoder } from '../text'
-
-import { importKeyLike } from '../key'
-
-const jwtSigner = async (req: RequestPrivateKeySigner) => {
-  const privateKey = await importKeyLike(req.privateKey)
-  return {
-    sign: async (bytes: Uint8Array) => {
-      const jws = await new jose.CompactSign(
-        bytes
-      )
-        .setProtectedHeader(req.protectedHeader)
-        .sign(privateKey)
-      return encoder.encode(jws)
-    }
-  }
-}
 
 
 const jwtPresentationIssuer = (holder: RequestPresentationHolder) => {
@@ -45,7 +25,7 @@ const jwtPresentationIssuer = (holder: RequestPresentationHolder) => {
         throw new Error('claimset is required for jwt presentations.')
       }
       let claims = claimset.parse(decoder.decode(req.claimset)) as any
-      claims.iss = claims.holder.id || claims.holder || holder.kid; // required for verify
+      claims.iss = claims.holder.id || claims.holder
       if (holder.aud) {
         claims = {
           aud: holder.aud,
@@ -75,7 +55,6 @@ const sdJwtPresentationIssuer = (holder: RequestPresentationHolder) => {
       const sdJwsDigester = await sd.digester()
       const sdHolder = await sd.holder({
         alg: holder.alg,
-        kid: holder.kid,
         salter: sdJwsSalter,
         digester: sdJwsDigester,
         signer: sdJwsSigner
@@ -102,7 +81,6 @@ const sdJwtPresentationIssuer = (holder: RequestPresentationHolder) => {
 
       const sdIssuer = await sd.issuer({
         alg: holder.alg,
-        kid: holder.kid,
         salter: sdJwsSalter,
         digester: sdJwsDigester,
         signer: sdJwsSigner

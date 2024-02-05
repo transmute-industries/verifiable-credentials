@@ -16,7 +16,6 @@ describe('credentials issue and verify', () => {
     const vc = await cr1
       .issuer({
         alg: 'ES384',
-        kid: 'key-42',
         cty: 'application/vc+ld+json+jwt',
         signer: {
           sign: async (bytes: Uint8Array) => {
@@ -60,7 +59,6 @@ describe('credentials issue and verify', () => {
       .issuer({
         // 🔥 implication is that both alg and kid do not belong at this layer...
         alg: 'ES384',
-        kid: 'key-42', // preserve kid after signer replaces private  key
         cty: 'application/vc+ld+json+sd-jwt', // expand cty everywhere for readability
         signer: {
           sign: async (bytes: Uint8Array) => {
@@ -94,8 +92,7 @@ describe('credentials issue and verify', () => {
       })
       .verify<cr1.VerifiableCredentialWithIssuerObject>({
         cty: 'application/vc+ld+json+sd-jwt',
-        content: vc,
-        iss: 'https://university.example/issuers/565049' //  not here... (2 party friendly)
+        content: vc
       })
     expect(verified.issuer.id).toBe('https://university.example/issuers/565049')
   })

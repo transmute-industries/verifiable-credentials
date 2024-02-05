@@ -106,7 +106,6 @@ export type RequestPrivateKeySigner = {
 }
 
 export type RequestCredentialIssuer = {
-  kid: string
   alg: SupportedSignatureAlgorithms
   cty: SupportedJwtSignatureFormats | SupportedSdJwtSignatureFormats
   aud?: string | string[] // questionable
@@ -122,7 +121,6 @@ export type RequestIssueCredential = {
 
 
 export type RequestPresentationHolder = {
-  kid: string
   alg: SupportedSignatureAlgorithms
   cty: SupportedPresentationFormats
   aud?: string | string[] // questionable...
