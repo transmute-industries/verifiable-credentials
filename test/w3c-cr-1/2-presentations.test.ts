@@ -1,7 +1,7 @@
 import fs from 'fs'
 
 import * as jose from 'jose'
-import * as cr1 from '../../src'
+import * as transmute from '../../src'
 
 import * as fixtures from '../../src/cr1/__fixtures__'
 
@@ -10,32 +10,48 @@ const privateKeyType = 'application/cose-key'
 const privateKeyContent = fs.readFileSync('./src/cr1/__fixtures__/holder-0-private-key.cbor')
 const publicKeyContent = fs.readFileSync('./src/cr1/__fixtures__/holder-0-public-key.cbor')
 
+
+const jws = {
+  sign: async (bytes: Uint8Array) => {
+    const privateKey = await transmute.key.importKeyLike({
+      cty: privateKeyType,
+      content: privateKeyContent
+    })
+    const jws = await new jose.CompactSign(
+      bytes
+    )
+      .setProtectedHeader({ kid: 'key-42', alg: 'ES384' })
+      .sign(privateKey)
+    return transmute.text.encoder.encode(jws)
+  }
+}
+
+const jwk: transmute.VerifierResolver = {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  resolve: async ({ cty, content }) => {
+    // ignore hints about message
+    // return the same public key for tests
+    return {
+      cty: privateKeyType,
+      content: publicKeyContent
+    }
+  }
+}
+
 describe('presentations issue and verify', () => {
 
   it('application/vp+ld+json+jwt', async () => {
-    const vp = await cr1
+    const vp = await transmute
       .holder({
         alg: 'ES384',
         cty: 'application/vp+ld+json+jwt',
-        signer: {
-          sign: async (bytes: Uint8Array) => {
-            const jws = await new jose.CompactSign(
-              bytes
-            )
-              .setProtectedHeader({ kid: 'key-42', alg: 'ES384' })
-              .sign(await cr1.key.importKeyLike({
-                cty: privateKeyType,
-                content: privateKeyContent
-              }))
-            return cr1.text.encoder.encode(jws)
-          }
-        }
+        signer: jws
       })
       .issue({
         // vp of enveloped
         claimset: fixtures.claimset_1,
       })
-    const verified = await cr1.
+    const verified = await transmute.
       verifier({
         resolver: {
           resolve: async () => {
@@ -46,7 +62,7 @@ describe('presentations issue and verify', () => {
           }
         }
       })
-      .verify<cr1.VerifiablePresentationWithHolderObject & cr1.VerifiablePresentationOfEnveloped>({
+      .verify<transmute.VerifiablePresentationWithHolderObject & transmute.VerifiablePresentationOfEnveloped>({
         cty: 'application/vp+ld+json+jwt',
         content: vp
       })
@@ -55,45 +71,21 @@ describe('presentations issue and verify', () => {
   })
 
   it('application/vp+ld+json+sd-jwt (without key binding)', async () => {
-    const vc = await cr1
+    const vc = await transmute
       .issuer({
         alg: 'ES384',
         cty: 'application/vc+ld+json+sd-jwt',
-        signer: {
-          sign: async (bytes: Uint8Array) => {
-            const jws = await new jose.CompactSign(
-              bytes
-            )
-              .setProtectedHeader({ kid: 'key-42', alg: 'ES384' })
-              .sign(await cr1.key.importKeyLike({
-                cty: privateKeyType,
-                content: privateKeyContent
-              }))
-            return cr1.text.encoder.encode(jws)
-          }
-        }
+        signer: jws
       })
       .issue({
         claimset: fixtures.claimset_disclosable_0,
       })
-    const vp = await cr1
+    const vp = await transmute
       .holder({
         alg: 'ES384',
         cty: 'application/vp+ld+json+sd-jwt',
         // this is the private key that signed the outer JSON-LD VP object.
-        signer: {
-          sign: async (bytes: Uint8Array) => {
-            const jws = await new jose.CompactSign(
-              bytes
-            )
-              .setProtectedHeader({ kid: 'key-42', alg: 'ES384' })
-              .sign(await cr1.key.importKeyLike({
-                cty: privateKeyType,
-                content: privateKeyContent
-              }))
-            return cr1.text.encoder.encode(jws)
-          }
-        }
+        signer: jws
       })
       .issue({
         presentation: {
@@ -117,22 +109,10 @@ describe('presentations issue and verify', () => {
           // each credential can have a different bound public key
           // so we need a different private key or signer for each 
           // disclosure
-          signer: {
-            sign: async (bytes: Uint8Array) => {
-              const jws = await new jose.CompactSign(
-                bytes
-              )
-                .setProtectedHeader({ kid: 'key-42', alg: 'ES384' })
-                .sign(await cr1.key.importKeyLike({
-                  cty: privateKeyType,
-                  content: privateKeyContent
-                }))
-              return cr1.text.encoder.encode(jws)
-            }
-          }
+          signer: jws
         }],
       })
-    const verified = await cr1.
+    const verified = await transmute.
       verifier({
         resolver: {
           resolve: async () => {
@@ -143,7 +123,7 @@ describe('presentations issue and verify', () => {
           }
         }
       })
-      .verify<cr1.VerifiablePresentationWithHolderObject & cr1.VerifiablePresentationOfEnveloped>({
+      .verify<transmute.VerifiablePresentationWithHolderObject & transmute.VerifiablePresentationOfEnveloped>({
         // this content type always implies an sd-jwt secured json-ld object (vp) contain enveloped Fnards.
         cty: 'application/vp+ld+json+sd-jwt',
         content: vp
@@ -157,45 +137,13 @@ describe('presentations issue and verify', () => {
     // dislosable claimset will need to be updated
     // every time the test keys change.
     // console.log(sd.YAML.dumps(await cose.key.convertCoseKeyToJsonWebKey(await cose.cbor.decode(publicKeyContent))))
-    const vc = await cr1
-      .issuer({
-        alg: 'ES384',
-        cty: 'application/vc+ld+json+sd-jwt',
-        signer: {
-          sign: async (bytes: Uint8Array) => {
-            const jws = await new jose.CompactSign(
-              bytes
-            )
-              .setProtectedHeader({ kid: 'key-42', alg: 'ES384' })
-              .sign(await cr1.key.importKeyLike({
-                cty: privateKeyType,
-                content: privateKeyContent
-              }))
-            return cr1.text.encoder.encode(jws)
-          }
-        }
-      })
-      .issue({
-        claimset: fixtures.claimset_disclosable_1,
-      })
-    const vp = await cr1
+
+    const vp = await transmute
       .holder({
         alg: 'ES384',
         cty: 'application/vp+ld+json+sd-jwt',
         // this is the private key that signed the outer JSON-LD VP object.
-        signer: {
-          sign: async (bytes: Uint8Array) => {
-            const jws = await new jose.CompactSign(
-              bytes
-            )
-              .setProtectedHeader({ kid: 'key-42', alg: 'ES384' })
-              .sign(await cr1.key.importKeyLike({
-                cty: privateKeyType,
-                content: privateKeyContent
-              }))
-            return cr1.text.encoder.encode(jws)
-          }
-        }
+        signer: jws
       })
       .issue({
         presentation: {
@@ -212,29 +160,25 @@ describe('presentations issue and verify', () => {
           // }]
         },
         disclosures: [{
-          credential: vc,
+          credential: await transmute
+            .issuer({
+              alg: 'ES384',
+              cty: 'application/vc+ld+json+sd-jwt',
+              signer: jws
+            })
+            .issue({
+              claimset: fixtures.claimset_disclosable_1,
+            }),
           disclosure: fixtures.claimset_disclosable_0_disclosure,
           audience: 'aud-123',
           nonce: 'nonce-456',
           // each credential can have a different bound public key
           // so we need a different private key or signer for each 
           // disclosure
-          signer: {
-            sign: async (bytes: Uint8Array) => {
-              const jws = await new jose.CompactSign(
-                bytes
-              )
-                .setProtectedHeader({ kid: 'key-42', alg: 'ES384' })
-                .sign(await cr1.key.importKeyLike({
-                  cty: privateKeyType,
-                  content: privateKeyContent
-                }))
-              return cr1.text.encoder.encode(jws)
-            }
-          }
+          signer: jws
         }],
       })
-    const verified = await cr1.
+    const verified = await transmute.
       verifier({
         resolver: {
           resolve: async () => {
@@ -245,7 +189,7 @@ describe('presentations issue and verify', () => {
           }
         }
       })
-      .verify<cr1.VerifiablePresentationWithHolderObject & cr1.VerifiablePresentationOfEnveloped>({
+      .verify<transmute.VerifiablePresentationWithHolderObject & transmute.VerifiablePresentationOfEnveloped>({
         // this content type always implies an sd-jwt secured json-ld object (vp) contain enveloped Fnards.
         cty: 'application/vp+ld+json+sd-jwt',
         content: vp,
@@ -257,39 +201,25 @@ describe('presentations issue and verify', () => {
 
     // ok now verify the nested vc as well.
     const envelopedVc = verified.verifiableCredential[0].id.replace('data:application/vc+ld+json+sd-jwt;', '')
-    const verified2 = await cr1.
+    const verified2 = await transmute.
       verifier({
-        resolver: {
-          resolve: async () => {
-            return {
-              cty: privateKeyType,
-              content: publicKeyContent
-            }
-          }
-        }
+        resolver: jwk
       })
-      .verify<cr1.VerifiablePresentationWithHolderObject & cr1.VerifiablePresentationOfEnveloped>({
+      .verify<transmute.VerifiablePresentationWithHolderObject & transmute.VerifiablePresentationOfEnveloped>({
         // this content type always implies an sd-jwt secured json-ld object (vp) contain enveloped Fnards.
         cty: 'application/vc+ld+json+sd-jwt',
-        content: cr1.text.encoder.encode(envelopedVc),
+        content: transmute.text.encoder.encode(envelopedVc),
         audience: 'aud-123',
         nonce: 'nonce-456',
       })
     expect(verified2.cnf).toBeDefined()
     // for extra sanity verify the key binding token again
     const kbt = envelopedVc.split('~').pop()
-    const verified3 = await cr1.verifier({
-      resolver: {
-        resolve: async () => {
-          return {
-            cty: privateKeyType,
-            content: publicKeyContent
-          }
-        }
-      }
+    const verified3 = await transmute.verifier({
+      resolver: jwk
     }).verify({
       cty: 'application/kb+jwt',
-      content: cr1.text.encoder.encode(kbt)
+      content: transmute.text.encoder.encode(kbt)
     })
     expect(verified3.aud).toBe('aud-123')
     expect(verified3.nonce).toBe('nonce-456')

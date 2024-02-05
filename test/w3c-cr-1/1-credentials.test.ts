@@ -3,7 +3,6 @@ import * as jose from 'jose'
 import * as transmute from '../../src'
 
 import * as fixtures from '../../src/cr1/__fixtures__'
-import { VerifierResolver } from '../../src/cr1/verifier'
 
 const privateKeyType = 'application/jwk+json'
 const privateKeyContent = fs.readFileSync('./src/cr1/__fixtures__/issuer-0-private-key.json')
@@ -24,7 +23,7 @@ const jws = {
   }
 }
 
-const jwk: VerifierResolver = {
+const jwk: transmute.VerifierResolver = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   resolve: async ({ cty, content }) => {
     // ignore hints about message

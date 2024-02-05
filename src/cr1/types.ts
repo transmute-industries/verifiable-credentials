@@ -145,3 +145,41 @@ export type RequestCredentialPresentation = {
   audience?: string | string[]
   nonce?: string
 }
+
+
+export type PublicKeyWithContentType = {
+  cty: SupportedKeyFormats,
+  content: Uint8Array
+}
+
+// here the word  "credential" means 
+// "anything that is signed and as an associated media type that indicates it is signed"
+// application/vc+ld+json is not a "credential" in this sense but...
+// application/vc+ld+json+jwt is a "credential" in this sense
+
+export type CredentialWithContentType = {
+  cty: SupportedCredentialFormats | SupportedPresentationFormats | SupportedJwtSignatureFormats | SupportedSdJwtSignatureFormats,
+  content: Uint8Array
+}
+
+export type VerifierResolver = {
+  resolve: (req: CredentialWithContentType) => Promise<PublicKeyWithContentType>
+}
+
+export type RequestVerifier = {
+  resolver: VerifierResolver
+}
+
+export type VerifyJwtOpts = {
+  iss?: string
+  audience?: string | string[]
+  nonce?: string
+}
+
+export type RequestVerify = {
+  cty: SupportedCredentialFormats | SupportedPresentationFormats | SupportedJwtSignatureFormats,
+  content: Uint8Array
+
+  audience?: string | string[]
+  nonce?: string
+} & VerifyJwtOpts
