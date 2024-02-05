@@ -126,8 +126,4 @@ describe('SD-JWT based W3C Verifiable Credentials', () => {
       })
     expect(verified.issuer.id).toBe('https://university.example/issuers/565049')
   })
-
 })
-
-// refactor cose to support signer apis first.
-it.todo('cose credentials')

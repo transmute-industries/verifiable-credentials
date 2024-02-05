@@ -112,17 +112,23 @@ describe('JWT based W3C Verifiable Presentations', () => {
 })
 
 describe('SD-JWT based W3C Verifiable Presentations', () => {
+
+  // todo seperate test for totally unsecured presentation.
+
   it('application/vp+ld+json+sd-jwt (without key binding)', async () => {
     // this content type always implies an sd-jwt secured json-ld object (vp) contain enveloped Fnards.
-    const type = 'application/vp+ld+json+sd-jwt'
+    const type = 'application/vp+ld+json'
     const vp = await transmute
       .holder({
         alg: 'ES384',
         cty: type,
         // this is the private key that signed the outer JSON-LD VP object.
-        signer: jws
+        // should be valid.
+        // signer: jws
       })
       .issue({
+        audience: undefined,
+        nonce: undefined,
         presentation: {
           "@context": [
             "https://www.w3.org/ns/credentials/v2",
@@ -147,12 +153,13 @@ describe('SD-JWT based W3C Verifiable Presentations', () => {
               claimset: fixtures.claimset_disclosable_0,
             }),
           disclosure: fixtures.claimset_disclosable_0_disclosure,
-          audience: undefined,
-          nonce: undefined,
-          // each credential can have a different bound public key
-          // so we need a different private key or signer for each 
-          // disclosure
-          signer: jws
+          // should be valid.
+          // audience: undefined,
+          // nonce: undefined,
+          // // each credential can have a different bound public key
+          // // so we need a different private key or signer for each 
+          // // disclosure
+          // signer: jws
         }],
       })
     const verified = await transmute.
@@ -188,6 +195,8 @@ describe('SD-JWT based W3C Verifiable Presentations', () => {
         signer: jws
       })
       .issue({
+        audience: 'aud-123',
+        nonce: 'nonce-456',
         presentation: {
           "@context": [
             "https://www.w3.org/ns/credentials/v2",
@@ -202,6 +211,7 @@ describe('SD-JWT based W3C Verifiable Presentations', () => {
           // }]
         },
         disclosures: [{
+          // internal params
           credential: await transmute
             .issuer({
               alg: 'ES384',
@@ -211,13 +221,15 @@ describe('SD-JWT based W3C Verifiable Presentations', () => {
             .issue({
               claimset: fixtures.claimset_disclosable_1,
             }),
-          disclosure: fixtures.claimset_disclosable_0_disclosure,
-          audience: 'aud-123',
-          nonce: 'nonce-456',
           // each credential can have a different bound public key
           // so we need a different private key or signer for each 
           // disclosure
-          signer: jws
+          signer: jws,
+
+          // external params
+          disclosure: fixtures.claimset_disclosable_0_disclosure,
+          audience: 'aud-123',
+          nonce: 'nonce-456',
         }],
       })
     const verified = await transmute.
@@ -268,5 +280,3 @@ describe('SD-JWT based W3C Verifiable Presentations', () => {
 
   })
 })
-
-it.todo('cose presentations')
