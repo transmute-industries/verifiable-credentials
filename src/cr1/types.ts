@@ -18,7 +18,7 @@ export type SdJwtEnvelopedVerifiableCredential = `data:${VcContentType}+sd-jwt;$
 
 
 export type SupportedCredentialFormats = `${VcContentType}+jwt` | `${VcContentType}+sd-jwt`
-export type SupportedPresentationFormats = `${VpContentType}+jwt` | `${VpContentType}+sd-jwt` | `${VpContentType}+cose`
+export type SupportedPresentationFormats = VpContentType | `${VpContentType}+jwt` | `${VpContentType}+sd-jwt` | `${VpContentType}+cose`
 
 export type SupportedSdJwtSignatureFormats = `application/sd-jwt` | `${VcContentType}+sd-jwt` | `${VpContentType}+sd-jwt`
 
@@ -86,9 +86,6 @@ export type RequestSigner = {
     cty: SupportedKeyFormats,
     content: Uint8Array
   }
-  // signer?: {
-  //   sign: (bytes: Uint8Array) => Promise<Uint8Array>
-  // }
 }
 
 export type SignatureHeader = Record<string, unknown> & {
@@ -121,19 +118,20 @@ export type RequestIssueCredential = {
 
 
 export type RequestPresentationHolder = {
-  alg: SupportedSignatureAlgorithms
+  alg?: SupportedSignatureAlgorithms
   cty: SupportedPresentationFormats
-  signer: {
-    sign: (bytes: Uint8Array) => Promise<Uint8Array>
-  }
+
 }
 
 export type SdJwtDisclosure = {
+  cty: SupportedCredentialFormats
   credential: Uint8Array
-  disclosure: Uint8Array
+  disclosure?: Uint8Array // only required in SD-JWT
+
+  // these are only present, when key binding
   audience?: string | string[]
   nonce?: string
-  signer: {
+  signer?: {
     sign: (bytes: Uint8Array) => Promise<Uint8Array>
   }
 }
@@ -141,11 +139,17 @@ export type SdJwtDisclosure = {
 export type SdJwtVpDisclosures = SdJwtDisclosure[]
 
 export type RequestCredentialPresentation = {
-  claimset?: Uint8Array,
+  claimset?: Uint8Array, // can we make this part of the disclosures?
   presentation?: VerifiablePresentation
   disclosures?: SdJwtVpDisclosures
+
+  // these MUST be present for any "secured presentations",
+  // these MUST NOT be present for unsecured presentations
   audience?: string | string[]
   nonce?: string
+  signer?: {
+    sign: (bytes: Uint8Array) => Promise<Uint8Array>
+  }
 }
 
 

@@ -18,7 +18,7 @@ import {
 
 import { importKeyLike, importJWK } from '../key';
 
-import { decoder } from '../text';
+import { decoder, encoder } from '../text';
 
 
 const verifyJwt = async (jwt: string, publicKey: jose.KeyLike | Uint8Array, opts: VerifyJwtOpts) => {
@@ -43,6 +43,21 @@ const verifyCoseSign1
     })
     return JSON.parse(decoder.decode(verified))
   }
+
+export const verifyUnsecuredPresentation = async (content: Uint8Array, req: RequestVerifier) => {
+  const dataModel = JSON.parse(decoder.decode(content))
+  for (const vc of dataModel.verifiableCredential || []) {
+    if (vc.type !== 'EnvelopedVerifiableCredential') {
+      throw new Error('Unsupported verifiable credential type')
+    }
+    const [start] = vc.id.split(';')
+    const cty = start.replace('data:', '')
+    const content = encoder.encode(vc.id.split(';').pop())
+    const { verify } = verifier(req)
+    await verify({ cty, content })
+  }
+  return dataModel
+}
 
 
 export const verifier = (req: RequestVerifier) => {
@@ -96,6 +111,8 @@ export const verifier = (req: RequestVerifier) => {
         return verifyCoseSign1(content, key) as T
       } else if (cty === 'application/vp+ld+json+cose') {
         return verifyCoseSign1(content, key) as T
+      } else if (cty === 'application/vp+ld+json') {
+        return verifyUnsecuredPresentation(content, { resolver: req.resolver }) as T
       }
 
       throw new Error('Unsupported content type')

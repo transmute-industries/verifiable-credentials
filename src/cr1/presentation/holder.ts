@@ -16,7 +16,7 @@ import { encoder, decoder } from '../text'
 const jwtPresentationIssuer = (holder: RequestPresentationHolder) => {
   return {
     issue: async (req: RequestCredentialPresentation) => {
-      if (holder.signer === undefined) {
+      if (req.signer === undefined) {
         throw new Error('No signer available.')
       }
       if (!req.claimset) {
@@ -24,7 +24,7 @@ const jwtPresentationIssuer = (holder: RequestPresentationHolder) => {
       }
       const claims = claimset.parse(decoder.decode(req.claimset)) as any
       claims.iss = claims.holder.id || claims.holder
-      return holder.signer.sign(encoder.encode(JSON.stringify(claims)))
+      return req.signer.sign(encoder.encode(JSON.stringify(claims)))
     }
   }
 }
@@ -33,7 +33,7 @@ const jwtPresentationIssuer = (holder: RequestPresentationHolder) => {
 const coseSign1PresentationIssuer = (holder: RequestPresentationHolder) => {
   return {
     issue: async (req: RequestCredentialPresentation) => {
-      if (holder.signer === undefined) {
+      if (req.signer === undefined) {
         throw new Error('No signer available.')
       }
       if (!req.claimset) {
@@ -41,7 +41,7 @@ const coseSign1PresentationIssuer = (holder: RequestPresentationHolder) => {
       }
       const claims = claimset.parse(decoder.decode(req.claimset)) as any
       claims.iss = claims.holder.id || claims.holder
-      return holder.signer.sign(encoder.encode(JSON.stringify(claims)))
+      return req.signer.sign(encoder.encode(JSON.stringify(claims)))
     }
   }
 }
@@ -52,11 +52,13 @@ const sdJwtPresentationIssuer = (holder: RequestPresentationHolder) => {
       if (!req.disclosures) {
         throw new Error('disclosures are required for this presentation type')
       }
-
       const sdJwsSigner = {
         sign: async ({ claimset }: { claimset: Record<string, unknown> }) => {
+          if (req.signer === undefined) {
+            throw new Error('signer is required for this presentation type')
+          }
           const bytes = encoder.encode(JSON.stringify(claimset))
-          return decoder.decode(await holder.signer.sign(bytes))
+          return decoder.decode(await req.signer.sign(bytes))
         }
       }
       const sdJwsSalter = await sd.salter()
@@ -110,6 +112,55 @@ const sdJwtPresentationIssuer = (holder: RequestPresentationHolder) => {
   }
 }
 
+const unsecuredPresentationOfSecuredCredentials = (holder: RequestPresentationHolder) => {
+  return {
+    issue: async (req: RequestCredentialPresentation) => {
+      // TODO.
+      if (req.claimset && req.presentation) {
+        throw new Error('claimset is forbidden for this presentation type.')
+      }
+      if (req.disclosures == undefined) {
+        throw new Error('disclosures is REQUIRED for this presentation type.')
+      }
+      const sdJwsSalter = await sd.salter()
+      const sdJwsDigester = await sd.digester()
+      const sdHolder = await sd.holder({
+        alg: holder.alg,
+        salter: sdJwsSalter,
+        digester: sdJwsDigester,
+        // note that no signer is here, since no holder binding is present.
+      })
+      const vp = req.presentation || claimset.parse(decoder.decode(req.claimset)) as any
+      vp.verifiableCredential = []
+      for (const d of req.disclosures) {
+        let enveloped = undefined
+        if (d.disclosure) {
+          const sdJwtFnard = await sdHolder.issue({
+            token: decoder.decode(d.credential), // todo for each...
+            disclosure: decoder.decode(d.disclosure),
+            // no audience or nonce are present here, 
+            // since there can be no key binding
+          }) as SdJwt
+
+          enveloped = `data:${d.cty};${sdJwtFnard}` // great job everyone.
+        } else {
+          const token = decoder.decode(d.credential)
+          enveloped = `data:${d.cty};${token}`
+        }
+        if (enveloped === undefined) {
+          throw new Error('Unable to envelop credential for presentation')
+        }
+        vp.verifiableCredential.push({
+          "@context": "https://www.w3.org/ns/credentials/v2",
+          "id": enveloped,
+          "type": "EnvelopedVerifiableCredential"
+        })
+      }
+      return encoder.encode(JSON.stringify(vp))
+    }
+  }
+}
+
 export const holder = (holder: RequestPresentationHolder) => {
   if (holder.cty === 'application/vp+ld+json+jwt') {
     return jwtPresentationIssuer(holder)
@@ -117,6 +168,8 @@ export const holder = (holder: RequestPresentationHolder) => {
     return sdJwtPresentationIssuer(holder)
   } else if (holder.cty === 'application/vp+ld+json+cose') {
     return coseSign1PresentationIssuer(holder)
+  } else if (holder.cty === 'application/vp+ld+json') {
+    return unsecuredPresentationOfSecuredCredentials(holder)
   }
   throw new Error('presentation type is not supported.')
 }
