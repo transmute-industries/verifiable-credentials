@@ -13,14 +13,8 @@ const jwtCredentialIssuer = (issuer: RequestCredentialIssuer) => {
       if (issuer.signer === undefined) {
         throw new Error('No signer available.')
       }
-      let claims = claimset.parse(decoder.decode(credential.claimset)) as any
+      const claims = claimset.parse(decoder.decode(credential.claimset)) as any
       claims.iss = claims.issuer.id || claims.issuer; // required for verify
-      if (issuer.aud) {
-        claims = {
-          aud: issuer.aud,
-          ...claims
-        }
-      }
       return issuer.signer.sign(encoder.encode(JSON.stringify(claims)))
     }
   }

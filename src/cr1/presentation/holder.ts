@@ -22,14 +22,8 @@ const jwtPresentationIssuer = (holder: RequestPresentationHolder) => {
       if (!req.claimset) {
         throw new Error('claimset is required for jwt presentations.')
       }
-      let claims = claimset.parse(decoder.decode(req.claimset)) as any
+      const claims = claimset.parse(decoder.decode(req.claimset)) as any
       claims.iss = claims.holder.id || claims.holder
-      if (holder.aud) {
-        claims = {
-          aud: holder.aud,
-          ...claims
-        }
-      }
       return holder.signer.sign(encoder.encode(JSON.stringify(claims)))
     }
   }
