@@ -4,13 +4,11 @@ export * from './types'
 
 import * as key from './key'
 import * as claimset from './claimset'
-
-import { issuer } from './credential'
-
-import { holder } from './presentation'
-
-import { verifier } from './verifier'
-
+import * as status from './status-list'
 import * as text from './text'
 
-export { key, claimset, text, issuer, holder, verifier }
+import { issuer } from './credential'
+import { holder } from './presentation'
+import { verifier } from './verifier'
+
+export { key, claimset, status, text, issuer, holder, verifier }
