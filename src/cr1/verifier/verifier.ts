@@ -40,12 +40,12 @@ const verifyJwt = async ({ resolver }: RequestVerifier, { type, content, audienc
 }
 
 const verifyCoseSign1
-  = async ({ resolver }: RequestVerifier, { content, audience, nonce }: RequestVerify) => {
+  = async ({ resolver }: RequestVerifier, { type, content, audience, nonce }: RequestVerify) => {
     const verifier = cose.attached.verifier({
       resolver: {
         resolve: async () => {
           const key = await resolver.resolve({
-            type: 'application/vc+ld+json+sd-jwt',
+            type,
             content
           })
           return importJWK(key)
@@ -80,12 +80,12 @@ export const verifyUnsecuredPresentation = async ({ resolver }: RequestVerifier,
   return dataModel
 }
 
-const verifySdJwtCredential = async ({ resolver }: RequestVerifier, { content, audience, nonce }: RequestVerify) => {
+const verifySdJwtCredential = async ({ resolver }: RequestVerifier, { type, content, audience, nonce }: RequestVerify) => {
   const verifier = sd.verifier({
     resolver: {
       resolve: async () => {
         const key = await resolver.resolve({
-          type: 'application/vc+ld+json+sd-jwt',
+          type,
           content
         })
         return importJWK(key)
@@ -100,12 +100,12 @@ const verifySdJwtCredential = async ({ resolver }: RequestVerifier, { content, a
   return verified.claimset
 }
 
-const verifySdJwtPresentation = async ({ resolver }: RequestVerifier, { content, audience, nonce }: RequestVerify) => {
+const verifySdJwtPresentation = async ({ resolver }: RequestVerifier, { type, content, audience, nonce }: RequestVerify) => {
   const verifier = sd.verifier({
     resolver: {
       resolve: async () => {
         const key = await resolver.resolve({
-          type: 'application/vp+ld+json+sd-jwt',
+          type,
           content // same a token
         })
         return importJWK(key)

@@ -31,7 +31,7 @@ describe('JSON Schema Validator for W3C Verifiable Credentials', () => {
       .validator({
         resolver: {
           resolve: async ({ type }) => {
-            if (type === 'application/vc+ld+json+sd-jwt') {
+            if (type === 'application/vc+ld+json+cose') {
               return {
                 type: privateKeyType,
                 content: publicKeyContent

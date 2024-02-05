@@ -194,3 +194,13 @@ export type CredentialSchema = {
   id: string
   type: 'JsonSchema'
 }
+
+export type CredentialStatus = {
+  id: string
+  type: 'BitstringStatusListEntry'
+  statusPurpose: 'revocation' | 'suspension'
+  statusListIndex: string
+  statusListCredential: string
+}
+
+
