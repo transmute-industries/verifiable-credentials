@@ -32,7 +32,7 @@ export const create = async ({ issuer, validFrom, validUntil, id, purpose, }: Re
   const statusList = await StatusList.create({
     id,
     purpose,
-    length: 131072, // from the spec
+    length: 131072, // from the spec 
   })
   statusList.issuer = { id: issuer }
   statusList.validFrom = validFrom

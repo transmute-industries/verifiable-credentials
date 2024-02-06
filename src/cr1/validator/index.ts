@@ -1,10 +1,19 @@
 import Ajv from 'ajv'
 
-import { RequestValidator, SecuredContentType, CredentialSchema, CredentialStatus } from "../types"
+import {
+  RequestValidator,
+  SecuredContentType,
+  CredentialSchema,
+  CredentialStatus,
+  BitstringStatusListCredential,
+  ValidationResult,
+  VerifiableCredential,
+  JsonSchemaError
+} from "../types"
 
 import { verifier } from "../verifier"
 
-import { decoder, encoder } from "../text"
+import { decoder } from "../text"
 
 import { bs } from '../../cr1/status-list'
 
@@ -15,8 +24,8 @@ const ajv = new Ajv({
 export const validator = ({ resolver }: RequestValidator) => {
   return {
     validate: async ({ type, content }: SecuredContentType) => {
-      const verified = await verifier({ resolver }).verify({ type, content })
-      const validation: any = {
+      const verified = await verifier({ resolver }).verify<VerifiableCredential>({ type, content })
+      const validation: ValidationResult = {
         valid: true,
         content: verified,
         schema: {},
@@ -28,8 +37,9 @@ export const validator = ({ resolver }: RequestValidator) => {
         for (const schema of schemas) {
           if (schema.type === 'JsonSchema') {
             const credentialSchema = await resolver.resolve({
+              // prefer to resolve this one by id, instead of content
+              id: schema.id,
               type: 'application/schema+json',
-              content: encoder.encode(schema.id)
             })
             const schemaContent = decoder.decode(credentialSchema.content)
             const parsedSchemaContent = JSON.parse(schemaContent)
@@ -38,7 +48,7 @@ export const validator = ({ resolver }: RequestValidator) => {
             validation.schema[schema.id] = { valid }
             if (!valid) {
               validation.valid = false
-              validation.schema[schema.id].errors = compiledSchemaValidator.errors
+              validation.schema[schema.id].errors = compiledSchemaValidator.errors as JsonSchemaError[]
             }
           }
         }
@@ -48,13 +58,27 @@ export const validator = ({ resolver }: RequestValidator) => {
         for (const status of statuses) {
           if (status.type === 'BitstringStatusListEntry') {
             const statusListCredential = await resolver.resolve({
-              type: type, // we do not support mixed type credential and status lists!
-              content: encoder.encode(status.statusListCredential)
+              // prefer to resolve this one by id, instead of content
+              id: status.statusListCredential,
+              type: type // we do not support mixed type credential and status lists!
             })
-            // TODO create type for bitstring status list instead of ANY here...
-            const verified = await verifier({ resolver }).verify<any>(statusListCredential)
-            const bit = bs(verified.credentialSubject.encodedList).get(parseInt(status.statusListIndex, 10))
-            validation.status[`${status.id}`] = { [`${status.statusPurpose}`]: bit, statusListCredential }
+            const verified = await verifier({ resolver }).verify<BitstringStatusListCredential>(statusListCredential)
+            // confirm purpose matches
+            if (status.statusPurpose !== verified.credentialSubject.statusPurpose) {
+              validation.valid = false
+              validation.status[`${status.id}`] = {
+                valid: false, purpose: status.statusPurpose, errors: [{
+                  message: 'status list purpose does not match credential status'
+                }]
+              }
+            } else {
+              const bit = bs(verified.credentialSubject.encodedList).get(parseInt(status.statusListIndex, 10))
+              if (bit) {
+                validation.valid = false
+              }
+              validation.status[`${status.id}`] = { valid: bit, purpose: status.statusPurpose }
+            }
+
           }
         }
       }

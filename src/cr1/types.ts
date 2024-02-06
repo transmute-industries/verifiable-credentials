@@ -168,8 +168,9 @@ export type RequestVerifier = {
 
 
 export type ValidatorContentType = {
+  id?: string
   type: any
-  content: Uint8Array
+  content?: Uint8Array
 }
 
 
@@ -204,3 +205,42 @@ export type CredentialStatus = {
 }
 
 
+export type BitstringStatusListCredential = VerifiableCredential & {
+  credentialSubject: {
+    id: string
+    // "id": "https://example.com/status/3#list",
+    "type": "BitstringStatusList"
+    "statusPurpose": "revocation" | "suspension"
+    encodedList: string
+    // "encodedList": "uH4sIAAAAAAAAA-3BMQEAAADCoPVPbQwfoAAAAAAAAAAAAAAAAAAAAIC3AYbSVKsAQAAA"
+  }
+
+}
+
+export type JsonSchemaError = {
+  instancePath: string
+  // "instancePath": "/credentialSubject/id",
+  schemaPath: string
+  // "schemaPath": "#/properties/credentialSubject/properties/id/pattern",
+  keyword: string
+  // "keyword": "pattern",
+  params: { pattern: string }
+  // "params": {
+  //   "pattern": "https://(.+)/issuers/(.+)"
+  // },
+  message: string
+  // "message": "must match pattern \"https://(.+)/issuers/(.+)\""
+}
+
+
+export type StatusListError = {
+  message: string
+  // "message": "status list purpose does not match credential status"
+}
+
+export type ValidationResult = {
+  valid: boolean
+  content: VerifiableCredential
+  schema: Record<string, { valid: boolean, errors?: JsonSchemaError[] }>
+  status: Record<string, { valid: boolean, purpose: string, errors?: StatusListError[] }>
+}
