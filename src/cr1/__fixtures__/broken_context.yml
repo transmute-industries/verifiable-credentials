@@ -1,0 +1,5 @@
+type:
+  - VerifiableCredential
+issuer: https://university.example/issuers/565049
+credentialSubject:
+  id: https://university.example/issuers/565049

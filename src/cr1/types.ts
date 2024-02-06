@@ -239,8 +239,9 @@ export type StatusListError = {
 }
 
 export type ConformanceWarningMessage = {
-  link: string
   message: string
+  pointer: string
+  reference: string
 }
 
 export type ValidationResult = {

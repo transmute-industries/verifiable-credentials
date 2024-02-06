@@ -17,6 +17,8 @@ import { decoder } from "../text"
 
 import { bs } from '../../cr1/status-list'
 
+import { conformance } from './w3c'
+
 const ajv = new Ajv({
   strict: false,
 })
@@ -83,7 +85,7 @@ export const validator = ({ resolver }: RequestValidator) => {
           }
         }
       }
-      return validation
+      return conformance(validation)
     }
   }
 }

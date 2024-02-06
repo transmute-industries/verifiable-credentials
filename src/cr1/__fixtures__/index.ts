@@ -1,4 +1,12 @@
 import fs from 'fs'
+import * as jose from "jose";
+
+import { importKeyLike } from '../key/importKeyLike'
+
+import { encoder, decoder } from '../text';
+
+import { issuer } from '../credential'
+import { validator } from '../validator'
 
 // keys
 export const issuer_0_key_type = 'application/jwk+json'
@@ -35,3 +43,64 @@ export const minimal_credential = new Uint8Array(fs.readFileSync('./src/cr1/__fi
 
 export const minimal_credential_with_dids = new Uint8Array(fs.readFileSync('./src/cr1/__fixtures__/minimal_credential_with_dids.yml'))
 
+export const minimal_credential_with_bad_urls = new Uint8Array(fs.readFileSync('./src/cr1/__fixtures__/minimal_credential_with_bad_urls.yml'))
+
+export const broken_context = new Uint8Array(fs.readFileSync('./src/cr1/__fixtures__/broken_context.yml'))
+
+
+const jws = {
+  sign: async (bytes: Uint8Array) => {
+    const privateKey = await importKeyLike({
+      type: issuer_0_key_type,
+      content: issuer_0_private_key,
+    });
+    const jws = await new jose.CompactSign(bytes)
+      .setProtectedHeader({ kid: "key-42", alg: "ES384" })
+      .sign(privateKey);
+    return encoder.encode(jws);
+  },
+};
+
+const resolver: any = {
+  resolve: async ({ id, type, content }: any) => {
+    if (!id) {
+      const [protectedHeader] = decoder
+        .decode(content)
+        .split(".");
+      const { kid } = JSON.parse(
+        decoder.decode(
+          jose.base64url.decode(protectedHeader)
+        )
+      );
+      if (kid === "key-42") {
+        return {
+          type: issuer_0_key_type,
+          content: issuer_0_public_key,
+        };
+      }
+    }
+    throw new Error("Resolver does not support " + type);
+  },
+};
+
+export const text = (claims: string) => {
+  return encoder.encode(claims);
+};
+
+export const review = async (claimset: Uint8Array) => {
+  const type = "application/vc+ld+json+jwt";
+  return validator({
+    resolver,
+  })
+    .validate({
+      type: type,
+      content: await issuer({
+        alg: "ES384",
+        type: type,
+        signer: jws,
+      })
+        .issue({
+          claimset,
+        }),
+    });
+};
