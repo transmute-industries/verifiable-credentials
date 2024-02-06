@@ -1,22 +1,16 @@
-import fs from 'fs'
 
 import * as jose from 'jose'
 import * as transmute from '../../src'
 import * as cose from '@transmute/cose'
 import * as fixtures from '../../src/cr1/__fixtures__'
 
-
-const privateKeyType = 'application/cose-key'
-const privateKeyContent = fs.readFileSync('./src/cr1/__fixtures__/holder-0-private-key.cbor')
-const publicKeyContent = fs.readFileSync('./src/cr1/__fixtures__/holder-0-public-key.cbor')
-
 const coseSign1 = {
   sign: async (bytes: Uint8Array) => {
     const signer = cose.attached.signer({
       remote: cose.crypto.signer({
         secretKeyJwk: await transmute.key.importJWK({
-          type: privateKeyType,
-          content: privateKeyContent
+          type: fixtures.holder_0_key_type,
+          content: fixtures.holder_0_private_key
         })
       })
     })
@@ -32,8 +26,8 @@ const coseSign1 = {
 const jws = {
   sign: async (bytes: Uint8Array) => {
     const privateKey = await transmute.key.importKeyLike({
-      type: privateKeyType,
-      content: privateKeyContent
+      type: fixtures.holder_0_key_type,
+      content: fixtures.holder_0_private_key
     })
     const jws = await new jose.CompactSign(
       bytes
@@ -44,14 +38,14 @@ const jws = {
   }
 }
 
-const jwk: transmute.VerifierResolver = {
+const resolver: transmute.VerifierResolver = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   resolve: async ({ type, content }) => {
     // ignore hints about message
     // return the same public key for tests
     return {
-      type: privateKeyType,
-      content: publicKeyContent
+      type: fixtures.holder_0_key_type,
+      content: fixtures.holder_0_public_key
     }
   }
 }
@@ -111,14 +105,7 @@ describe('Unsecured W3C Verifiable Presentations', () => {
       })
     const verified = await transmute.
       verifier({
-        resolver: {
-          resolve: async () => {
-            return {
-              type: privateKeyType,
-              content: publicKeyContent
-            }
-          }
-        }
+        resolver
       })
       .verify<transmute.VerifiablePresentationWithHolderObject & transmute.VerifiablePresentationOfEnveloped>({
         type: type,
@@ -173,7 +160,7 @@ describe('COSE Sign1 based W3C Verifiable Presentations', () => {
 
     const verified = await transmute.
       verifier({
-        resolver: jwk
+        resolver
       })
       .verify<transmute.VerifiablePresentationWithHolderObject & transmute.VerifiablePresentationOfEnveloped>({
         type: type,
@@ -228,7 +215,7 @@ describe('JWT based W3C Verifiable Presentations', () => {
       })
     const verified = await transmute.
       verifier({
-        resolver: jwk
+        resolver
       })
       .verify<transmute.VerifiablePresentationWithHolderObject & transmute.VerifiablePresentationOfEnveloped>({
         type: type,
@@ -288,14 +275,7 @@ describe('SD-JWT based W3C Verifiable Presentations', () => {
       })
     const verified = await transmute.
       verifier({
-        resolver: {
-          resolve: async () => {
-            return {
-              type: privateKeyType,
-              content: publicKeyContent
-            }
-          }
-        }
+        resolver
       })
       .verify<transmute.VerifiablePresentationWithHolderObject & transmute.VerifiablePresentationOfEnveloped>({
         type: type,
@@ -361,14 +341,7 @@ describe('SD-JWT based W3C Verifiable Presentations', () => {
       })
     const verified = await transmute.
       verifier({
-        resolver: {
-          resolve: async () => {
-            return {
-              type: privateKeyType,
-              content: publicKeyContent
-            }
-          }
-        }
+        resolver
       })
       .verify<transmute.VerifiablePresentationWithHolderObject & transmute.VerifiablePresentationOfEnveloped>({
         // this content type always implies an sd-jwt secured json-ld object (vp) contain enveloped Fnards.
@@ -384,7 +357,7 @@ describe('SD-JWT based W3C Verifiable Presentations', () => {
     const envelopedVc = verified.verifiableCredential[0].id.replace('data:application/vc+ld+json+sd-jwt;', '')
     const verified2 = await transmute.
       verifier({
-        resolver: jwk
+        resolver
       })
       .verify<transmute.VerifiablePresentationWithHolderObject & transmute.VerifiablePresentationOfEnveloped>({
         // this content type always implies an sd-jwt secured json-ld object (vp) contain enveloped Fnards.
@@ -397,7 +370,7 @@ describe('SD-JWT based W3C Verifiable Presentations', () => {
     // for extra sanity verify the key binding token again
     const kbt = envelopedVc.split('~').pop()
     const verified3 = await transmute.verifier({
-      resolver: jwk
+      resolver
     }).verify({
       type: 'application/kb+jwt',
       content: transmute.text.encoder.encode(kbt),

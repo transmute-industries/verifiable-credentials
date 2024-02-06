@@ -238,9 +238,15 @@ export type StatusListError = {
   // "message": "status list purpose does not match credential status"
 }
 
+export type ConformanceWarningMessage = {
+  link: string
+  message: string
+}
+
 export type ValidationResult = {
   valid: boolean
   content: VerifiableCredential
   schema: Record<string, { valid: boolean, errors?: JsonSchemaError[] }>
   status: Record<string, { valid: boolean, purpose: string, errors?: StatusListError[] }>
+  warnings: ConformanceWarningMessage[]
 }

@@ -29,7 +29,8 @@ export const validator = ({ resolver }: RequestValidator) => {
         valid: true,
         content: verified,
         schema: {},
-        status: {}
+        status: {},
+        warnings: []
       }
       const { credentialSchema, credentialStatus } = verified
       if (credentialSchema) {

@@ -5,15 +5,12 @@ import * as transmute from '../../src'
 
 import * as fixtures from '../../src/cr1/__fixtures__'
 
-const privateKeyType = 'application/jwk+json'
-const privateKeyContent = fs.readFileSync('./src/cr1/__fixtures__/issuer-0-private-key.json')
-const publicKeyContent = fs.readFileSync('./src/cr1/__fixtures__/issuer-0-public-key.json')
 
 const jws = {
   sign: async (bytes: Uint8Array) => {
     const privateKey = await transmute.key.importKeyLike({
-      type: privateKeyType,
-      content: privateKeyContent
+      type: fixtures.issuer_0_key_type,
+      content: fixtures.issuer_0_private_key
     })
     const jws = await new jose.CompactSign(
       bytes
@@ -29,8 +26,8 @@ const coseSign1 = {
     const signer = cose.attached.signer({
       remote: cose.crypto.signer({
         secretKeyJwk: await transmute.key.importJWK({
-          type: privateKeyType,
-          content: privateKeyContent
+          type: fixtures.issuer_0_key_type,
+          content: fixtures.issuer_0_private_key
         })
       })
     })
@@ -49,8 +46,8 @@ const jwk: transmute.VerifierResolver = {
     // ignore hints about message
     // return the same public key for tests
     return {
-      type: privateKeyType,
-      content: publicKeyContent
+      type: fixtures.issuer_0_key_type,
+      content: fixtures.issuer_0_public_key
     }
   }
 }

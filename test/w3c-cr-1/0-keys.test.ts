@@ -39,8 +39,8 @@ describe.skip('key generation', () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { d, ...publicKeyJwk } = jwk
     const publicKeyContent = encoder.encode(JSON.stringify(publicKeyJwk, null, 2))
-    fs.writeFileSync('./src/cr1/__fixtures__/issuer-0-private-key.json', k1)
-    fs.writeFileSync('./src/cr1/__fixtures__/issuer-0-public-key.json', publicKeyContent)
+    fs.writeFileSync('./src/cr1/__fixtures__/issuer_0_private_key.json', k1)
+    fs.writeFileSync('./src/cr1/__fixtures__/issuer_0_public_key.json', publicKeyContent)
   })
   it('application/cose-key', async () => {
     const k1 = await cr1.key.generate({
@@ -52,8 +52,8 @@ describe.skip('key generation', () => {
     const importedKey = await jose.importJWK(jwk)
     expect(importedKey).toBeDefined()
     const publicKeyCose = await cose.key.publicFromPrivate(coseKey)
-    fs.writeFileSync('./src/cr1/__fixtures__/holder-0-private-key.cbor', k1)
-    fs.writeFileSync('./src/cr1/__fixtures__/holder-0-public-key.cbor', cose.cbor.encode(publicKeyCose))
+    fs.writeFileSync('./src/cr1/__fixtures__/holder_0_private_key.cbor', k1)
+    fs.writeFileSync('./src/cr1/__fixtures__/holder_0_public_key', cose.cbor.encode(publicKeyCose))
   })
   it('application/pkcs8', async () => {
     const k1 = await cr1.key.generate({

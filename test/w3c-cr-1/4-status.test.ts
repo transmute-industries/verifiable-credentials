@@ -3,8 +3,8 @@ import * as cose from '@transmute/cose'
 import * as transmute from '../../src'
 
 const privateKeyType = 'application/jwk+json'
-const privateKeyContent = fs.readFileSync('./src/cr1/__fixtures__/issuer-0-private-key.json')
-const publicKeyContent = fs.readFileSync('./src/cr1/__fixtures__/issuer-0-public-key.json')
+const privateKeyContent = fs.readFileSync('./src/cr1/__fixtures__/issuer_0_private_key.json')
+const publicKeyContent = fs.readFileSync('./src/cr1/__fixtures__/issuer_0_public_key.json')
 
 const coseSign1 = {
   sign: async (bytes: Uint8Array) => {
