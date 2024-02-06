@@ -1,0 +1,10 @@
+"@context":
+  - https://www.w3.org/ns/credentials/v2
+type:
+  - VerifiableCredential
+issuer: https://issuer.example
+credentialSchema:
+  id: https://issuer.example/schemas/42
+  type: JsonSchema
+credentialSubject:
+  id: https://subject.example

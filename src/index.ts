@@ -1,12 +1,7 @@
 
-import controller from './controller'
-import vc from './vc'
-import vp from './vp'
 
-export * from './vc/types'
+import { base64url } from 'jose'
 
-export { vc, vp }
+export { base64url }
+export * from './cr1'
 
-const api = { controller, vc, vp }
-
-export default api
