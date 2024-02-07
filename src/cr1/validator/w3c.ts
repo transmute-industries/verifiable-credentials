@@ -92,9 +92,6 @@ const verifiableCredential = (result: ValidationResult, pointer: string, value: 
         reference: 'https://www.w3.org/TR/vc-data-model-2.0/#presentations-0'
       })
     }
-    // Check Enveloped Cred
-
-    // 
   }
 }
 
