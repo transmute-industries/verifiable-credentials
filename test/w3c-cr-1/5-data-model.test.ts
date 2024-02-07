@@ -261,7 +261,75 @@ credentialSubject:
 
 // https://www.w3.org/TR/2024/CRD-vc-data-model-2.0-20240205/#presentations-0
 describe("Presentations", () => {
-  it.todo("complete me")
+  describe("Presentation - verifiableCredential", () => {
+    it.todo("complete me")
+  });
+  describe("Presentation - holder", () => {
+    it("can be object with id as url", async  () => {
+      const validation = await review(
+        text(`
+  "@context":
+    - https://www.w3.org/ns/credentials/v2
+  type:
+    - VerifiablePresentation
+  holder: 
+    id: https://university.example/issuers/565049
+  `)
+      );
+      expect(validation.warnings).toEqual([]);
+    })
+  
+    it("can be url", async  () => {
+      const validation = await review(
+        text(`
+  "@context":
+    - https://www.w3.org/ns/credentials/v2
+  type:
+    - VerifiablePresentation
+  holder: https://university.example/issuers/565049
+  `)
+      );
+      expect(validation.warnings).toEqual([]);
+    })
+  
+    it("gives warning if issuer not valid url", async  () => {
+      const validation = await review(
+        text(`
+  "@context":
+    - https://www.w3.org/ns/credentials/v2
+  type:
+    - VerifiablePresentation
+  holder: test
+  `)
+      );
+      expect(validation.warnings[0]).toStrictEqual({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        message: `Holder MUST be a valid URL or an object containing an id property that is a valid URL`,
+        pointer: '/holder',
+        reference: 'https://www.w3.org/TR/vc-data-model-2.0/#presentations-0'
+      });
+    })
+  
+    it("gives warning if issuer.id not valid url", async  () => {
+      const validation = await review(
+        text(`
+  "@context":
+    - https://www.w3.org/ns/credentials/v2
+  type:
+    - VerifiablePresentation
+  holder: 
+    id: test
+  `)
+      );
+      expect(validation.warnings[1]).toStrictEqual({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        message: `Holder MUST be a valid URL or an object containing an id property that is a valid URL`,
+        pointer: '/holder/id',
+        reference: 'https://www.w3.org/TR/vc-data-model-2.0/#presentations-0'
+      });
+    })
+  });
+  
 });
 
 // it.todo('data model tests')
