@@ -83,7 +83,6 @@ const holder = (result: ValidationResult, pointer: string, value: any) => {
 const verifiableCredential = (result: ValidationResult, pointer: string, value: any) => {
   const nonObjectPointer = pointer?.split('/verifiableCredential/').pop() as string
   if (pointer.startsWith('/verifiableCredential/') && nonObjectPointer.length === 1 && !Number.isNaN(parseInt(nonObjectPointer))) {
-    console.log("VAL:",  pointer, value);
     if (typeof value !== 'object') {
       result.warnings.push({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
