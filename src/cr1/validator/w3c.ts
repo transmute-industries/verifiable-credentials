@@ -93,6 +93,17 @@ const verifiableCredential = (result: ValidationResult, pointer: string, value: 
       })
     }
   }
+  const pointerIndex = pointer?.split('/verifiableCredential/').pop()?.split("/")[0]
+  if (pointer.endsWith(`/verifiableCredential/${pointerIndex}/id`)) {
+    if (!value.includes('data:')) {
+      result.warnings.push({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        message: `verifiableCredential id value of the object MUST be a data: URL`,
+        pointer,
+        reference: 'https://www.w3.org/TR/vc-data-model-2.0/#enveloped-verifiable-credentials'
+      })
+    }
+  }
 }
 
 

@@ -261,7 +261,7 @@ credentialSubject:
 
 // https://www.w3.org/TR/2024/CRD-vc-data-model-2.0-20240205/#presentations-0
 describe("Presentations", () => {
-  describe("Presentation - verifiableCredential", () => {
+  describe("verifiableCredential", () => {
     it("can be an array of enveloped credentials and credentials", async  () => {
       const validation = await review(
         text(`
@@ -312,10 +312,46 @@ describe("Presentations", () => {
         pointer: '/verifiableCredential/0',
         reference: 'https://www.w3.org/TR/vc-data-model-2.0/#presentations-0'
       }]);
-      
+    })
+
+    it("warns when enveloped credential id is not valid", async  () => {
+      const validation = await review(
+        text(`
+  "@context":
+    - https://www.w3.org/ns/credentials/v2
+  type:
+    - VerifiablePresentation
+  holder: 
+    id: https://university.example/issuers/565049
+  verifiableCredential:
+    - "@context": https://www.w3.org/ns/credentials/v2
+      id: QzVjV...RMjU
+      type: EnvelopedVerifiableCredential
+    - "@context":
+        - https://www.w3.org/ns/credentials/v2
+      type:
+        - VerifiableCredential
+      issuer: 
+        id: https://university.example/issuers/565049
+      credentialSubject:
+        - id: https://university.example/issuers/1
+        - id: https://university.example/issuers/2
+  `)
+      );
+
+      expect(validation.warnings).toEqual([{
+        message: 'Identifier will not be well understood:  QzVjV...RMjU',
+        pointer: '/verifiableCredential/0/id',
+        reference: 'https://www.w3.org/TR/2024/CRD-vc-data-model-2.0-20240205/#identifiers'
+      },
+      {
+        message: 'verifiableCredential id value of the object MUST be a data: URL',
+        pointer: '/verifiableCredential/0/id',
+        reference: 'https://www.w3.org/TR/vc-data-model-2.0/#enveloped-verifiable-credentials'
+      }]);
     })
   });
-  describe("Presentation - holder", () => {
+  describe("holder", () => {
     it("can be object with id as url", async  () => {
       const validation = await review(
         text(`
