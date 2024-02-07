@@ -49,6 +49,21 @@ const identifiers = (result: ValidationResult, pointer: string, value: any) => {
   }
 }
 
+// https://www.w3.org/TR/vc-data-model-2.0/#issuer
+const issuer = (result: ValidationResult, pointer: string, value: any) => {
+  if (pointer.endsWith('/issuer') || pointer.endsWith('/issuer/id')) {
+    const issuerAllowed = stringIsAValidUrl(value, allowedProtocols)
+    if (!issuerAllowed) {
+      result.warnings.push({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        message: `Issuer MUST be a valid URL or an object containing an id property that is a valid URL`,
+        pointer,
+        reference: 'https://www.w3.org/TR/vc-data-model-2.0/#issuer'
+      })
+    }
+  }
+}
+
 // https://www.w3.org/TR/2024/CRD-vc-data-model-2.0-20240205/#types
 const types = (result: ValidationResult, pointer: string, value: any) => {
   // I'm not writing a test for:
@@ -98,7 +113,7 @@ export const conformance = (result: ValidationResult) => {
     identifiers(result, pointer, value)
     types(result, pointer, value)
     names_and_descriptions(result, pointer, value)
-
+    issuer(result, pointer, value)
   }
 
   return result
