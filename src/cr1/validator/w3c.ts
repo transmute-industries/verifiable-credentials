@@ -79,6 +79,27 @@ const holder = (result: ValidationResult, pointer: string, value: any) => {
   }
 }
 
+// https://www.w3.org/TR/vc-data-model-2.0/#presentations-0
+const verifiableCredential = (result: ValidationResult, pointer: string, value: any) => {
+  const nonObjectPointer = pointer?.split('/verifiableCredential/').pop() as string
+  if (pointer.startsWith('/verifiableCredential/') && nonObjectPointer.length === 1 && !Number.isNaN(parseInt(nonObjectPointer))) {
+    console.log("VAL:",  pointer, value);
+    if (typeof value !== 'object') {
+      result.warnings.push({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        message: `verifiableCredential MUST NOT be non-object values such as numbers, strings, or URLs`,
+        pointer,
+        reference: 'https://www.w3.org/TR/vc-data-model-2.0/#presentations-0'
+      })
+    }
+    // Check Enveloped Cred
+
+    // 
+  }
+}
+
+
+
 // https://www.w3.org/TR/2024/CRD-vc-data-model-2.0-20240205/#types
 const types = (result: ValidationResult, pointer: string, value: any) => {
   // I'm not writing a test for:
@@ -130,6 +151,7 @@ export const conformance = (result: ValidationResult) => {
     names_and_descriptions(result, pointer, value)
     issuer(result, pointer, value)
     holder(result, pointer, value)
+    verifiableCredential(result, pointer, value);
   }
 
   return result
