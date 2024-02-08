@@ -49,6 +49,64 @@ const identifiers = (result: ValidationResult, pointer: string, value: any) => {
   }
 }
 
+// https://www.w3.org/TR/vc-data-model-2.0/#issuer
+const issuer = (result: ValidationResult, pointer: string, value: any) => {
+  if (pointer.endsWith('/issuer') || pointer.endsWith('/issuer/id')) {
+    const issuerAllowed = stringIsAValidUrl(value, allowedProtocols)
+    if (!issuerAllowed) {
+      result.warnings.push({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        message: `Issuer MUST be a valid URL or an object containing an id property that is a valid URL`,
+        pointer,
+        reference: 'https://www.w3.org/TR/vc-data-model-2.0/#issuer'
+      })
+    }
+  }
+}
+
+// https://www.w3.org/TR/vc-data-model-2.0/#presentations-0
+const holder = (result: ValidationResult, pointer: string, value: any) => {
+  if (pointer.endsWith('/holder') || pointer.endsWith('/holder/id')) {
+    const issuerAllowed = stringIsAValidUrl(value, allowedProtocols)
+    if (!issuerAllowed) {
+      result.warnings.push({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        message: `Holder MUST be a valid URL or an object containing an id property that is a valid URL`,
+        pointer,
+        reference: 'https://www.w3.org/TR/vc-data-model-2.0/#presentations-0'
+      })
+    }
+  }
+}
+
+// https://www.w3.org/TR/vc-data-model-2.0/#presentations-0
+const verifiableCredential = (result: ValidationResult, pointer: string, value: any) => {
+  const nonObjectPointer = pointer?.split('/verifiableCredential/').pop() as string
+  if (pointer.startsWith('/verifiableCredential/') && nonObjectPointer.length === 1 && !Number.isNaN(parseInt(nonObjectPointer))) {
+    if (typeof value !== 'object') {
+      result.warnings.push({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        message: `verifiableCredential MUST NOT be non-object values such as numbers, strings, or URLs`,
+        pointer,
+        reference: 'https://www.w3.org/TR/vc-data-model-2.0/#presentations-0'
+      })
+    }
+  }
+  const pointerIndex = pointer?.split('/verifiableCredential/').pop()?.split("/")[0]
+  if (pointer.endsWith(`/verifiableCredential/${pointerIndex}/id`)) {
+    if (!value.includes('data:')) {
+      result.warnings.push({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        message: `verifiableCredential id value of the object MUST be a data: URL`,
+        pointer,
+        reference: 'https://www.w3.org/TR/vc-data-model-2.0/#enveloped-verifiable-credentials'
+      })
+    }
+  }
+}
+
+
+
 // https://www.w3.org/TR/2024/CRD-vc-data-model-2.0-20240205/#types
 const types = (result: ValidationResult, pointer: string, value: any) => {
   // I'm not writing a test for:
@@ -98,7 +156,9 @@ export const conformance = (result: ValidationResult) => {
     identifiers(result, pointer, value)
     types(result, pointer, value)
     names_and_descriptions(result, pointer, value)
-
+    issuer(result, pointer, value)
+    holder(result, pointer, value)
+    verifiableCredential(result, pointer, value);
   }
 
   return result
