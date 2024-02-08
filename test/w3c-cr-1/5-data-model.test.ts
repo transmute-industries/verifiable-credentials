@@ -1,5 +1,5 @@
 
-import * as fixtures from "../../src/cr1/__fixtures__";
+import * as fixtures from "../../test/__fixtures__";
 
 const { text, review } = fixtures
 
@@ -182,7 +182,7 @@ credentialSubject:
 // https://www.w3.org/TR/2024/CRD-vc-data-model-2.0-20240205/#issuer
 // MUST BE: URL, or Object with ID that is URL
 describe("Issuer", () => {
-  it("can be object with id as url", async  () => {
+  it("can be object with id as url", async () => {
     const validation = await review(
       text(`
 "@context":
@@ -199,7 +199,7 @@ credentialSubject:
     expect(validation.warnings).toEqual([]);
   })
 
-  it("can be url", async  () => {
+  it("can be url", async () => {
     const validation = await review(
       text(`
 "@context":
@@ -215,7 +215,7 @@ credentialSubject:
     expect(validation.warnings).toEqual([]);
   })
 
-  it("gives warning if issuer not valid url", async  () => {
+  it("gives warning if issuer not valid url", async () => {
     const validation = await review(
       text(`
 "@context":
@@ -236,7 +236,7 @@ credentialSubject:
     });
   })
 
-  it("gives warning if issuer.id not valid url", async  () => {
+  it("gives warning if issuer.id not valid url", async () => {
     const validation = await review(
       text(`
 "@context":
@@ -262,7 +262,7 @@ credentialSubject:
 // https://www.w3.org/TR/2024/CRD-vc-data-model-2.0-20240205/#presentations-0
 describe("Presentations", () => {
   describe("verifiableCredential", () => {
-    it("can be an array of enveloped credentials and credentials", async  () => {
+    it("can be an array of enveloped credentials and credentials", async () => {
       const validation = await review(
         text(`
   "@context":
@@ -293,7 +293,7 @@ describe("Presentations", () => {
       }]);
     })
 
-    it("warns when non-object value is used", async  () => {
+    it("warns when non-object value is used", async () => {
       const validation = await review(
         text(`
   "@context":
@@ -314,7 +314,7 @@ describe("Presentations", () => {
       }]);
     })
 
-    it("warns when enveloped credential id is not valid", async  () => {
+    it("warns when enveloped credential id is not valid", async () => {
       const validation = await review(
         text(`
   "@context":
@@ -352,7 +352,7 @@ describe("Presentations", () => {
     })
   });
   describe("holder", () => {
-    it("can be object with id as url", async  () => {
+    it("can be object with id as url", async () => {
       const validation = await review(
         text(`
   "@context":
@@ -365,8 +365,8 @@ describe("Presentations", () => {
       );
       expect(validation.warnings).toEqual([]);
     })
-  
-    it("can be url", async  () => {
+
+    it("can be url", async () => {
       const validation = await review(
         text(`
   "@context":
@@ -378,8 +378,8 @@ describe("Presentations", () => {
       );
       expect(validation.warnings).toEqual([]);
     })
-  
-    it("gives warning if issuer not valid url", async  () => {
+
+    it("gives warning if issuer not valid url", async () => {
       const validation = await review(
         text(`
   "@context":
@@ -396,8 +396,8 @@ describe("Presentations", () => {
         reference: 'https://www.w3.org/TR/vc-data-model-2.0/#presentations-0'
       });
     })
-  
-    it("gives warning if issuer.id not valid url", async  () => {
+
+    it("gives warning if issuer.id not valid url", async () => {
       const validation = await review(
         text(`
   "@context":
@@ -416,7 +416,7 @@ describe("Presentations", () => {
       });
     })
   });
-  
+
 });
 
 // it.todo('data model tests')
