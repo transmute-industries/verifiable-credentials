@@ -2,7 +2,7 @@
 import * as jose from 'jose'
 import moment from 'moment'
 
-import * as vc from '../../src'
+import * as transmute from '../../src'
 
 const alg = `ES256`
 const statusListSize = 131072
@@ -10,23 +10,24 @@ const revocationIndex = 94567
 const suspensionIndex = 23452
 
 const issuer = `did:example:123`
-const baseURL = `https://vendor.example/api/`
+const baseURL = `https://vendor.example/api`
 
 describe('product passport', () => {
   it('issue application/vc+ld+json+jwt using application/jwk+json', async () => {
-    const privateKey = await vc.key.generate({
+    const privateKey = await transmute.key.generate({
       alg,
       type: 'application/jwk+json'
     })
-    expect(vc.text.decoder.decode(privateKey).startsWith(`{
+
+    expect(transmute.text.decoder.decode(privateKey).startsWith(`{
   "kid"`)).toBe(true)
-    const publicKey = await vc.key.publicFromPrivate({
+    const publicKey = await transmute.key.publicFromPrivate({
       type: 'application/jwk+json',
       content: privateKey
     })
-    const issued = await vc
+    const issued = await transmute
       .issuer({
-        alg: 'ES256',
+        alg,
         type: 'application/vc+ld+json+jwt',
         signer: {
           sign: async (bytes: Uint8Array) => {
@@ -34,19 +35,19 @@ describe('product passport', () => {
               bytes
             )
               .setProtectedHeader({ kid: `${issuer}#key-42`, alg })
-              .sign(await vc.key.importKeyLike({
+              .sign(await transmute.key.importKeyLike({
                 type: "application/jwk+json",
                 content: privateKey
               }))
-            return vc.text.encoder.encode(jws)
+            return transmute.text.encoder.encode(jws)
           }
         }
       })
       .issue({
-        claimset: vc.text.encoder.encode(`
+        claimset: transmute.text.encoder.encode(`
 "@context":
   - https://www.w3.org/ns/credentials/v2
-  - https://www.w3.org/ns/credentials/examples/v2
+  - ${baseURL}/context/v2
 
 id: ${baseURL}/credentials/3732
 type:
@@ -78,7 +79,9 @@ credentialSubject:
 `),
       })
 
-    const validated = await vc.validator({
+
+
+    const validated = await transmute.validator({
       resolver: {
         resolve: async ({ id, type, content }) => {
           // Resolve external resources according to verifier policy
@@ -86,7 +89,7 @@ credentialSubject:
           if (id === `${baseURL}/schemas/product-passport`) {
             return {
               type: `application/schema+json`,
-              content: vc.text.encoder.encode(`
+              content: transmute.text.encoder.encode(`
 {
   "$id": "${baseURL}/schemas/product-passport",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -110,7 +113,7 @@ credentialSubject:
           if (id === `${baseURL}/credentials/status/3`) {
             return {
               type: `application/vc+ld+json+jwt`,
-              content: await vc
+              content: await transmute
                 .issuer({
                   alg: 'ES384',
                   type: 'application/vc+ld+json+cose',
@@ -120,16 +123,16 @@ credentialSubject:
                         bytes
                       )
                         .setProtectedHeader({ kid: `${issuer}#key-42`, alg })
-                        .sign(await vc.key.importKeyLike({
+                        .sign(await transmute.key.importKeyLike({
                           type: "application/jwk+json",
                           content: privateKey
                         }))
-                      return vc.text.encoder.encode(jws)
+                      return transmute.text.encoder.encode(jws)
                     }
                   }
                 })
                 .issue({
-                  claimset: vc.text.encoder.encode(
+                  claimset: transmute.text.encoder.encode(
                     `
 "@context":
   - https://www.w3.org/ns/credentials/v2
@@ -144,7 +147,7 @@ credentialSubject:
   id: ${baseURL}/status/3#list#list
   type: BitstringStatusList
   statusPurpose: revocation
-  encodedList: ${await vc.status.bs(statusListSize).set(revocationIndex, false).encode()}
+  encodedList: ${await transmute.status.bs(statusListSize).set(revocationIndex, false).encode()}
 `.trim()
                   )
                 })
@@ -153,7 +156,7 @@ credentialSubject:
           if (id === `${baseURL}/credentials/status/4`) {
             return {
               type: `application/vc+ld+json+jwt`,
-              content: await vc
+              content: await transmute
                 .issuer({
                   alg: 'ES384',
                   type: 'application/vc+ld+json+cose',
@@ -163,16 +166,16 @@ credentialSubject:
                         bytes
                       )
                         .setProtectedHeader({ kid: `${issuer}#key-42`, alg })
-                        .sign(await vc.key.importKeyLike({
+                        .sign(await transmute.key.importKeyLike({
                           type: "application/jwk+json",
                           content: privateKey
                         }))
-                      return vc.text.encoder.encode(jws)
+                      return transmute.text.encoder.encode(jws)
                     }
                   }
                 })
                 .issue({
-                  claimset: vc.text.encoder.encode(
+                  claimset: transmute.text.encoder.encode(
                     `
 "@context":
   - https://www.w3.org/ns/credentials/v2
@@ -187,14 +190,14 @@ credentialSubject:
   id: ${baseURL}/status/4#list#list
   type: BitstringStatusList
   statusPurpose: suspension
-  encodedList: ${await vc.status.bs(statusListSize).set(suspensionIndex, false).encode()}
+  encodedList: ${await transmute.status.bs(statusListSize).set(suspensionIndex, false).encode()}
 `.trim()
                   )
                 })
             }
           }
           if (content != undefined && type === `application/vc+ld+json+jwt`) {
-            const { kid } = jose.decodeProtectedHeader(vc.text.decoder.decode(content))
+            const { kid } = jose.decodeProtectedHeader(transmute.text.decoder.decode(content))
             // lookup public key on a resolver
             if (kid === `did:example:123#key-42`) {
               return {
@@ -214,5 +217,71 @@ credentialSubject:
     expect(validated.schema[`${baseURL}/schemas/product-passport`].valid).toBe(true)
     expect(validated.status[`${baseURL}/credentials/status/3#${revocationIndex}`].valid).toBe(false)
     expect(validated.status[`${baseURL}/credentials/status/4#${suspensionIndex}`].valid).toBe(false)
+
+
+    const vp = await transmute
+      .holder({
+        alg,
+        type: 'application/vp+ld+json+jwt',
+      })
+      .issue({
+        signer: {
+          sign: async (bytes: Uint8Array) => {
+            const jws = await new jose.CompactSign(
+              bytes
+            )
+              .setProtectedHeader({ kid: `${issuer}#key-42`, alg })
+              .sign(await transmute.key.importKeyLike({
+                type: "application/jwk+json",
+                content: privateKey
+              }))
+            return transmute.text.encoder.encode(jws)
+          }
+        },
+        presentation: {
+          "@context": [
+            "https://www.w3.org/ns/credentials/v2",
+          ],
+          "type": ["VerifiablePresentation"],
+          holder: `${baseURL}/holders/565049`,
+          // this part is built from disclosures without key binding below.
+          // "verifiableCredential": [{
+          //   "@context": "https://www.w3.org/ns/credentials/v2",
+          //   "id": "data:application/vc+ld+json+sd-jwt;QzVjV...RMjU",
+          //   "type": "EnvelopedVerifiableCredential"
+          // }]
+        },
+        disclosures: [
+          {
+            type: `application/vc+ld+json+jwt`,
+            credential: issued
+          }
+        ]
+      })
+    const presentation = await transmute.validator({
+      resolver: {
+        resolve: async ({ type, content }) => {
+          // Resolve external resources according to verifier policy
+          // In this case, we return inline exampes...
+          if (content != undefined && type === `application/vp+ld+json+jwt`) {
+            const { kid } = jose.decodeProtectedHeader(transmute.text.decoder.decode(content))
+            // lookup public key on a resolver
+            if (kid === `did:example:123#key-42`) {
+              return {
+                type: "application/jwk+json",
+                content: publicKey
+              }
+            }
+          }
+          throw new Error('Resolver option not supported.')
+        }
+      }
+    })
+      .validate<transmute.TraceablePresentationValidationResult>({
+        type: `application/vp+ld+json+jwt`,
+        content: vp
+      })
+    expect(presentation.content.holder).toBe('https://vendor.example/api/holders/565049')
+    expect(presentation.content.verifiableCredential[0].id.startsWith('data:application/vc+ld+json+jwt;')).toBe(true)
   })
 })

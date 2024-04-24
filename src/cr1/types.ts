@@ -251,3 +251,8 @@ export type ValidationResult = {
   status: Record<string, { valid: boolean, purpose: string, errors?: StatusListError[] }>
   warnings: ConformanceWarningMessage[]
 }
+
+
+export type TraceablePresentationValidationResult = ValidationResult & {
+  content: VerifiablePresentationWithHolderObject & VerifiablePresentationOfEnveloped
+}
