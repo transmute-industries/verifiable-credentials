@@ -17,7 +17,7 @@ export type RequestGenerateCredentialKey = {
 
 }
 
-export const generate = async (req: RequestGenerateCredentialKey): Promise<Uint8Array> => {
+export const generate = async <T = Uint8Array>(req: RequestGenerateCredentialKey): Promise<Uint8Array> => {
   if (req.type === 'application/jwk+json') {
     const obj = await cose.key.generate(req.alg, 'application/jwk+json')
     const text = JSON.stringify(obj, null, 2)
