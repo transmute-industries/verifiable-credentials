@@ -89,6 +89,7 @@ credentialSubject:
               content: vc.text.encoder.encode(`
 {
   "$id": "${baseURL}/schemas/product-passport",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Example JSON Schema",
   "description": "This is a test schema",
   "type": "object",

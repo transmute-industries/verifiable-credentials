@@ -1,4 +1,3 @@
-import Ajv from 'ajv'
 
 import {
   RequestValidator,
@@ -19,9 +18,7 @@ import { bs } from '../../cr1/status-list'
 
 import { conformance } from './w3c'
 
-const ajv = new Ajv({
-  strict: false,
-})
+import { ajv } from "./ajv"
 
 export const validator = ({ resolver }: RequestValidator) => {
   return {
