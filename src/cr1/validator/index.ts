@@ -44,8 +44,20 @@ export const validator = ({ resolver }: RequestValidator) => {
             })
             const schemaContent = decoder.decode(credentialSchema.content)
             const parsedSchemaContent = JSON.parse(schemaContent)
-            const compiledSchemaValidator = ajv.compile(parsedSchemaContent)
-            const valid = compiledSchemaValidator(verified)
+            let valid: any;
+            let compiledSchemaValidator: any
+            try {
+              const maybeExistingSchema = ajv.getSchema(parsedSchemaContent.$id)
+              compiledSchemaValidator = maybeExistingSchema
+              if (compiledSchemaValidator === undefined) {
+                // only compile new schemas...
+                // this assumes schemas do not change.
+                compiledSchemaValidator = ajv.compile(parsedSchemaContent)
+              }
+              valid = compiledSchemaValidator(verified)
+            } catch (e) {
+              valid = false
+            }
             validation.schema[schema.id] = { valid }
             if (!valid) {
               validation.valid = false
