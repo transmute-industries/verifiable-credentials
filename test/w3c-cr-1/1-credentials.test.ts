@@ -3,7 +3,7 @@ import * as jose from 'jose'
 import * as cose from '@transmute/cose'
 import * as transmute from '../../src'
 
-import * as fixtures from '../../src/cr1/__fixtures__'
+import * as fixtures from '../../test/__fixtures__'
 
 
 const jws = {

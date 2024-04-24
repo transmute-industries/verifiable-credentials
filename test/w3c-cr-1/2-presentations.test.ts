@@ -2,7 +2,7 @@
 import * as jose from 'jose'
 import * as transmute from '../../src'
 import * as cose from '@transmute/cose'
-import * as fixtures from '../../src/cr1/__fixtures__'
+import * as fixtures from '../../test/__fixtures__'
 
 const coseSign1 = {
   sign: async (bytes: Uint8Array) => {

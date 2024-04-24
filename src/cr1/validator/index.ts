@@ -1,4 +1,3 @@
-import Ajv from 'ajv'
 
 import {
   RequestValidator,
@@ -8,7 +7,8 @@ import {
   BitstringStatusListCredential,
   ValidationResult,
   VerifiableCredential,
-  JsonSchemaError
+  JsonSchemaError,
+  TraceablePresentationValidationResult
 } from "../types"
 
 import { verifier } from "../verifier"
@@ -19,13 +19,11 @@ import { bs } from '../../cr1/status-list'
 
 import { conformance } from './w3c'
 
-const ajv = new Ajv({
-  strict: false,
-})
+import { ajv } from "./ajv"
 
 export const validator = ({ resolver }: RequestValidator) => {
   return {
-    validate: async ({ type, content }: SecuredContentType) => {
+    validate: async <T = TraceablePresentationValidationResult>({ type, content }: SecuredContentType) => {
       const verified = await verifier({ resolver }).verify<VerifiableCredential>({ type, content })
       const validation: ValidationResult = {
         valid: true,
@@ -85,7 +83,7 @@ export const validator = ({ resolver }: RequestValidator) => {
           }
         }
       }
-      return conformance(validation)
+      return conformance(validation) as T
     }
   }
 }
