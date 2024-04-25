@@ -175,7 +175,7 @@ const validated = await transmute
             content: await transmute
               .issuer({
                 alg: "ES384",
-                type: "application/vc+ld+json+cose",
+                type: "application/vc+ld+json+jwt",
                 signer: {
                   sign: async (bytes: Uint8Array) => {
                     const jws = await new jose.CompactSign(bytes)
@@ -221,7 +221,7 @@ credentialSubject:
             content: await transmute
               .issuer({
                 alg: "ES384",
-                type: "application/vc+ld+json+cose",
+                type: "application/vc+ld+json+jwt",
                 signer: {
                   sign: async (bytes: Uint8Array) => {
                     const jws = await new jose.CompactSign(bytes)
