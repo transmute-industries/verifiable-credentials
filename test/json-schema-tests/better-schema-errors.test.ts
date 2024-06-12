@@ -112,7 +112,6 @@ credentialSubject:
     content: issued,
   });
   expect(validation1.valid).toBe(false);
-  // console.log(JSON.stringify(validation1, null, 2))
   expect(validation1.schema).toEqual({
     "https://vendor.example/api/schemas/product-passport": {
       "valid": false,
