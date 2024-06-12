@@ -70,22 +70,28 @@ credentialSubject:
             type: `application/schema+json`,
             content: transmute.text.encoder.encode(`
 {
-"$id": "${baseURL}/schemas/product-passport",
-"$schema": "https://json-schema.org/draft/2020-12/schema",
-"title": "Example JSON Schema",
-"description": "This is a test schema",
-"type": "object",
-"properties": {
-  "credentialSubject": {
-    "type": "object",
-    "properties": {
-      "id": {
-        "type": "string"
+  "$id": "${baseURL}/schemas/product-passport",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Example JSON Schema",
+  "description": "This is a test schema",
+  "type": "object",
+  "properties": {
+    "credentialSubject": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "degree": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "errorMessage": {
+        "additionalProperties": "🔥 This is a custom error message for extra properties 🔥"
       }
-    },
-    "additionalProperties": false
+    }
   }
-}
 }
             `),
           };
@@ -118,14 +124,26 @@ credentialSubject:
       "errors": [
         {
           "instancePath": "/credentialSubject",
-          "schemaPath": "#/properties/credentialSubject/additionalProperties",
-          "keyword": "additionalProperties",
+          "schemaPath": "#/properties/credentialSubject/errorMessage",
+          "keyword": "errorMessage",
           "params": {
-            "additionalProperty": "unexpectedProperty"
+            "errors": [
+              {
+                "instancePath": "/credentialSubject",
+                "schemaPath": "#/properties/credentialSubject/additionalProperties",
+                "keyword": "additionalProperties",
+                "params": {
+                  "additionalProperty": "unexpectedProperty"
+                },
+                "message": "must NOT have additional properties",
+                "emUsed": true
+              },
+            ]
           },
-          "message": "must NOT have additional properties"
+          "message": "🔥 This is a custom error message for extra properties 🔥"
         }
       ]
     }
-  })
+  }
+  )
 });
