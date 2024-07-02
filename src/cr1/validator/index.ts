@@ -41,6 +41,7 @@ export const validator = ({ resolver }: RequestValidator) => {
               // prefer to resolve this one by id, instead of content
               id: schema.id,
               type: 'application/schema+json',
+              purpose: 'schema-validation'
             })
             if (credentialSchema === true) {
               validation.schema[schema.id] = { validation: 'ignored' } as any
@@ -77,7 +78,8 @@ export const validator = ({ resolver }: RequestValidator) => {
             const statusListCredential = await resolver.resolve({
               // prefer to resolve this one by id, instead of content
               id: status.statusListCredential,
-              type: type // we do not support mixed type credential and status lists!
+              type: type, // we do not support mixed type credential and status lists!
+              purpose: 'status-check'
             })
             const verified = await verifier({ resolver }).verify<BitstringStatusListCredential>(statusListCredential)
             // confirm purpose matches

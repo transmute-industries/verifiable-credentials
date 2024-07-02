@@ -66,25 +66,15 @@ credentialSubject:
 it("can disable schema validation", async () => {
   const validator = await transmute.validator({
     resolver: {
-      resolve: async (opts: any) => {
-        // console.log(opts)
-        const { id, type, content } = opts
-        // Resolve external resources according to verifier policy
-        // In this case, we return inline exampes...
-        if (id === `${baseURL}/schemas/product-passport`) {
+      resolve: async ({ purpose }) => {
+        if (purpose === 'schema-validation') {
           return true; // resolving the special case "true" ignores validation
         }
-        if (content != undefined && type === `application/vc+ld+json+jwt`) {
-          const { kid } = jose.decodeProtectedHeader(
-            transmute.text.decoder.decode(content)
-          );
-          // lookup public key on a resolver
-          if (kid === `did:example:123#key-42`) {
-            return {
-              type: "application/jwk+json",
-              content: publicKey,
-            };
-          }
+        if (purpose === 'verification-material') {
+          return {
+            type: "application/jwk+json",
+            content: publicKey,
+          };
         }
         throw new Error("Resolver option not supported.");
       },

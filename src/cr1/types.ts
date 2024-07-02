@@ -158,8 +158,14 @@ export type SecuredContentType = {
   content: Uint8Array
 }
 
+export type VerifierResolutionRequest = {
+  type: SupportedCredentialFormats | SupportedPresentationFormats | SupportedJwtSignatureFormats | SupportedSdJwtSignatureFormats | SupportedCoseSign1Formats
+  content: Uint8Array
+  purpose: ValidatorResolutionPurpose
+}
+
 export type VerifierResolver = {
-  resolve: (req: SecuredContentType) => Promise<PublicKeyWithContentType>
+  resolve: (req: VerifierResolutionRequest) => Promise<PublicKeyWithContentType>
 }
 
 export type RequestVerifier = {
@@ -167,10 +173,13 @@ export type RequestVerifier = {
 }
 
 
+export type ValidatorResolutionPurpose = 'schema-validation' | 'status-check' | 'verification-material'
+
 export type ValidatorContentType = {
   id?: string
   type: any
   content?: Uint8Array
+  purpose: ValidatorResolutionPurpose
 }
 
 
