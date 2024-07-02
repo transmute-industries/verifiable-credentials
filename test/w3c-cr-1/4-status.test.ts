@@ -97,8 +97,12 @@ credentialSubject:
             }),
         })
       expect(validation.valid).toBe(true);
-      expect(validation.status['https://example.com/credentials/status/3#94567'].valid).toBe(false);
-      expect(validation.status['https://example.com/credentials/status/3#94567'].purpose).toBe('revocation');
+      expect(validation.status['https://example.com/credentials/status/3#94567']).toEqual({
+        "purpose": "revocation",
+        "revocation": false,
+        "set": false
+      });
+
     })
 
     // failure here means REVOKED
@@ -183,8 +187,11 @@ credentialSubject:
             }),
         })
       expect(validation.valid).toBe(false);
-      expect(validation.status['https://example.com/credentials/status/3#94567'].valid).toBe(true);
-      expect(validation.status['https://example.com/credentials/status/3#94567'].purpose).toBe('revocation');
+      expect(validation.status['https://example.com/credentials/status/3#94567']).toEqual({
+        "purpose": "revocation",
+        "revocation": true,
+        "set": true
+      });
     })
   })
 
@@ -259,8 +266,12 @@ credentialSubject:
             }),
         })
       expect(validation.valid).toBe(true);
-      expect(validation.status['https://example.com/credentials/status/3#94567'].valid).toBe(false);
-      expect(validation.status['https://example.com/credentials/status/3#94567'].purpose).toBe('suspension');
+      expect(validation.status['https://example.com/credentials/status/3#94567']).toEqual({
+        "set": false,
+        "purpose": "suspension",
+        "suspension": false
+      });
+
     })
 
     // failure here means REVOKED
@@ -345,8 +356,12 @@ credentialSubject:
             }),
         })
       expect(validation.valid).toBe(false);
-      expect(validation.status['https://example.com/credentials/status/3#94567'].valid).toBe(true);
-      expect(validation.status['https://example.com/credentials/status/3#94567'].purpose).toBe('suspension');
+      expect(validation.status['https://example.com/credentials/status/3#94567']).toEqual({
+        "set": true,
+        "purpose": "suspension",
+        "suspension": true
+      });
+
     })
   })
 }) 

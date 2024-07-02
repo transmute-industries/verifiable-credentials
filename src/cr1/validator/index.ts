@@ -86,7 +86,9 @@ export const validator = ({ resolver }: RequestValidator) => {
             if (status.statusPurpose !== verified.credentialSubject.statusPurpose) {
               validation.valid = false
               validation.status[`${status.id}`] = {
-                valid: false, purpose: status.statusPurpose, errors: [{
+                set: false,
+                purpose: status.statusPurpose,
+                errors: [{
                   message: 'status list purpose does not match credential status'
                 }]
               }
@@ -95,7 +97,7 @@ export const validator = ({ resolver }: RequestValidator) => {
               if (bit) {
                 validation.valid = false
               }
-              validation.status[`${status.id}`] = { valid: bit, purpose: status.statusPurpose }
+              validation.status[`${status.id}`] = { set: bit, purpose: status.statusPurpose, [status.statusPurpose]: bit }
             }
 
           }
