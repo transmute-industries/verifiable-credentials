@@ -213,10 +213,10 @@ credentialSubject:
       type: 'application/vc+ld+json+jwt',
       content: issued,
     })
-    expect(validated.valid).toBe(true)
+    expect(validated.verified).toBe(true)
     expect(validated.schema[`${baseURL}/schemas/product-passport`].validation).toBe('succeeded')
-    expect(validated.status[`${baseURL}/credentials/status/3#${revocationIndex}`]).toEqual({ "purpose": "revocation", "revocation": false, "set": false })
-    expect(validated.status[`${baseURL}/credentials/status/4#${suspensionIndex}`]).toEqual({ "purpose": "suspension", "suspension": false, "set": false })
+    expect(validated.status[`${baseURL}/credentials/status/3#${revocationIndex}`]).toEqual({ "revocation": false, })
+    expect(validated.status[`${baseURL}/credentials/status/4#${suspensionIndex}`]).toEqual({ "suspension": false, })
 
 
     const vp = await transmute

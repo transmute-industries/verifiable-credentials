@@ -117,7 +117,7 @@ credentialSubject:
     type: "application/vc+ld+json+jwt",
     content: issued,
   });
-  expect(validation1.valid).toBe(false);
+  expect(validation1.verified).toBe(true);
   expect(validation1.schema).toEqual({
     "https://vendor.example/api/schemas/product-passport": {
       "validation": "failed",

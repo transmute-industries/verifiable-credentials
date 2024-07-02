@@ -221,12 +221,12 @@ credentialSubject:
       type: "application/vc+ld+json+jwt",
       content: issued,
     });
-    expect(valid1.valid).toBe(true);
+    expect(valid1.verified).toBe(true);
 
     const valid2 = await validator.validate({
       type: "application/vc+ld+json+jwt",
       content: issued,
     });
-    expect(valid2.valid).toBe(true);
+    expect(valid2.verified).toBe(true);
   });
 });

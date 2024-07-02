@@ -84,7 +84,7 @@ it("can disable schema validation", async () => {
     type: "application/vc+ld+json+jwt",
     content: issued,
   });
-  expect(validation1.valid).toBe(true);
+  expect(validation1.verified).toBe(true);
   // console.log(JSON.stringify(validation1, null, 2))
   expect(validation1.schema['https://vendor.example/api/schemas/product-passport'].validation).toBe('ignored')
 });

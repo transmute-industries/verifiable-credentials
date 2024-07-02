@@ -26,7 +26,7 @@ export const validator = ({ resolver }: RequestValidator) => {
     validate: async <T = TraceablePresentationValidationResult>({ type, content }: SecuredContentType) => {
       const verified = await verifier({ resolver }).verify<VerifiableCredential>({ type, content })
       const validation: ValidationResult = {
-        valid: true,
+        verified: true,
         content: verified,
         schema: {},
         status: {},
@@ -65,7 +65,6 @@ export const validator = ({ resolver }: RequestValidator) => {
             }
             validation.schema[schema.id] = { validation: valid ? 'succeeded' : 'failed' }
             if (!valid) {
-              validation.valid = false
               validation.schema[schema.id].errors = compiledSchemaValidator.errors as JsonSchemaError[]
             }
           }
@@ -84,20 +83,15 @@ export const validator = ({ resolver }: RequestValidator) => {
             const verified = await verifier({ resolver }).verify<BitstringStatusListCredential>(statusListCredential)
             // confirm purpose matches
             if (status.statusPurpose !== verified.credentialSubject.statusPurpose) {
-              validation.valid = false
               validation.status[`${status.id}`] = {
-                set: false,
-                purpose: status.statusPurpose,
+                [status.statusPurpose]: false,
                 errors: [{
                   message: 'status list purpose does not match credential status'
                 }]
               }
             } else {
               const bit = bs(verified.credentialSubject.encodedList).get(parseInt(status.statusListIndex, 10))
-              if (bit) {
-                validation.valid = false
-              }
-              validation.status[`${status.id}`] = { set: bit, purpose: status.statusPurpose, [status.statusPurpose]: bit }
+              validation.status[`${status.id}`] = { [status.statusPurpose]: bit }
             }
 
           }

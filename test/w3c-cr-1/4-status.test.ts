@@ -96,11 +96,9 @@ credentialSubject:
           `)
             }),
         })
-      expect(validation.valid).toBe(true);
+      expect(validation.verified).toBe(true);
       expect(validation.status['https://example.com/credentials/status/3#94567']).toEqual({
-        "purpose": "revocation",
         "revocation": false,
-        "set": false
       });
 
     })
@@ -186,11 +184,9 @@ credentialSubject:
           `)
             }),
         })
-      expect(validation.valid).toBe(false);
+      expect(validation.verified).toBe(true);
       expect(validation.status['https://example.com/credentials/status/3#94567']).toEqual({
-        "purpose": "revocation",
         "revocation": true,
-        "set": true
       });
     })
   })
@@ -265,10 +261,8 @@ credentialSubject:
           `)
             }),
         })
-      expect(validation.valid).toBe(true);
+      expect(validation.verified).toBe(true);
       expect(validation.status['https://example.com/credentials/status/3#94567']).toEqual({
-        "set": false,
-        "purpose": "suspension",
         "suspension": false
       });
 
@@ -355,10 +349,8 @@ credentialSubject:
           `)
             }),
         })
-      expect(validation.valid).toBe(false);
+      expect(validation.verified).toBe(true);
       expect(validation.status['https://example.com/credentials/status/3#94567']).toEqual({
-        "set": true,
-        "purpose": "suspension",
         "suspension": true
       });
 

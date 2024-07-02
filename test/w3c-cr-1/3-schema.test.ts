@@ -88,7 +88,7 @@ credentialSubject:
           `)
           }),
       })
-    expect(validation.valid).toBe(true);
+    expect(validation.verified).toBe(true);
     expect(validation.schema).toEqual({ 'https://issuer.example/schemas/42': { validation: 'succeeded' } });
   })
 
@@ -154,7 +154,7 @@ credentialSubject:
           `)
           }),
       })
-    expect(validation.valid).toBe(false);
+    expect(validation.verified).toBe(true);
     expect(validation.schema).toEqual({
       "https://issuer.example/schemas/52": {
         "validation": 'failed',
