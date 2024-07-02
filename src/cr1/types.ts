@@ -244,10 +244,12 @@ export type ConformanceWarningMessage = {
   reference: string
 }
 
+export type SchemaValidation = 'succeeded' | 'failed' | 'ignored'
+
 export type ValidationResult = {
   valid: boolean
   content: VerifiableCredential
-  schema: Record<string, { valid: boolean, errors?: JsonSchemaError[] }>
+  schema: Record<string, { validation?: SchemaValidation, errors?: JsonSchemaError[], }>
   status: Record<string, { valid: boolean, purpose: string, errors?: StatusListError[] }>
   warnings: ConformanceWarningMessage[]
 }

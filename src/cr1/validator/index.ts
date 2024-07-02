@@ -42,6 +42,10 @@ export const validator = ({ resolver }: RequestValidator) => {
               id: schema.id,
               type: 'application/schema+json',
             })
+            if (credentialSchema === true) {
+              validation.schema[schema.id] = { validation: 'ignored' } as any
+              continue;
+            }
             const schemaContent = decoder.decode(credentialSchema.content)
             const parsedSchemaContent = JSON.parse(schemaContent)
             let valid: any;
@@ -58,7 +62,7 @@ export const validator = ({ resolver }: RequestValidator) => {
             } catch (e) {
               valid = false
             }
-            validation.schema[schema.id] = { valid }
+            validation.schema[schema.id] = { validation: valid ? 'succeeded' : 'failed' }
             if (!valid) {
               validation.valid = false
               validation.schema[schema.id].errors = compiledSchemaValidator.errors as JsonSchemaError[]

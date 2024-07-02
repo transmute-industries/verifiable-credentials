@@ -7,18 +7,19 @@ const alg = `ES256`;
 const issuer = `did:example:123`;
 const baseURL = `https://vendor.example/api`;
 
-it("validate twice without error", async () => {
+let publicKey: any;
+let issued: any;
+
+beforeAll(async () => {
   const privateKey = await transmute.key.generate({
     alg,
     type: "application/jwk+json",
   });
-
-
-  const publicKey = await transmute.key.publicFromPrivate({
+  publicKey = await transmute.key.publicFromPrivate({
     type: "application/jwk+json",
     content: privateKey,
   });
-  const issued = await transmute
+  issued = await transmute
     .issuer({
       alg,
       type: "application/vc+ld+json+jwt",
@@ -60,43 +61,19 @@ credentialSubject:
     subtype: Bachelor of Science and Arts
 `),
     });
+})
+
+it("can disable schema validation", async () => {
   const validator = await transmute.validator({
     resolver: {
-      resolve: async ({ id, type, content }) => {
+      resolve: async (opts: any) => {
+        // console.log(opts)
+        const { id, type, content } = opts
         // Resolve external resources according to verifier policy
         // In this case, we return inline exampes...
         if (id === `${baseURL}/schemas/product-passport`) {
-          return {
-            type: `application/schema+json`,
-            content: transmute.text.encoder.encode(`
-{
-  "$id": "${baseURL}/schemas/product-passport",
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Example JSON Schema",
-  "description": "This is a test schema",
-  "type": "object",
-  "properties": {
-    "credentialSubject": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "degree": {
-          "type": "object"
+          return true; // resolving the special case "true" ignores validation
         }
-      },
-      "additionalProperties": false,
-      "errorMessage": {
-        "additionalProperties": "🔥 This is a custom error message for extra properties 🔥"
-      }
-    }
-  }
-}
-            `),
-          };
-        }
-
         if (content != undefined && type === `application/vc+ld+json+jwt`) {
           const { kid } = jose.decodeProtectedHeader(
             transmute.text.decoder.decode(content)
@@ -117,33 +94,7 @@ credentialSubject:
     type: "application/vc+ld+json+jwt",
     content: issued,
   });
-  expect(validation1.valid).toBe(false);
-  expect(validation1.schema).toEqual({
-    "https://vendor.example/api/schemas/product-passport": {
-      "validation": "failed",
-      "errors": [
-        {
-          "instancePath": "/credentialSubject",
-          "schemaPath": "#/properties/credentialSubject/errorMessage",
-          "keyword": "errorMessage",
-          "params": {
-            "errors": [
-              {
-                "instancePath": "/credentialSubject",
-                "schemaPath": "#/properties/credentialSubject/additionalProperties",
-                "keyword": "additionalProperties",
-                "params": {
-                  "additionalProperty": "unexpectedProperty"
-                },
-                "message": "must NOT have additional properties",
-                "emUsed": true
-              },
-            ]
-          },
-          "message": "🔥 This is a custom error message for extra properties 🔥"
-        }
-      ]
-    }
-  }
-  )
+  expect(validation1.valid).toBe(true);
+  // console.log(JSON.stringify(validation1, null, 2))
+  expect(validation1.schema['https://vendor.example/api/schemas/product-passport'].validation).toBe('ignored')
 });

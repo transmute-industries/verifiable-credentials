@@ -214,7 +214,7 @@ credentialSubject:
       content: issued,
     })
     expect(validated.valid).toBe(true)
-    expect(validated.schema[`${baseURL}/schemas/product-passport`].valid).toBe(true)
+    expect(validated.schema[`${baseURL}/schemas/product-passport`].validation).toBe('succeeded')
     expect(validated.status[`${baseURL}/credentials/status/3#${revocationIndex}`].valid).toBe(false)
     expect(validated.status[`${baseURL}/credentials/status/4#${suspensionIndex}`].valid).toBe(false)
 
