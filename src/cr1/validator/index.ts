@@ -44,7 +44,7 @@ export const validator = ({ resolver }: RequestValidator) => {
               purpose: 'schema-validation'
             })
             if (credentialSchema === true) {
-              validation.schema[schema.id] = { validation: 'ignored' } as any
+              validation.schema[schema.id] = { validation: 'ignored' }
               continue;
             }
             const schemaContent = decoder.decode(credentialSchema.content)

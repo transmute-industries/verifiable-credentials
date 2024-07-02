@@ -13,7 +13,7 @@ const coseSign1CredentialIssuer = (issuer: RequestCredentialIssuer) => {
       if (issuer.signer === undefined) {
         throw new Error('No signer available.')
       }
-      const claims = claimset.parse(decoder.decode(credential.claimset)) as any
+      const claims = claimset.parse(decoder.decode(credential.claimset))
       return issuer.signer.sign(encoder.encode(JSON.stringify(claims)))
     }
   }
@@ -25,7 +25,7 @@ const jwtCredentialIssuer = (issuer: RequestCredentialIssuer) => {
       if (issuer.signer === undefined) {
         throw new Error('No signer available.')
       }
-      const claims = claimset.parse(decoder.decode(credential.claimset)) as any
+      const claims = claimset.parse(decoder.decode(credential.claimset))
       return issuer.signer.sign(encoder.encode(JSON.stringify(claims)))
     }
   }
