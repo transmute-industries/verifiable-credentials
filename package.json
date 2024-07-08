@@ -1,6 +1,6 @@
 {
   "name": "@transmute/verifiable-credentials",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "An opinionated typescript library for w3c verifiable credentials.",
   "main": "./dist/index.js",
   "typings": "dist/index.d.ts",
