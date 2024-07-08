@@ -79,6 +79,9 @@ credentialSubject:
     subtype: Bachelor of Science and Arts
 `),
       });
+
+    // $schema: https://json-schema.org/draft/2020-12/schema
+    // version: 1.0.0
     const validator = await transmute.validator({
       resolver: {
         resolve: async ({ id, type, content }) => {
@@ -91,6 +94,7 @@ credentialSubject:
 {
   "$id": "${baseURL}/schemas/product-passport",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
   "title": "Example JSON Schema",
   "description": "This is a test schema",
   "type": "object",
