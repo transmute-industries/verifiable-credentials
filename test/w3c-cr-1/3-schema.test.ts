@@ -88,8 +88,8 @@ credentialSubject:
           `)
           }),
       })
-    expect(validation.valid).toBe(true);
-    expect(validation.schema).toEqual({ 'https://issuer.example/schemas/42': { valid: true } });
+    expect(validation.verified).toBe(true);
+    expect(validation.schema).toEqual({ 'https://issuer.example/schemas/42': { validation: 'succeeded' } });
   })
 
   it('failure', async () => {
@@ -154,10 +154,10 @@ credentialSubject:
           `)
           }),
       })
-    expect(validation.valid).toBe(false);
+    expect(validation.verified).toBe(true);
     expect(validation.schema).toEqual({
       "https://issuer.example/schemas/52": {
-        "valid": false,
+        "validation": 'failed',
         "errors": [
           {
             "instancePath": "/credentialSubject/id",

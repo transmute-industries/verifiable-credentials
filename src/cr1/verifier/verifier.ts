@@ -23,7 +23,7 @@ const acceptableAudience = (expectedAud: string, receivedAud: string | string[])
 }
 
 const verifyJwt = async ({ resolver }: RequestVerifier, { type, content, audience, nonce }: RequestVerify) => {
-  const key = await resolver.resolve({ type, content })
+  const key = await resolver.resolve({ type, content, purpose: 'verification-material' })
   const publicKey = await importKeyLike(key)
   const jwt = decoder.decode(content)
   const { payload } = await jose.jwtVerify(jwt, publicKey, {
@@ -46,7 +46,8 @@ const verifyCoseSign1
         resolve: async () => {
           const key = await resolver.resolve({
             type,
-            content
+            content,
+            purpose: 'verification-material'
           })
           return importJWK(key)
         }
@@ -86,7 +87,8 @@ const verifySdJwtCredential = async ({ resolver }: RequestVerifier, { type, cont
       resolve: async () => {
         const key = await resolver.resolve({
           type,
-          content
+          content,
+          purpose: 'verification-material'
         })
         return importJWK(key)
       }
@@ -106,7 +108,8 @@ const verifySdJwtPresentation = async ({ resolver }: RequestVerifier, { type, co
       resolve: async () => {
         const key = await resolver.resolve({
           type,
-          content // same a token
+          content, // same a token
+          purpose: 'verification-material'
         })
         return importJWK(key)
       }

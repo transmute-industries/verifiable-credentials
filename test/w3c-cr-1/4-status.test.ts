@@ -96,9 +96,11 @@ credentialSubject:
           `)
             }),
         })
-      expect(validation.valid).toBe(true);
-      expect(validation.status['https://example.com/credentials/status/3#94567'].valid).toBe(false);
-      expect(validation.status['https://example.com/credentials/status/3#94567'].purpose).toBe('revocation');
+      expect(validation.verified).toBe(true);
+      expect(validation.status['https://example.com/credentials/status/3#94567']).toEqual({
+        "revocation": false,
+      });
+
     })
 
     // failure here means REVOKED
@@ -182,9 +184,10 @@ credentialSubject:
           `)
             }),
         })
-      expect(validation.valid).toBe(false);
-      expect(validation.status['https://example.com/credentials/status/3#94567'].valid).toBe(true);
-      expect(validation.status['https://example.com/credentials/status/3#94567'].purpose).toBe('revocation');
+      expect(validation.verified).toBe(true);
+      expect(validation.status['https://example.com/credentials/status/3#94567']).toEqual({
+        "revocation": true,
+      });
     })
   })
 
@@ -258,9 +261,11 @@ credentialSubject:
           `)
             }),
         })
-      expect(validation.valid).toBe(true);
-      expect(validation.status['https://example.com/credentials/status/3#94567'].valid).toBe(false);
-      expect(validation.status['https://example.com/credentials/status/3#94567'].purpose).toBe('suspension');
+      expect(validation.verified).toBe(true);
+      expect(validation.status['https://example.com/credentials/status/3#94567']).toEqual({
+        "suspension": false
+      });
+
     })
 
     // failure here means REVOKED
@@ -344,9 +349,11 @@ credentialSubject:
           `)
             }),
         })
-      expect(validation.valid).toBe(false);
-      expect(validation.status['https://example.com/credentials/status/3#94567'].valid).toBe(true);
-      expect(validation.status['https://example.com/credentials/status/3#94567'].purpose).toBe('suspension');
+      expect(validation.verified).toBe(true);
+      expect(validation.status['https://example.com/credentials/status/3#94567']).toEqual({
+        "suspension": true
+      });
+
     })
   })
 }) 
