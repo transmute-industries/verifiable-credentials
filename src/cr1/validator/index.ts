@@ -1,103 +1,97 @@
+import { RequestValidator, SecuredContentType, CredentialSchema, CredentialStatus, BitstringStatusListCredential, ValidationResult, VerifiableCredential, JsonSchemaError, TraceablePresentationValidationResult } from "../types";
 
-import {
-  RequestValidator,
-  SecuredContentType,
-  CredentialSchema,
-  CredentialStatus,
-  BitstringStatusListCredential,
-  ValidationResult,
-  VerifiableCredential,
-  JsonSchemaError,
-  TraceablePresentationValidationResult
-} from "../types"
+import { verifier } from "../verifier";
 
-import { verifier } from "../verifier"
+import { decoder } from "../text";
 
-import { decoder } from "../text"
+import { bs } from "../../cr1/status-list";
 
-import { bs } from '../../cr1/status-list'
+import { conformance } from "./w3c";
 
-import { conformance } from './w3c'
-
-import { ajv } from "./ajv"
+import { ajv } from "./ajv";
 
 export const validator = ({ resolver }: RequestValidator) => {
   return {
     validate: async <T = TraceablePresentationValidationResult>({ type, content }: SecuredContentType) => {
-      const verified = await verifier({ resolver }).verify<VerifiableCredential>({ type, content })
+      const verified = await verifier({ resolver }).verify<VerifiableCredential>({ type, content });
       const validation: ValidationResult = {
         verified: true,
         content: verified,
         schema: {},
         status: {},
-        warnings: []
-      }
-      const { credentialSchema, credentialStatus } = verified
+        warnings: [],
+      };
+      const { credentialSchema, credentialStatus } = verified;
       if (credentialSchema) {
-        const schemas = (Array.isArray(credentialSchema) ? verified.credentialSchema : [credentialSchema]) as CredentialSchema[]
+        const schemas = (Array.isArray(credentialSchema) ? verified.credentialSchema : [credentialSchema]) as CredentialSchema[];
         for (const schema of schemas) {
-          if (schema.type === 'JsonSchema') {
+          if (schema.type === "JsonSchema") {
             const credentialSchema = await resolver.resolve({
               // prefer to resolve this one by id, instead of content
               id: schema.id,
-              type: 'application/schema+json',
-              purpose: 'schema-validation'
-            })
+              type: "application/schema+json",
+              purpose: "schema-validation",
+            });
             if (credentialSchema === true) {
-              validation.schema[schema.id] = { validation: 'ignored' }
+              validation.schema[schema.id] = { validation: "ignored" };
               continue;
             }
-            const schemaContent = decoder.decode(credentialSchema.content)
-            const parsedSchemaContent = JSON.parse(schemaContent)
+            const schemaContent = decoder.decode(credentialSchema.content);
+            const parsedSchemaContent = JSON.parse(schemaContent);
             let valid: any;
-            let compiledSchemaValidator: any
+            let compiledSchemaValidator: any;
             try {
-              const maybeExistingSchema = ajv.getSchema(parsedSchemaContent.$id)
-              compiledSchemaValidator = maybeExistingSchema
+              const maybeExistingSchema = ajv.getSchema(parsedSchemaContent.$id);
+              compiledSchemaValidator = maybeExistingSchema;
               if (compiledSchemaValidator === undefined) {
                 // only compile new schemas...
                 // this assumes schemas do not change.
-                compiledSchemaValidator = ajv.compile(parsedSchemaContent)
+                compiledSchemaValidator = ajv.compile(parsedSchemaContent);
               }
-              valid = compiledSchemaValidator(verified)
+              valid = compiledSchemaValidator(verified);
             } catch (e) {
-              valid = false
+              valid = false;
             }
-            validation.schema[schema.id] = { validation: valid ? 'succeeded' : 'failed' }
+            validation.schema[schema.id] = { validation: valid ? "succeeded" : "failed" };
             if (!valid) {
-              validation.schema[schema.id].errors = compiledSchemaValidator.errors as JsonSchemaError[]
+              if (compiledSchemaValidator === undefined) {
+                validation.schema[schema.id].errors = [{ message: "json schema has invalid syntax" }] as any;
+              } else {
+                validation.schema[schema.id].errors = compiledSchemaValidator.errors as JsonSchemaError[];
+              }
             }
           }
         }
       }
       if (credentialStatus) {
-        const statuses = (Array.isArray(credentialStatus) ? verified.credentialStatus : [credentialStatus]) as CredentialStatus[]
+        const statuses = (Array.isArray(credentialStatus) ? verified.credentialStatus : [credentialStatus]) as CredentialStatus[];
         for (const status of statuses) {
-          if (status.type === 'BitstringStatusListEntry') {
+          if (status.type === "BitstringStatusListEntry") {
             const statusListCredential = await resolver.resolve({
               // prefer to resolve this one by id, instead of content
               id: status.statusListCredential,
               type: type, // we do not support mixed type credential and status lists!
-              purpose: 'status-check'
-            })
-            const verified = await verifier({ resolver }).verify<BitstringStatusListCredential>(statusListCredential)
+              purpose: "status-check",
+            });
+            const verified = await verifier({ resolver }).verify<BitstringStatusListCredential>(statusListCredential);
             // confirm purpose matches
             if (status.statusPurpose !== verified.credentialSubject.statusPurpose) {
               validation.status[`${status.id}`] = {
                 [status.statusPurpose]: false,
-                errors: [{
-                  message: 'status list purpose does not match credential status'
-                }]
-              }
+                errors: [
+                  {
+                    message: "status list purpose does not match credential status",
+                  },
+                ],
+              };
             } else {
-              const bit = bs(verified.credentialSubject.encodedList).get(parseInt(status.statusListIndex, 10))
-              validation.status[`${status.id}`] = { [status.statusPurpose]: bit }
+              const bit = bs(verified.credentialSubject.encodedList).get(parseInt(status.statusListIndex, 10));
+              validation.status[`${status.id}`] = { [status.statusPurpose]: bit };
             }
-
           }
         }
       }
-      return conformance(validation) as T
-    }
-  }
-}
+      return conformance(validation) as T;
+    },
+  };
+};
