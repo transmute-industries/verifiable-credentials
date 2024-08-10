@@ -4,7 +4,7 @@ it('cose-sign1 sign and verify', async () => {
   const privateKey = await cose.key.generate<cose.key.CoseKey>('ES256', 'application/cose-key')
   const signer = cose.detached.signer({
     remote: cose.crypto.signer({
-      secretKeyJwk: await cose.key.convertCoseKeyToJsonWebKey(privateKey)
+      privateKeyJwk: await cose.key.convertCoseKeyToJsonWebKey(privateKey)
     })
   })
   const payload = new TextEncoder().encode(JSON.stringify({

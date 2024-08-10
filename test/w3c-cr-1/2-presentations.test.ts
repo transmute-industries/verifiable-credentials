@@ -8,7 +8,7 @@ const coseSign1 = {
   sign: async (bytes: Uint8Array) => {
     const signer = cose.attached.signer({
       remote: cose.crypto.signer({
-        secretKeyJwk: await transmute.key.importJWK({
+        privateKeyJwk: await transmute.key.importJWK({
           type: fixtures.holder_0_key_type,
           content: fixtures.holder_0_private_key
         })

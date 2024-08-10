@@ -1,9 +1,9 @@
 import sd from '@transmute/vc-jwt-sd'
 
 it('SD-JWT sign and verify (no binding)', async () => {
-  const { publicKeyJwk, secretKeyJwk } = await sd.key.generate('ES256');
+  const { publicKeyJwk, privateKeyJwk } = await sd.key.generate('ES256');
   const sdJwt = await sd.issuer({
-    secretKeyJwk
+    privateKeyJwk
   }).issue({
     claimset: `
 iss: urn:uuid:123
@@ -12,7 +12,7 @@ iss: urn:uuid:123
     `,
   })
   const sdJwtFnard = await sd.holder({
-    secretKeyJwk
+    privateKeyJwk
   }).issue({
     token: sdJwt,
     disclosure: `
@@ -33,19 +33,19 @@ c2: False
 })
 
 it('SD-JWT sign and verify (with binding)', async () => {
-  const { publicKeyJwk, secretKeyJwk } = await sd.key.generate('ES256');
+  const { publicKeyJwk, privateKeyJwk } = await sd.key.generate('ES256');
   const sdJwt = await sd.issuer({
-    secretKeyJwk
+    privateKeyJwk
   }).issue({
     claimset: `
 iss: urn:uuid:123
 !sd c1: urn:uuid:456
 !sd c2: urn:uuid:789
     `,
-    holder: publicKeyJwk
+    jwk: publicKeyJwk
   })
   const sdJwtFnard = await sd.holder({
-    secretKeyJwk
+    privateKeyJwk
   }).issue({
     token: sdJwt,
     disclosure: `
