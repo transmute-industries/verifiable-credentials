@@ -1,4 +1,4 @@
-import fs from 'fs'
+
 import * as jose from 'jose'
 import * as cose from '@transmute/cose'
 import * as transmute from '../../src'

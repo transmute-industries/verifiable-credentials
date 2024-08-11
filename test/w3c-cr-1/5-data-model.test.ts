@@ -3,25 +3,10 @@ import * as fixtures from "../../test/__fixtures__";
 
 const { text, review } = fixtures
 
-/*
-Purpose of this test suite is not to cover every MUST/SHOULD 
-but instead to cover the parts of the data model 
-that are most likely to cause interoperability problems
-*/
-
 it("minimal VerifiableCredential", async () => {
   const validation = await review(fixtures.minimal_credential);
   expect(validation.warnings.length).toBe(0);
 });
-// We decline to implement validation for VerifiablePresentation
-// because it is such an open ended data structure, we do not
-// believe meaningful interoperability will be achieved with it
-// it('minimal VerifiablePresentation', async () => {
-//   const validation = await review(fixtures.minimal_credential)
-//   expect(validation.warnings.length).toBe(0)
-// })
-
-// console.log(JSON.stringify(validation.warnings));
 
 it("should warn about interoperability issues with decentralized identifiers", async () => {
   const validation = await review(fixtures.minimal_credential_with_dids);
@@ -418,8 +403,3 @@ describe("Presentations", () => {
   });
 
 });
-
-// it.todo('data model tests')
-// it.todo('data times tests')
-// it.todo('urls times tests')
-// it.todo('data urls tests')
