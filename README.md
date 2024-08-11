@@ -96,7 +96,7 @@ const issuerSigner = {
 const issued = await transmute
   .issuer({
     alg,
-    type: "application/vc+ld+json+jwt",
+    type: "application/vc-ld+jwt",
     signer: issuerSigner,
   })
   .issue({
@@ -173,11 +173,11 @@ const validated = await transmute
         }
         if (id === `${baseURL}/credentials/status/3`) {
           return {
-            type: `application/vc+ld+json+jwt`,
+            type: `application/vc-ld+jwt`,
             content: await transmute
               .issuer({
                 alg: "ES384",
-                type: "application/vc+ld+json+jwt",
+                type: "application/vc-ld+jwt",
                 signer: issuerSigner,
               })
               .issue({
@@ -207,11 +207,11 @@ credentialSubject:
         }
         if (id === `${baseURL}/credentials/status/4`) {
           return {
-            type: `application/vc+ld+json+jwt`,
+            type: `application/vc-ld+jwt`,
             content: await transmute
               .issuer({
                 alg: "ES384",
-                type: "application/vc+ld+json+jwt",
+                type: "application/vc-ld+jwt",
                 signer: issuerSigner,
               })
               .issue({
@@ -239,7 +239,7 @@ credentialSubject:
               }),
           };
         }
-        if (content != undefined && type === `application/vc+ld+json+jwt`) {
+        if (content != undefined && type === `application/vc-ld+jwt`) {
           const { kid } = jose.decodeProtectedHeader(
             transmute.text.decoder.decode(content)
           );
@@ -256,7 +256,7 @@ credentialSubject:
     },
   })
   .validate({
-    type: "application/vc+ld+json+jwt",
+    type: "application/vc-ld+jwt",
     content: issued,
   });
 
@@ -272,7 +272,7 @@ credentialSubject:
 const presentation = await transmute
   .holder({
     alg,
-    type: "application/vp+ld+json+jwt",
+    type: "application/vp-ld+jwt",
   })
   .issue({
     signer: issuerSigner,
@@ -283,13 +283,13 @@ const presentation = await transmute
       // this part is built from disclosures without key binding below.
       // "verifiableCredential": [{
       //   "@context": "https://www.w3.org/ns/credentials/v2",
-      //   "id": "data:application/vc+ld+json+sd-jwt;QzVjV...RMjU",
+      //   "id": "data:application/vc-ld+sd-jwt;QzVjV...RMjU",
       //   "type": "EnvelopedVerifiableCredential"
       // }]
     },
     disclosures: [
       {
-        type: `application/vc+ld+json+jwt`,
+        type: `application/vc-ld+jwt`,
         credential: issued,
       },
     ],
@@ -305,7 +305,7 @@ const validation = await transmute
       resolve: async ({ type, content }) => {
         // Resolve external resources according to verifier policy
         // In this case, we return inline exampes...
-        if (content != undefined && type === `application/vp+ld+json+jwt`) {
+        if (content != undefined && type === `application/vp-ld+jwt`) {
           const { kid } = jose.decodeProtectedHeader(
             transmute.text.decoder.decode(content)
           );
@@ -322,7 +322,7 @@ const validation = await transmute
     },
   })
   .validate<transmute.TraceablePresentationValidationResult>({
-    type: `application/vp+ld+json+jwt`,
+    type: `application/vp-ld+jwt`,
     content: presentation,
   });
 // {
@@ -338,7 +338,7 @@ const validation = await transmute
 //     "verifiableCredential": [
 //       {
 //         "@context": "https://www.w3.org/ns/credentials/v2",
-//         "id": "data:application/vc+ld+json+jwt;eyJraWQiOiJkaWQ6ZX...
+//         "id": "data:application/vc-ld+jwt;eyJraWQiOiJkaWQ6ZX...
 ```
 
 ## Develop
