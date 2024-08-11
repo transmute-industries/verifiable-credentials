@@ -91,7 +91,7 @@ const sdJwtPresentationIssuer = (holder: RequestPresentationHolder) => {
 
         vp.verifiableCredential.push({
           "@context": "https://www.w3.org/ns/credentials/v2",
-          "id": `data:application/vc+ld+json+sd-jwt;${sdJwtFnard}`, // great job everyone.
+          "id": `data:application/vc-ld+sd-jwt;${sdJwtFnard}`, // great job everyone.
           "type": "EnvelopedVerifiableCredential"
         })
       }
@@ -165,13 +165,13 @@ const unsecuredPresentationOfSecuredCredentials = (holder: RequestPresentationHo
 }
 
 export const holder = (holder: RequestPresentationHolder) => {
-  if (holder.type === 'application/vp+ld+json+jwt') {
+  if (holder.type === 'application/vp-ld+jwt') {
     return jwtPresentationIssuer(holder)
-  } else if (holder.type === 'application/vp+ld+json+sd-jwt') {
+  } else if (holder.type === 'application/vp-ld+sd-jwt') {
     return sdJwtPresentationIssuer(holder)
-  } else if (holder.type === 'application/vp+ld+json+cose') {
+  } else if (holder.type === 'application/vp-ld+cose') {
     return coseSign1PresentationIssuer(holder)
-  } else if (holder.type === 'application/vp+ld+json') {
+  } else if (holder.type === 'application/vp-ld') {
     return unsecuredPresentationOfSecuredCredentials(holder)
   }
   throw new Error('presentation type is not supported.')

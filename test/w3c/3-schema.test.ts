@@ -32,7 +32,7 @@ describe('JSON Schema Validator for W3C Verifiable Credentials', () => {
         resolver: {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           resolve: async ({ id, type, content }) => {
-            if (type === 'application/vc+ld+json+cose') {
+            if (type === 'application/vc-ld+cose') {
               return {
                 type: privateKeyType,
                 content: publicKeyContent
@@ -66,11 +66,11 @@ describe('JSON Schema Validator for W3C Verifiable Credentials', () => {
         }
       })
       .validate({
-        type: 'application/vc+ld+json+cose',
+        type: 'application/vc-ld+cose',
         content: await transmute
           .issuer({
             alg: 'ES384',
-            type: 'application/vc+ld+json+cose',
+            type: 'application/vc-ld+cose',
             signer: coseSign1
           })
           .issue({
@@ -98,7 +98,7 @@ credentialSubject:
         resolver: {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           resolve: async ({ id, type, content }) => {
-            if (type === 'application/vc+ld+json+cose') {
+            if (type === 'application/vc-ld+cose') {
               return {
                 type: privateKeyType,
                 content: publicKeyContent
@@ -132,11 +132,11 @@ credentialSubject:
         }
       })
       .validate({
-        type: 'application/vc+ld+json+cose',
+        type: 'application/vc-ld+cose',
         content: await transmute
           .issuer({
             alg: 'ES384',
-            type: 'application/vc+ld+json+cose',
+            type: 'application/vc-ld+cose',
             signer: coseSign1
           })
           .issue({

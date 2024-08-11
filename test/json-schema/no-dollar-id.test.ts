@@ -24,7 +24,7 @@ describe("json schema tests", () => {
     issued = await transmute
       .issuer({
         alg,
-        type: "application/vc+ld+json+jwt",
+        type: "application/vc-ld+jwt",
         signer: {
           sign: async (bytes: Uint8Array) => {
             const jws = await new jose.CompactSign(bytes)
@@ -90,7 +90,7 @@ credentialSubject:
               `),
             };
           }
-          if (content != undefined && type === `application/vc+ld+json+jwt`) {
+          if (content != undefined && type === `application/vc-ld+jwt`) {
             return {
               type: "application/jwk+json",
               content: publicKey,
@@ -102,12 +102,12 @@ credentialSubject:
     });
     // call valdiate twice for sanity
     const valid1 = await validator.validate({
-      type: "application/vc+ld+json+jwt",
+      type: "application/vc-ld+jwt",
       content: issued,
     });
     expect(valid1.verified).toBe(true);
     const valid2 = await validator.validate({
-      type: "application/vc+ld+json+jwt",
+      type: "application/vc-ld+jwt",
       content: issued,
     });
     expect(valid2.verified).toBe(true);

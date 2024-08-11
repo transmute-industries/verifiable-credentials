@@ -22,7 +22,7 @@ beforeAll(async () => {
   issued = await transmute
     .issuer({
       alg,
-      type: "application/vc+ld+json+jwt",
+      type: "application/vc-ld+jwt",
       signer: {
         sign: async (bytes: Uint8Array) => {
           const jws = await new jose.CompactSign(bytes)
@@ -81,7 +81,7 @@ it("can disable schema validation", async () => {
     },
   });
   const validation1 = await validator.validate({
-    type: "application/vc+ld+json+jwt",
+    type: "application/vc-ld+jwt",
     content: issued,
   });
   expect(validation1.verified).toBe(true);

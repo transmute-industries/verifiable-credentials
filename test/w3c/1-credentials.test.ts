@@ -53,8 +53,8 @@ const jwk: transmute.VerifierResolver = {
 }
 
 describe('COSE Sign1 based W3C Verifiable Credentials', () => {
-  it('application/vc+ld+json+cose', async () => {
-    const type = 'application/vc+ld+json+cose'
+  it('application/vc-ld+cose', async () => {
+    const type = 'application/vc-ld+cose'
     const vc = await transmute
       .issuer({
         alg: 'ES384',
@@ -77,8 +77,8 @@ describe('COSE Sign1 based W3C Verifiable Credentials', () => {
 })
 
 describe('JWT based W3C Verifiable Credentials', () => {
-  it('application/vc+ld+json+jwt', async () => {
-    const type = 'application/vc+ld+json+jwt'
+  it('application/vc-ld+jwt', async () => {
+    const type = 'application/vc-ld+jwt'
     const vc = await transmute
       .issuer({
         alg: 'ES384',
@@ -101,8 +101,8 @@ describe('JWT based W3C Verifiable Credentials', () => {
 })
 
 describe('SD-JWT based W3C Verifiable Credentials', () => {
-  it('application/vc+ld+json+sd-jwt', async () => {
-    const type = 'application/vc+ld+json+sd-jwt'
+  it('application/vc-ld+sd-jwt', async () => {
+    const type = 'application/vc-ld+sd-jwt'
     const vc = await transmute
       .issuer({
         // 🔥 implication is that both alg and kid do not belong at this layer...

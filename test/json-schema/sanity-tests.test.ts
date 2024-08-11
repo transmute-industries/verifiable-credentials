@@ -12,7 +12,7 @@ const createTestCase = async (claimset: string, schema: string, publicKey: any, 
   const issued = await transmute
     .issuer({
       alg,
-      type: "application/vc+ld+json+sd-jwt",
+      type: "application/vc-ld+sd-jwt",
       signer: {
         sign: async (bytes: Uint8Array) => {
           const jws = await new jose.CompactSign(bytes).setProtectedHeader({ kid: `did:example:123#key-42`, alg }).sign(
@@ -45,11 +45,11 @@ const createTestCase = async (claimset: string, schema: string, publicKey: any, 
         }
         if (id === `https://vendor.example/credentials/status/3`) {
           return {
-            type: `application/vc+ld+json+jwt`,
+            type: `application/vc-ld+jwt`,
             content: await transmute
               .issuer({
                 alg: "ES384",
-                type: "application/vc+ld+json+cose",
+                type: "application/vc-ld+cose",
                 signer: {
                   sign: async (bytes: Uint8Array) => {
                     const jws = await new jose.CompactSign(bytes).setProtectedHeader({ kid: `did:example:123#key-42`, alg }).sign(
@@ -84,13 +84,13 @@ credentialSubject:
               }),
           };
         }
-        if (content != undefined && type === `application/vc+ld+json+sd-jwt`) {
+        if (content != undefined && type === `application/vc-ld+sd-jwt`) {
           return {
             type: "application/jwk+json",
             content: publicKey,
           };
         }
-        if (content != undefined && type === `application/vc+ld+json+jwt`) {
+        if (content != undefined && type === `application/vc-ld+jwt`) {
           return {
             type: "application/jwk+json",
             content: publicKey,
@@ -103,7 +103,7 @@ credentialSubject:
   });
   // call valdiate twice for sanity
   const valid1 = await validator.validate({
-    type: "application/vc+ld+json+sd-jwt",
+    type: "application/vc-ld+sd-jwt",
     content: issued,
   });
   return valid1;

@@ -7,8 +7,8 @@ export type SupportedSignatureAlgorithms = 'ES256' | 'ES384' | 'ES512'
 
 export type SupportedKeyFormats = 'application/jwk+json' | 'application/cose-key' | 'application/pkcs8'
 
-export type VcContentType = `application/vc+ld+json`
-export type VpContentType = `application/vp+ld+json`
+export type VcContentType = `application/vc-ld`
+export type VpContentType = `application/vp-ld`
 
 export type Jwt = `${string}.${string}.${string}`
 export type SdJwt = `${Jwt}${string}~${string}`
