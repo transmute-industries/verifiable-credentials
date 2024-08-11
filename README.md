@@ -79,23 +79,25 @@ const suspensionIndex = 23452;
 
 const issuer = `did:example:123`;
 const baseURL = `https://vendor.example/api`;
+
+const issuerSigner = {
+  sign: async (bytes: Uint8Array) => {
+    const jws = await new jose.CompactSign(bytes)
+      .setProtectedHeader({ kid: `${issuer}#key-42`, alg })
+      .sign(
+        await transmute.key.importKeyLike({
+          type: "application/jwk+json",
+          content: privateKey,
+        })
+      );
+    return transmute.text.encoder.encode(jws);
+  },
+};
 const issued = await transmute
   .issuer({
     alg,
     type: "application/vc+ld+json+jwt",
-    signer: {
-      sign: async (bytes: Uint8Array) => {
-        const jws = await new jose.CompactSign(bytes)
-          .setProtectedHeader({ kid: `${issuer}#key-42`, alg })
-          .sign(
-            await transmute.key.importKeyLike({
-              type: "application/jwk+json",
-              content: privateKey,
-            })
-          );
-        return transmute.text.encoder.encode(jws);
-      },
-    },
+    signer: issuerSigner,
   })
   .issue({
     claimset: transmute.text.encoder.encode(`
@@ -176,19 +178,7 @@ const validated = await transmute
               .issuer({
                 alg: "ES384",
                 type: "application/vc+ld+json+jwt",
-                signer: {
-                  sign: async (bytes: Uint8Array) => {
-                    const jws = await new jose.CompactSign(bytes)
-                      .setProtectedHeader({ kid: `${issuer}#key-42`, alg })
-                      .sign(
-                        await transmute.key.importKeyLike({
-                          type: "application/jwk+json",
-                          content: privateKey,
-                        })
-                      );
-                    return transmute.text.encoder.encode(jws);
-                  },
-                },
+                signer: issuerSigner,
               })
               .issue({
                 claimset: transmute.text.encoder.encode(
@@ -222,19 +212,7 @@ credentialSubject:
               .issuer({
                 alg: "ES384",
                 type: "application/vc+ld+json+jwt",
-                signer: {
-                  sign: async (bytes: Uint8Array) => {
-                    const jws = await new jose.CompactSign(bytes)
-                      .setProtectedHeader({ kid: `${issuer}#key-42`, alg })
-                      .sign(
-                        await transmute.key.importKeyLike({
-                          type: "application/jwk+json",
-                          content: privateKey,
-                        })
-                      );
-                    return transmute.text.encoder.encode(jws);
-                  },
-                },
+                signer: issuerSigner,
               })
               .issue({
                 claimset: transmute.text.encoder.encode(
@@ -297,19 +275,7 @@ const presentation = await transmute
     type: "application/vp+ld+json+jwt",
   })
   .issue({
-    signer: {
-      sign: async (bytes: Uint8Array) => {
-        const jws = await new jose.CompactSign(bytes)
-          .setProtectedHeader({ kid: `${issuer}#key-42`, alg })
-          .sign(
-            await transmute.key.importKeyLike({
-              type: "application/jwk+json",
-              content: privateKey,
-            })
-          );
-        return transmute.text.encoder.encode(jws);
-      },
-    },
+    signer: issuerSigner,
     presentation: {
       "@context": ["https://www.w3.org/ns/credentials/v2"],
       type: ["VerifiablePresentation"],
