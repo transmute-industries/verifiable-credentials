@@ -4,7 +4,7 @@ import { verifier } from "../verifier";
 
 import { decoder } from "../text";
 
-import { bs } from "../../cr1/status-list";
+import { bs } from "../status-list";
 
 import { conformance } from "./w3c";
 

@@ -1,12 +1,12 @@
 import fs from 'fs'
 import * as jose from "jose";
 
-import { importKeyLike } from '../../src/cr1/key/importKeyLike'
+import { importKeyLike } from '../../src/key/importKeyLike'
 
-import { encoder, decoder } from '../../src/cr1/text';
+import { encoder, decoder } from '../../src/text';
 
-import { issuer } from '../../src/cr1/credential'
-import { validator } from '../../src/cr1/validator'
+import { issuer } from '../../src/credential'
+import { validator } from '../../src/validator'
 
 // keys
 export const issuer_0_key_type = 'application/jwk+json'
