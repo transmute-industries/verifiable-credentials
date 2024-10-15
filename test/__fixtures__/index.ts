@@ -88,7 +88,7 @@ export const text = (claims: string) => {
 };
 
 export const review = async (claimset: Uint8Array) => {
-  const type = "application/vc-ld+jwt";
+  const type = "application/vc+jwt";
   return validator({
     resolver,
   })

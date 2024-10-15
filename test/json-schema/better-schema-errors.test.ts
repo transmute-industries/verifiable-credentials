@@ -21,7 +21,7 @@ it("validate twice without error", async () => {
   const issued = await transmute
     .issuer({
       alg,
-      type: "application/vc-ld+jwt",
+      type: "application/vc+jwt",
       signer: {
         sign: async (bytes: Uint8Array) => {
           const jws = await new jose.CompactSign(bytes)
@@ -97,7 +97,7 @@ credentialSubject:
           };
         }
 
-        if (content != undefined && type === `application/vc-ld+jwt`) {
+        if (content != undefined && type === `application/vc+jwt`) {
           const { kid } = jose.decodeProtectedHeader(
             transmute.text.decoder.decode(content)
           );
@@ -114,7 +114,7 @@ credentialSubject:
     },
   });
   const validation1 = await validator.validate({
-    type: "application/vc-ld+jwt",
+    type: "application/vc+jwt",
     content: issued,
   });
   expect(validation1.verified).toBe(true);

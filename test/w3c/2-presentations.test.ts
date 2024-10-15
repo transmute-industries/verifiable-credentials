@@ -52,8 +52,8 @@ const resolver: transmute.VerifierResolver = {
 
 describe('Unsecured W3C Verifiable Presentations', () => {
   // unsecured VP, with disclosure of SD-JWT VC without key binding
-  it('application/vp-ld', async () => {
-    const type = 'application/vp-ld'
+  it('application/vp', async () => {
+    const type = 'application/vp'
 
     const vp = await transmute
       .holder({
@@ -71,16 +71,16 @@ describe('Unsecured W3C Verifiable Presentations', () => {
           // this part is built from disclosures without key binding below.
           // "verifiableCredential": [{
           //   "@context": "https://www.w3.org/ns/credentials/v2",
-          //   "id": "data:application/vc-ld+sd-jwt;QzVjV...RMjU",
+          //   "id": "data:application/vc+sd-jwt;QzVjV...RMjU",
           //   "type": "EnvelopedVerifiableCredential"
           // }]
         },
         disclosures: [{
-          type: `application/vc-ld+sd-jwt`,
+          type: `application/vc+sd-jwt`,
           credential: await transmute
             .issuer({
               alg: 'ES384',
-              type: 'application/vc-ld+sd-jwt',
+              type: 'application/vc+sd-jwt',
               signer: jws
             })
             .issue({
@@ -91,11 +91,11 @@ describe('Unsecured W3C Verifiable Presentations', () => {
           disclosure: fixtures.claimset_0,
         },
         {
-          type: `application/vc-ld+jwt`,
+          type: `application/vc+jwt`,
           credential: await transmute
             .issuer({
               alg: 'ES384',
-              type: 'application/vc-ld+jwt',
+              type: 'application/vc+jwt',
               signer: jws
             })
             .issue({
@@ -112,15 +112,15 @@ describe('Unsecured W3C Verifiable Presentations', () => {
         content: vp
       })
     expect(verified.holder).toBe('https://university.example/issuers/565049')
-    expect(verified.verifiableCredential[0].id.startsWith('data:application/vc-ld+sd-jwt;ey')).toBe(true)
-    expect(verified.verifiableCredential[1].id.startsWith('data:application/vc-ld+jwt;ey')).toBe(true)
+    expect(verified.verifiableCredential[0].id.startsWith('data:application/vc+sd-jwt;ey')).toBe(true)
+    expect(verified.verifiableCredential[1].id.startsWith('data:application/vc+jwt;ey')).toBe(true)
   })
 })
 
 
 describe('COSE Sign1 based W3C Verifiable Presentations', () => {
-  it('application/vp-ld+cose', async () => {
-    const type = 'application/vp-ld+cose'
+  it('application/vp+cose', async () => {
+    const type = 'application/vp+cose'
     const vc = await transmute
       .holder({
         alg: 'ES384',
@@ -137,18 +137,18 @@ describe('COSE Sign1 based W3C Verifiable Presentations', () => {
           // this part is built from disclosures without key binding below.
           // "verifiableCredential": [{
           //   "@context": "https://www.w3.org/ns/credentials/v2",
-          //   "id": "data:application/vc-ld+sd-jwt;QzVjV...RMjU",
+          //   "id": "data:application/vc+sd-jwt;QzVjV...RMjU",
           //   "type": "EnvelopedVerifiableCredential"
           // }]
         },
         disclosures: [
           {
-            type: `application/vc-ld+cose`,
+            type: `application/vc+cose`,
             credential: await transmute
               .issuer({
                 // 🔥 remove alg from this layer
                 alg: 'ES384',
-                type: `application/vc-ld+cose`, // expand cty everywhere for readability
+                type: `application/vc+cose`, // expand cty everywhere for readability
                 signer: coseSign1
               })
               .issue({
@@ -169,14 +169,14 @@ describe('COSE Sign1 based W3C Verifiable Presentations', () => {
 
 
     expect(verified.holder).toBe('https://university.example/issuers/565049')
-    expect(verified.verifiableCredential[0].id.startsWith('data:application/vc-ld+cose;')).toBe(true)
+    expect(verified.verifiableCredential[0].id.startsWith('data:application/vc+cose;')).toBe(true)
   })
 })
 
 describe('JWT based W3C Verifiable Presentations', () => {
 
-  it('application/vp-ld+jwt', async () => {
-    const type = 'application/vp-ld+jwt'
+  it('application/vp+jwt', async () => {
+    const type = 'application/vp+jwt'
     const vp = await transmute
       .holder({
         alg: 'ES384',
@@ -194,17 +194,17 @@ describe('JWT based W3C Verifiable Presentations', () => {
           // this part is built from disclosures without key binding below.
           // "verifiableCredential": [{
           //   "@context": "https://www.w3.org/ns/credentials/v2",
-          //   "id": "data:application/vc-ld+sd-jwt;QzVjV...RMjU",
+          //   "id": "data:application/vc+sd-jwt;QzVjV...RMjU",
           //   "type": "EnvelopedVerifiableCredential"
           // }]
         },
         disclosures: [
           {
-            type: `application/vc-ld+jwt`,
+            type: `application/vc+jwt`,
             credential: await transmute
               .issuer({
                 alg: 'ES384',  // 🔥 remove me from this layer.
-                type: `application/vc-ld+jwt`, // expand cty everywhere for readability
+                type: `application/vc+jwt`, // expand cty everywhere for readability
                 signer: jws
               })
               .issue({
@@ -222,15 +222,15 @@ describe('JWT based W3C Verifiable Presentations', () => {
         content: vp
       })
     expect(verified.holder).toBe('https://university.example/issuers/565049')
-    expect(verified.verifiableCredential[0].id.startsWith('data:application/vc-ld+jwt;')).toBe(true)
+    expect(verified.verifiableCredential[0].id.startsWith('data:application/vc+jwt;')).toBe(true)
   })
 })
 
 describe('SD-JWT based W3C Verifiable Presentations', () => {
 
-  it('application/vp-ld+sd-jwt (without key binding)', async () => {
+  it('application/vp+sd-jwt (without key binding)', async () => {
     // this content type always implies an sd-jwt secured json-ld object (vp) contain enveloped Fnards.
-    const type = 'application/vp-ld+sd-jwt'
+    const type = 'application/vp+sd-jwt'
     const vp = await transmute
       .holder({
         alg: 'ES384', // renmove me when possible
@@ -250,18 +250,18 @@ describe('SD-JWT based W3C Verifiable Presentations', () => {
           // this part is built from disclosures with or without key binding below.
           // "verifiableCredential": [{
           //   "@context": "https://www.w3.org/ns/credentials/v2",
-          //   "id": "data:application/vc-ld+sd-jwt;QzVjV...RMjU",
+          //   "id": "data:application/vc+sd-jwt;QzVjV...RMjU",
           //   "type": "EnvelopedVerifiableCredential"
           // }]
         },
         disclosures: [{
-          type: `application/vc-ld+sd-jwt`,
+          type: `application/vc+sd-jwt`,
           audience: undefined,
           nonce: undefined,
           credential: await transmute
             .issuer({
               alg: 'ES384',
-              type: 'application/vc-ld+sd-jwt',
+              type: 'application/vc+sd-jwt',
               signer: jws
             })
             .issue({
@@ -282,14 +282,14 @@ describe('SD-JWT based W3C Verifiable Presentations', () => {
         content: vp
       })
     expect(verified.holder.id).toBe('https://university.example/issuers/565049')
-    expect(verified.verifiableCredential[0].id.startsWith('data:application/vc-ld+sd-jwt;ey')).toBe(true)
+    expect(verified.verifiableCredential[0].id.startsWith('data:application/vc+sd-jwt;ey')).toBe(true)
   })
 
-  it('application/vp-ld+sd-jwt (with key binding)', async () => {
+  it('application/vp+sd-jwt (with key binding)', async () => {
     // dislosable claimset will need to be updated
     // every time the test keys change.
     // console.log(sd.YAML.dumps(await cose.key.convertCoseKeyToJsonWebKey(await cose.cbor.decode(publicKeyContent))))
-    const type = 'application/vp-ld+sd-jwt'
+    const type = 'application/vp+sd-jwt'
     const vp = await transmute
       .holder({
         alg: 'ES384',
@@ -312,17 +312,17 @@ describe('SD-JWT based W3C Verifiable Presentations', () => {
           // this part is built from disclosures with or without key binding below.
           // "verifiableCredential": [{
           //   "@context": "https://www.w3.org/ns/credentials/v2",
-          //   "id": "data:application/vc-ld+sd-jwt;QzVjV...RMjU",
+          //   "id": "data:application/vc+sd-jwt;QzVjV...RMjU",
           //   "type": "EnvelopedVerifiableCredential"
           // }]
         },
         disclosures: [{
-          type: `application/vc-ld+sd-jwt`,
+          type: `application/vc+sd-jwt`,
           // internal params
           credential: await transmute
             .issuer({
               alg: 'ES384',
-              type: 'application/vc-ld+sd-jwt',
+              type: 'application/vc+sd-jwt',
               signer: jws
             })
             .issue({
@@ -351,17 +351,17 @@ describe('SD-JWT based W3C Verifiable Presentations', () => {
         nonce: 'nonce-456',
       })
     expect(verified.holder.id).toBe('https://university.example/issuers/565049')
-    expect(verified.verifiableCredential[0].id.startsWith('data:application/vc-ld+sd-jwt;ey')).toBe(true)
+    expect(verified.verifiableCredential[0].id.startsWith('data:application/vc+sd-jwt;ey')).toBe(true)
 
     // ok now verify the nested vc as well.
-    const envelopedVc = verified.verifiableCredential[0].id.replace('data:application/vc-ld+sd-jwt;', '')
+    const envelopedVc = verified.verifiableCredential[0].id.replace('data:application/vc+sd-jwt;', '')
     const verified2 = await transmute.
       verifier({
         resolver
       })
       .verify<transmute.VerifiablePresentationWithHolderObject & transmute.VerifiablePresentationOfEnveloped>({
         // this content type always implies an sd-jwt secured json-ld object (vp) contain enveloped Fnards.
-        type: 'application/vc-ld+sd-jwt',
+        type: 'application/vc+sd-jwt',
         content: transmute.text.encoder.encode(envelopedVc),
         audience: 'aud-123',
         nonce: 'nonce-456',

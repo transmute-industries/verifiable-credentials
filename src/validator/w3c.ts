@@ -6,7 +6,7 @@ const identifierAlias = [
   '/issuer'
 ]
 
-const allowedProtocols = ['https']
+const allowedProtocols = ['https', 'data']
 
 const isPointerToIdentifier = (pointer: string) => {
   return pointer.endsWith('/id') || identifierAlias.includes(pointer)
