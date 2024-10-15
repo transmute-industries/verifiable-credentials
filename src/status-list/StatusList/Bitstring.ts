@@ -162,6 +162,5 @@ function _parsePosition(
   // When a single bit specifies a status, such as "revoked" or "suspended", 
   // then that status is expected to be true when the bit is set (1) and false when unset (0).
   const bit = (1 << shift)
-  // the real bit value is bit % 8
   return { index, bit }
 }
