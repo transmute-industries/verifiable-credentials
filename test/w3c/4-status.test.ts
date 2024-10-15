@@ -38,11 +38,11 @@ describe('Bitstring Status List Credential Validator for W3C Verifiable Credenti
               // instead of content for some cases...
               if (id === 'https://example.com/credentials/status/3') {
                 return {
-                  type: `application/vc-ld+cose`,
+                  type: `application/vc+cose`,
                   content: await transmute
                     .issuer({
                       alg: 'ES384',
-                      type: 'application/vc-ld+cose',
+                      type: 'application/vc+cose',
                       signer: coseSign1
                     })
                     .issue({
@@ -60,7 +60,7 @@ describe('Bitstring Status List Credential Validator for W3C Verifiable Credenti
               // public key for credential with status 
               // normally we would look at protected header 
               // in content here, this is just for testing
-              if (type === 'application/vc-ld+cose') {
+              if (type === 'application/vc+cose') {
                 return {
                   type: privateKeyType,
                   content: publicKeyContent
@@ -71,11 +71,11 @@ describe('Bitstring Status List Credential Validator for W3C Verifiable Credenti
           }
         })
         .validate({
-          type: 'application/vc-ld+cose',
+          type: 'application/vc+cose',
           content: await transmute
             .issuer({
               alg: 'ES384',
-              type: 'application/vc-ld+cose',
+              type: 'application/vc+cose',
               signer: coseSign1
             })
             .issue({
@@ -131,11 +131,11 @@ credentialSubject:
         
                 `
                 return {
-                  type: `application/vc-ld+cose`,
+                  type: `application/vc+cose`,
                   content: await transmute
                     .issuer({
                       alg: 'ES384',
-                      type: 'application/vc-ld+cose',
+                      type: 'application/vc+cose',
                       signer: coseSign1
                     })
                     .issue({
@@ -148,7 +148,7 @@ credentialSubject:
               // public key for credential with status 
               // normally we would look at protected header 
               // in content here, this is just for testing
-              if (type === 'application/vc-ld+cose') {
+              if (type === 'application/vc+cose') {
                 return {
                   type: privateKeyType,
                   content: publicKeyContent
@@ -159,11 +159,11 @@ credentialSubject:
           }
         })
         .validate({
-          type: 'application/vc-ld+cose',
+          type: 'application/vc+cose',
           content: await transmute
             .issuer({
               alg: 'ES384',
-              type: 'application/vc-ld+cose',
+              type: 'application/vc+cose',
               signer: coseSign1
             })
             .issue({
@@ -203,11 +203,11 @@ credentialSubject:
               // instead of content for some cases...
               if (id === 'https://example.com/credentials/status/3') {
                 return {
-                  type: `application/vc-ld+cose`,
+                  type: `application/vc+cose`,
                   content: await transmute
                     .issuer({
                       alg: 'ES384',
-                      type: 'application/vc-ld+cose',
+                      type: 'application/vc+cose',
                       signer: coseSign1
                     })
                     .issue({
@@ -225,7 +225,7 @@ credentialSubject:
               // public key for credential with status 
               // normally we would look at protected header 
               // in content here, this is just for testing
-              if (type === 'application/vc-ld+cose') {
+              if (type === 'application/vc+cose') {
                 return {
                   type: privateKeyType,
                   content: publicKeyContent
@@ -236,11 +236,11 @@ credentialSubject:
           }
         })
         .validate({
-          type: 'application/vc-ld+cose',
+          type: 'application/vc+cose',
           content: await transmute
             .issuer({
               alg: 'ES384',
-              type: 'application/vc-ld+cose',
+              type: 'application/vc+cose',
               signer: coseSign1
             })
             .issue({
@@ -296,11 +296,11 @@ credentialSubject:
         
                 `
                 return {
-                  type: `application/vc-ld+cose`,
+                  type: `application/vc+cose`,
                   content: await transmute
                     .issuer({
                       alg: 'ES384',
-                      type: 'application/vc-ld+cose',
+                      type: 'application/vc+cose',
                       signer: coseSign1
                     })
                     .issue({
@@ -313,7 +313,7 @@ credentialSubject:
               // public key for credential with status 
               // normally we would look at protected header 
               // in content here, this is just for testing
-              if (type === 'application/vc-ld+cose') {
+              if (type === 'application/vc+cose') {
                 return {
                   type: privateKeyType,
                   content: publicKeyContent
@@ -324,11 +324,11 @@ credentialSubject:
           }
         })
         .validate({
-          type: 'application/vc-ld+cose',
+          type: 'application/vc+cose',
           content: await transmute
             .issuer({
               alg: 'ES384',
-              type: 'application/vc-ld+cose',
+              type: 'application/vc+cose',
               signer: coseSign1
             })
             .issue({

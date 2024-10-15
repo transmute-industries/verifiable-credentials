@@ -109,8 +109,20 @@ export class Bitstring {
     assert.isNumber(position, 'position')
     const { length, leftToRightIndexing } = this
     const { index, bit } = _parsePosition(position, length, leftToRightIndexing)
-    return !!(this.bits[index] & bit)
+    const actualBitSet = this.bits[index] & bit % 8
+    // Let bitstring be a list of bits with a minimum size of 16KB, where each bit is initialized to 0 (zero).
+    // ....
+    // When a single bit specifies a status, such as "revoked" or "suspended", 
+    // then that status is expected to be true when the bit is set (1) and false when unset (0).
+    if (actualBitSet === 1) {
+      return true
+    }
+    if (actualBitSet === 0) {
+      return false
+    }
+    throw new Error('Invalid bit')
   }
+
 
   async encodeBits() {
     return base64url.encode(gzip(this.bits))
@@ -146,6 +158,9 @@ function _parsePosition(
   const index = Math.floor(position / 8)
   const rem = position % 8
   const shift = leftToRightIndexing ? 7 - rem : rem
-  const bit = 1 << shift
+
+  // When a single bit specifies a status, such as "revoked" or "suspended", 
+  // then that status is expected to be true when the bit is set (1) and false when unset (0).
+  const bit = (1 << shift)
   return { index, bit }
 }

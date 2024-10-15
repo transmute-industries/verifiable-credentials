@@ -128,22 +128,22 @@ export const verifier = ({ resolver }: RequestVerifier) => {
   return {
     verify: async <T = VerifiableCredential | VerifiablePresentation>({ type, content, audience, nonce }: RequestVerify): Promise<T> => {
       switch (type) {
-        case 'application/vc-ld+cose':
-        case 'application/vp-ld+cose': {
+        case 'application/vc+cose':
+        case 'application/vp+cose': {
           return verifyCoseSign1({ resolver }, { type, content, audience, nonce }) as T
         }
-        case 'application/vc-ld+jwt':
-        case 'application/vp-ld+jwt':
+        case 'application/vc+jwt':
+        case 'application/vp+jwt':
         case 'application/kb+jwt': {
           return verifyJwt({ resolver }, { type, content, audience, nonce }) as T
         }
-        case 'application/vc-ld+sd-jwt': {
+        case 'application/vc+sd-jwt': {
           return verifySdJwtCredential({ resolver }, { type, content, audience, nonce }) as T
         }
-        case 'application/vp-ld+sd-jwt': {
+        case 'application/vp+sd-jwt': {
           return verifySdJwtPresentation({ resolver }, { type, content, audience, nonce }) as T
         }
-        case 'application/vp-ld': {
+        case 'application/vp': {
           return verifyUnsecuredPresentation({ resolver }, { type, content, audience, nonce }) as T
         }
         default: {

@@ -258,7 +258,7 @@ describe("Presentations", () => {
     id: https://university.example/issuers/565049
   verifiableCredential:
     - "@context": https://www.w3.org/ns/credentials/v2
-      id: data:application/vc-ld+sd-jwt;QzVjV...RMjU
+      id: data:application/vc+sd-jwt;QzVjV...RMjU
       type: EnvelopedVerifiableCredential
     - "@context":
         - https://www.w3.org/ns/credentials/v2
@@ -271,11 +271,7 @@ describe("Presentations", () => {
         - id: https://university.example/issuers/2
   `)
       );
-      expect(validation.warnings).toEqual([{
-        message: 'Identifier will not be well understood:  data:application/vc-ld+sd-jwt;QzVjV...RMjU',
-        pointer: '/verifiableCredential/0/id',
-        reference: 'https://www.w3.org/TR/2024/CRD-vc-data-model-2.0-20240205/#identifiers'
-      }]);
+      expect(validation.warnings).toEqual([]);
     })
 
     it("warns when non-object value is used", async () => {

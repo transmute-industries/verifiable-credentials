@@ -8,6 +8,8 @@ describe('Status List', () => {
     const list2 = await status.bs(8).set(2, true).encode();
     expect(list2).toBe('H4sIAAAAAAAAA1MAAEXPbOkBAAAA')
 
+    const statusSet = status.bs('H4sIAAAAAAAAA-3OMQ0AAAgDsOHfNBp2kZBWQRMAAAAAAAAAAAAAAL6Z6wAAAAAAtQVQdb5gAEAAAA').get(11924)
+    expect(statusSet).toBe(false)
   })
 
   it('create claimset', async () => {

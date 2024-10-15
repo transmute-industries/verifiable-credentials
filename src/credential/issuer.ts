@@ -41,8 +41,8 @@ const sdJwtCredentialIssuer = (issuer: RequestCredentialIssuer) => {
       const sdJwsDigester = await sd.digester()
       const sdIssuer = await sd.issuer({
         alg: issuer.alg,
-        typ: 'application/vc-ld+sd-jwt',
-        cty: 'application/vc-ld',
+        typ: 'application/vc+sd-jwt',
+        cty: 'application/vc',
         salter: sdJwsSalter,
         digester: sdJwsDigester,
         signer: {
@@ -62,11 +62,11 @@ const sdJwtCredentialIssuer = (issuer: RequestCredentialIssuer) => {
 }
 
 export const issuer = (issuer: RequestCredentialIssuer) => {
-  if (issuer.type === 'application/vc-ld+jwt') {
+  if (issuer.type === 'application/vc+jwt') {
     return jwtCredentialIssuer(issuer)
-  } else if (issuer.type === 'application/vc-ld+sd-jwt') {
+  } else if (issuer.type === 'application/vc+sd-jwt') {
     return sdJwtCredentialIssuer(issuer)
-  } else if (issuer.type === 'application/vc-ld+cose') {
+  } else if (issuer.type === 'application/vc+cose') {
     return coseSign1CredentialIssuer(issuer)
   }
 
